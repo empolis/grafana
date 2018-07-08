@@ -572,6 +572,11 @@ export class DashboardModel {
   }
 
   getSelectedVariableOptions(variable: any) {
+    if (variable.defaults.type === 'constant' && _.includes(variable.current.text, ',')) {
+        return _.map(variable.current.text.split(','), function(v) {
+            return {selected: true, text: v, value: Number(v)};
+        });
+    }
     let selectedOptions: any[];
     if (variable.current.text === 'All') {
       selectedOptions = variable.options.slice(1, variable.options.length);
