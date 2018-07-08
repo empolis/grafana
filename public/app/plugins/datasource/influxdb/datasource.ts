@@ -90,7 +90,10 @@ export default class InfluxDatasource extends DataSourceApi<InfluxQuery, InfluxO
     scopedVars.timeFilter = { value: timeFilter };
 
     // replace templated variables
-    allQueries = this.templateSrv.replace(allQueries, scopedVars);
+    allQueries = this.templateSrv
+        .replace(allQueries, scopedVars)
+        .replace('$timeFrom', this.getInfluxTime(options.rangeRaw.from, false))
+        .replace('$timeTo', this.getInfluxTime(options.rangeRaw.to, true));
 
     return this._seriesQuery(allQueries, options).then(
       (data: any): any => {
@@ -145,6 +148,8 @@ export default class InfluxDatasource extends DataSourceApi<InfluxQuery, InfluxO
 
     const timeFilter = this.getTimeFilter({ rangeRaw: options.rangeRaw, timezone: options.timezone });
     let query = options.annotation.query.replace('$timeFilter', timeFilter);
+    query = query.replace('$timeFrom', this.getInfluxTime(options.rangeRaw.from, false));
+    query = query.replace('$timeTo', this.getInfluxTime(options.rangeRaw.to, true));
     query = this.templateSrv.replace(query, null, 'regex');
 
     return this._seriesQuery(query, options).then((data: any) => {
