@@ -709,7 +709,14 @@ export class DashboardModel {
     format = format || 'YYYY-MM-DD HH:mm:ss';
     const timezone = this.getTimezone();
 
-    return timezone === 'browser' ? dateTime(date).format(format) : toUtc(date).format(format);
+    if (timezone === 'data') {
+      // TODO: get Timezone from variable
+      const tzName = 'Asia/Tokyo';
+      return moment(date)
+        .tz(tzName)
+        .format(format);
+    }
+    return timezone === 'browser' ? moment(date).format(format) : moment.utc(date).format(format);
   }
 
   destroy() {

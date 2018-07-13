@@ -592,6 +592,7 @@ class GraphElement {
     let tz = this.dashboard.getTimezone();
     if (tz === 'data') {
       // TODO: get Timezone from variable
+      return 'Asia/Tokyo'
     }
     return tz;
   }
