@@ -155,6 +155,7 @@ API.txt for details.
 			d.setTime(ts);
 			return d;
 		} else {
+			// TODO: use moment-timezone instead 
 			try {
 				// for browsers that support IANA time zone names in timeZone option
 				// (Chrome and Firefox do, other browsers may only know about 'UTC')

@@ -696,10 +696,16 @@ export class DashboardModel {
   }
 
   formatDate(date, format?) {
-    date = moment.isMoment(date) ? date : moment(date);
     format = format || 'YYYY-MM-DD HH:mm:ss';
     const timezone = this.getTimezone();
 
+    if (timezone === 'data') {
+      // TODO: get Timezone from variable
+      const tzName = 'Asia/Tokyo';
+      return moment(date)
+        .tz(tzName)
+        .format(format);
+    }
     return timezone === 'browser' ? moment(date).format(format) : moment.utc(date).format(format);
   }
 
