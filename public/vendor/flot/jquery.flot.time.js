@@ -155,9 +155,13 @@ API.txt for details.
 			d.setTime(ts);
 			return d;
 		} else {
-			// for browsers that support IANA time zone names in timeZone option
-			// (Chrome and Firefox do, other browsers may only know about 'UTC')
-			return new Date(new Date(ts).toLocaleString('en-US', { timeZone: opts.timezone }));
+			try {
+				// for browsers that support IANA time zone names in timeZone option
+				// (Chrome and Firefox do, other browsers may only know about 'UTC')
+				return new Date(new Date(ts).toLocaleString('en-US', { timeZone: opts.timezone }));
+			} catch (ex) {
+				return makeUtcWrapper(new Date(ts));
+			}
 		}
 	}
 
