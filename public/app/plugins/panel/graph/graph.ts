@@ -591,7 +591,7 @@ class GraphElement {
   getTimezone() {
     let tz = this.dashboard.getTimezone();
     if (tz === 'data') {
-      // TODO: get Timezon from variable
+      // TODO: get Timezone from variable
     }
     return tz;
   }
