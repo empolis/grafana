@@ -474,13 +474,21 @@ class GraphElement {
     }
   }
 
+  getTimezone() {
+    let tz = this.dashboard.getTimezone();
+    if (tz === 'data') {
+      // TODO: get Timezon from variable
+    }
+    return tz;
+  }
+
   addTimeAxis(options) {
     const ticks = this.panelWidth / 100;
     const min = _.isUndefined(this.ctrl.range.from) ? null : this.ctrl.range.from.valueOf();
     const max = _.isUndefined(this.ctrl.range.to) ? null : this.ctrl.range.to.valueOf();
 
     options.xaxis = {
-      timezone: this.dashboard.getTimezone(),
+      timezone: getTimezone(),
       show: this.panel.xaxis.show,
       mode: 'time',
       min: min,
@@ -497,7 +505,7 @@ class GraphElement {
     });
 
     options.xaxis = {
-      timezone: this.dashboard.getTimezone(),
+      timezone: getTimezone(),
       show: this.panel.xaxis.show,
       mode: null,
       min: 0,
@@ -547,7 +555,7 @@ class GraphElement {
     }
 
     options.xaxis = {
-      timezone: this.dashboard.getTimezone(),
+      timezone: getTimezone(),
       show: this.panel.xaxis.show,
       mode: null,
       min: min,
@@ -570,7 +578,7 @@ class GraphElement {
     ticks = _.flatten(ticks, true);
 
     options.xaxis = {
-      timezone: this.dashboard.getTimezone(),
+      timezone: getTimezone(),
       show: this.panel.xaxis.show,
       mode: null,
       min: 0,
