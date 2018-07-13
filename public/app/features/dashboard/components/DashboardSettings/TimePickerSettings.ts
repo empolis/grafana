@@ -31,7 +31,7 @@ const template = `
 			<label class="gf-form-label width-10">Timezone</label>
 			<div class="gf-form-select-wrapper">
 				<select ng-model="ctrl.dashboard.timezone" class='gf-form-input' ng-options="f.value as f.text for f in
-				  [{value: '', text: 'Default'}, {value: 'browser', text: 'Local browser time'},{value: 'utc', text: 'UTC'}]">
+				  [{value: '', text: 'Default'}, {value: 'browser', text: 'Local browser time'},{value: 'utc', text: 'UTC'}, {value: 'data', text: 'Timezone of data'}]">
 				</select>
 			</div>
 		</div>
