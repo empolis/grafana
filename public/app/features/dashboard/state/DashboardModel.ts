@@ -704,12 +704,12 @@ export class DashboardModel {
     return newPanel;
   }
 
-  formatDate(date: DateTimeInput, format?: string) {
+  formatDate(date: DateTimeInput, format?: string, tzName?: string) {
     date = isDateTime(date) ? date : dateTime(date);
     format = format || 'YYYY-MM-DD HH:mm:ss';
     const timezone = this.getTimezone();
 
-    if (timezone === 'data') {
+    if (timezone === 'data' && tzName) {
       // TODO: get Timezone from variable
       const tzName = 'Asia/Tokyo';
       return moment(date)
