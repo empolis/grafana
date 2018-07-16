@@ -58,7 +58,7 @@ class GraphElement {
     );
     this.tooltip = new GraphTooltip(this.elem, this.ctrl.dashboard, this.scope, () => {
       return this.sortedSeries;
-    });
+    }, variableSrv);
 
     // panel events
     this.ctrl.events.on('panel-teardown', this.onPanelTeardown.bind(this));
@@ -481,6 +481,7 @@ class GraphElement {
       if (tzVariable && tzVariable.current.value) {
         return tzVariable.current.value;
       }
+      return 'utc'
     }
     return tz;
   }
