@@ -31,7 +31,7 @@ function describeSharedTooltip(desc, fn) {
   describe(desc, () => {
     beforeEach(() => {
       ctx.setupFn();
-      const tooltip = new GraphTooltip(elem, dashboard, scope, getSeriesFn);
+      const tooltip = new GraphTooltip(elem, dashboard, scope, getSeriesFn, null);
       ctx.results = tooltip.getMultiSeriesPlotHoverInfo(ctx.data, ctx.pos);
     });
 
@@ -40,7 +40,7 @@ function describeSharedTooltip(desc, fn) {
 }
 
 describe('findHoverIndexFromData', () => {
-  const tooltip = new GraphTooltip(elem, dashboard, scope, getSeriesFn);
+  const tooltip = new GraphTooltip(elem, dashboard, scope, getSeriesFn, null);
   const series = {
     data: [[100, 0], [101, 0], [102, 0], [103, 0], [104, 0], [105, 0], [106, 0], [107, 0]],
   };
