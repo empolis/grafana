@@ -477,8 +477,10 @@ class GraphElement {
   getTimezone() {
     let tz = this.dashboard.getTimezone();
     if (tz === 'data') {
-      // TODO: get Timezone from variable
-      return 'Asia/Tokyo'
+      const tzVariable = variableSrv.variables.find(v => v.name === 'timezone');
+      if (tzVariable && tzVariable.current.value) {
+        return tzVariable.current.value;
+      }
     }
     return tz;
   }
@@ -775,7 +777,7 @@ class GraphElement {
 }
 
 /** @ngInject */
-function graphDirective(timeSrv, popoverSrv, contextSrv) {
+function graphDirective(timeSrv, popoverSrv, contextSrv, variableSrv) {
   return {
     restrict: 'A',
     template: '',
