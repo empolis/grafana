@@ -71,13 +71,13 @@ API.txt for details.
 				switch (c) {
 					case 'a': c = "" + dayNames[d.getDay()]; break;
 					case 'b': c = "" + monthNames[d.getMonth()]; break;
-					case 'd': c = leftPad(d.getDate(), ""); break;
+					case 'd': c = leftPad(d.getDate(), "0"); break;
 					case 'e': c = leftPad(d.getDate(), " "); break;
 					case 'h':	// For back-compat with 0.7; remove in 1.0
 					case 'H': c = leftPad(hours); break;
 					case 'I': c = leftPad(hours12); break;
 					case 'l': c = leftPad(hours12, " "); break;
-					case 'm': c = leftPad(d.getMonth() + 1, ""); break;
+					case 'm': c = leftPad(d.getMonth() + 1, "0"); break;
 					case 'M': c = leftPad(d.getMinutes()); break;
 					// quarters not in Open Group's strftime specification
 					case 'q':
