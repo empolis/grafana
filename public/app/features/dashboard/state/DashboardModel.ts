@@ -695,11 +695,11 @@ export class DashboardModel {
     return newPanel;
   }
 
-  formatDate(date, format?) {
+  formatDate(date, format?, tzName?) {
     format = format || 'YYYY-MM-DD HH:mm:ss';
     const timezone = this.getTimezone();
 
-    if (timezone === 'data') {
+    if (timezone === 'data' && tzName) {
       // TODO: get Timezone from variable
       const tzName = 'Asia/Tokyo';
       return moment(date)
