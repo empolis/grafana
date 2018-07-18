@@ -53,7 +53,9 @@
   @extend .view-mode--tv;
 
   .sidemenu,
-  .navbar {
+  .navbar-page-btn,
+  .navbar-buttons--actions,
+  .navbar-buttons--tv {
     display: none;
   }
 
@@ -64,4 +66,12 @@
   .submenu-controls {
     display: none;
   }
+
+  .submenu-item.gf-form-inline.ng-hide {
+    display: none !important;
+  }
+}
+
+.submenu-item.gf-form-inline.ng-hide {
+  display: flex !important;
 }
