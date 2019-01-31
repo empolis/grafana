@@ -556,7 +556,7 @@ export class DashboardModel {
 
   getSelectedVariableOptions(variable) {
     if (variable.defaults.type === 'constant' && _.includes(variable.current.text, ',')) {
-        return _.map(variable.current.text.split(','), function(v) {
+        return _.map(variable.current.text.split(','), v => {
             return {selected: true, text: v, value: Number(v)};
         });
     }
