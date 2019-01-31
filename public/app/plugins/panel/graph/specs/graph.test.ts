@@ -462,9 +462,9 @@ describe('grafanaGraph', () => {
         });
       });
 
-      it('should format dates as month days', () => {
+      it('should format dates as year-month-day', () => {
         const axis = ctx.plotOptions.xaxis;
-        expect(axis.timeformat).toBe('%m/%d');
+        expect(axis.timeformat).toBe('%Y-%m-%d');
       });
     });
   });
