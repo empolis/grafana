@@ -176,7 +176,7 @@ export default function GraphTooltip(this: any, elem, dashboard, scope, getSerie
     plot.unhighlight();
   };
 
-  this.getTzName = function() {
+  this.getTzName = () => {
     if (variableSrv) {
       const tzVariable = variableSrv.variables.find(v => v.name === 'timezone');
       if (tzVariable && tzVariable.current.value) {
