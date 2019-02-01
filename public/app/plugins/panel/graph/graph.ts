@@ -57,7 +57,7 @@ class GraphElement {
   timeRegionManager: TimeRegionManager;
   legendElem: HTMLElement;
 
-  constructor(private scope: any, private elem: JQuery, private timeSrv: TimeSrv) {
+  constructor(private scope: any, private elem: JQuery, private timeSrv: TimeSrv, private variableSrv: VariableSrv) {
     this.ctrl = scope.ctrl;
     this.contextMenu = scope.ctrl.contextMenuCtrl;
     this.dashboard = this.ctrl.dashboard;
@@ -589,13 +589,13 @@ class GraphElement {
   }
 
   getTimezone() {
-    let tz = this.dashboard.getTimezone();
+    const tz = this.dashboard.getTimezone();
     if (tz === 'data') {
-      const tzVariable = variableSrv.variables.find(v => v.name === 'timezone');
+      const tzVariable = this.variableSrv.variables.find(v => v.name === 'timezone');
       if (tzVariable && tzVariable.current.value) {
         return tzVariable.current.value;
       }
-      return 'utc'
+      return 'utc';
     }
     return tz;
   }
@@ -606,7 +606,7 @@ class GraphElement {
     const max = _.isUndefined(this.ctrl.range.to) ? null : this.ctrl.range.to.valueOf();
 
     options.xaxis = {
-      timezone: getTimezone(),
+      timezone: this.getTimezone(),
       show: this.panel.xaxis.show,
       mode: 'time',
       min: min,
@@ -623,7 +623,7 @@ class GraphElement {
     });
 
     options.xaxis = {
-      timezone: getTimezone(),
+      timezone: this.getTimezone(),
       show: this.panel.xaxis.show,
       mode: null,
       min: 0,
@@ -678,7 +678,7 @@ class GraphElement {
     }
 
     options.xaxis = {
-      timezone: getTimezone(),
+      timezone: this.getTimezone(),
       show: this.panel.xaxis.show,
       mode: null,
       min: min,
@@ -702,7 +702,7 @@ class GraphElement {
     ticks = _.flatten(ticks, true);
 
     options.xaxis = {
-      timezone: getTimezone(),
+      timezone: this.getTimezone(),
       show: this.panel.xaxis.show,
       mode: null,
       min: 0,
@@ -905,7 +905,7 @@ function graphDirective(timeSrv: TimeSrv, popoverSrv: any, contextSrv: ContextSr
     restrict: 'A',
     template: '',
     link: (scope: any, elem: JQuery) => {
-      return new GraphElement(scope, elem, timeSrv);
+      return new GraphElement(scope, elem, timeSrv, variableSrv);
     },
   };
 }
