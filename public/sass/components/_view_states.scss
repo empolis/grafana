@@ -28,25 +28,6 @@
 
 .view-mode--tv {
   @extend .view-mode--inactive;
-
-  .sidemenu {
-    position: fixed;
-    background-color: transparent;
-    box-shadow: none;
-
-    .sidemenu__top,
-    .sidemenu__bottom {
-      display: none;
-    }
-  }
-
-  .navbar {
-    padding-left: $side-menu-width;
-  }
-
-  .submenu-controls {
-    display: none;
-  }
 }
 
 .view-mode--kiosk {
@@ -61,10 +42,6 @@
 
   .scroll-canvas--dashboard {
     height: 100%;
-  }
-
-  .submenu-controls {
-    display: none;
   }
 
   .submenu-item.gf-form-inline.ng-hide {
