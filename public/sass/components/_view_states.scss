@@ -28,10 +28,6 @@
 
 .view-mode--tv {
   @extend .view-mode--inactive;
-
-  .submenu-controls {
-    display: none;
-  }
 }
 
 .view-mode--kiosk {
@@ -46,10 +42,6 @@
 
   .scroll-canvas--dashboard {
     height: 100%;
-  }
-
-  .submenu-controls {
-    display: none;
   }
 
   .submenu-item.gf-form-inline.ng-hide {
