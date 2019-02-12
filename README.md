@@ -7,13 +7,18 @@
 Grafana is an open source, feature rich metrics dashboard and graph editor for
 Graphite, Elasticsearch, OpenTSDB, Prometheus and InfluxDB.
 
+![](https://www.grafanacon.org/2019/images/grafanacon_la_nav-logo.png)
+
+Join us Feb 25-26 in Los Angeles, California for GrafanaCon - a two-day event with talks focused on Grafana and the surrounding open source monitoring ecosystem. Get deep dives into Loki, the Explore workflow and all of the new features of Grafana 6, plus participate in hands on workshops to help you get the most out of your data. 
+
+Time is running out - grab your ticket now! http://grafanacon.org
+
+<!---
 ![](http://docs.grafana.org/assets/img/features/dashboard_ex1.png)
+-->
 
 ## Installation
-Head to [docs.grafana.org](http://docs.grafana.org/installation/) and [download](https://grafana.com/get)
-the latest release.
-
-If you have any problems please read the [troubleshooting guide](http://docs.grafana.org/installation/troubleshooting/).
+Head to [docs.grafana.org](http://docs.grafana.org/installation/) for documentation or [download](https://grafana.com/get) to get the latest release.
 
 ## Documentation & Support
 Be sure to read the [getting started guide](http://docs.grafana.org/guides/gettingstarted/) and the other feature guides.
@@ -25,49 +30,71 @@ the latest master builds [here](https://grafana.com/grafana/download)
 ### Dependencies
 
 - Go (Latest Stable)
+  - bra [`go get github.com/Unknwon/bra`]
 - Node.js LTS
+  - yarn [`npm install -g yarn`]
 
-### Building the backend
+### Get the project
+
+**The project located in the go-path will be your working directory.**
+
 ```bash
 go get github.com/grafana/grafana
 cd $GOPATH/src/github.com/grafana/grafana
+```
+
+### Building
+
+#### The backend
+
+```bash
 go run build.go setup
 go run build.go build
 ```
 
-### Building frontend assets
+#### Frontend assets
 
-For this you need Node.js (LTS version).
+*For this you need Node.js (LTS version).*
 
-To build the assets, rebuild on file change, and serve them by Grafana's webserver (http://localhost:3000):
 ```bash
-npm install -g yarn
 yarn install --pure-lockfile
+```
+
+### Run and rebuild on source change
+
+#### Backend
+
+To run the backend and rebuild on source change:
+
+```bash
+$GOPATH/bin/bra run
+```
+
+#### Frontend
+
+Rebuild on file change, and serve them by Grafana's webserver (http://localhost:3000):
+
+```bash
 yarn watch
 ```
 
 Build the assets, rebuild on file change with Hot Module Replacement (HMR), and serve them by webpack-dev-server (http://localhost:3333):
+
 ```bash
 yarn start
 # OR set a theme
 env GRAFANA_THEME=light yarn start
 ```
-Note: HMR for Angular is not supported. If you edit files in the Angular part of the app, the whole page will reload.
 
-Run tests
+*Note: HMR for Angular is not supported. If you edit files in the Angular part of the app, the whole page will reload.*
+
+Run tests and rebuild on source change:
+
 ```bash
 yarn jest
 ```
 
-### Recompile backend on source change
-
-To rebuild on source change.
-```bash
-go get github.com/Unknwon/bra
-bra run
-```
-
-Open grafana in your browser (default: `http://localhost:3000`) and login with admin user (default: `user/pass = admin/admin`).
+**Open grafana in your browser (default: e.g. `http://localhost:3000`) and login with admin user (default: `user/pass = admin/admin`).**
 
 ### Building a Docker image
 

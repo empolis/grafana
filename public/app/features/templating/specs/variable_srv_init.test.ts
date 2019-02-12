@@ -2,7 +2,7 @@ import '../all';
 
 import _ from 'lodash';
 import { VariableSrv } from '../variable_srv';
-import { DashboardModel } from '../../dashboard/dashboard_model';
+import { DashboardModel } from '../../dashboard/state/DashboardModel';
 import $q from 'q';
 
 describe('VariableSrv init', function(this: any) {
@@ -25,10 +25,6 @@ describe('VariableSrv init', function(this: any) {
   };
 
   const $injector = {} as any;
-  const $rootscope = {
-    $on: () => {},
-  };
-
   let ctx = {} as any;
 
   function describeInitScenario(desc, fn) {
@@ -54,7 +50,7 @@ describe('VariableSrv init', function(this: any) {
         };
 
         // @ts-ignore
-        ctx.variableSrv = new VariableSrv($rootscope, $q, {}, $injector, templateSrv, timeSrv);
+        ctx.variableSrv = new VariableSrv($q, {}, $injector, templateSrv, timeSrv);
 
         $injector.instantiate = (variable, model) => {
           return getVarMockConstructor(variable, model, ctx);

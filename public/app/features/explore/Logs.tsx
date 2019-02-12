@@ -3,6 +3,8 @@ import React, { PureComponent } from 'react';
 
 import * as rangeUtil from 'app/core/utils/rangeutil';
 import { RawTimeRange, Switch } from '@grafana/ui';
+import TimeSeries from 'app/core/time_series2';
+
 import {
   LogsDedupDescription,
   LogsDedupStrategy,
@@ -49,6 +51,7 @@ function renderMetaItem(value: any, kind: LogsMetaKind) {
 
 interface Props {
   data?: LogsModel;
+  width: number;
   exploreId: string;
   highlighterExpressions: string[];
   loading: boolean;
@@ -163,6 +166,7 @@ export default class Logs extends PureComponent<Props, State> {
       range,
       scanning,
       scanRange,
+      width,
     } = this.props;
 
     if (!data) {
@@ -205,13 +209,15 @@ export default class Logs extends PureComponent<Props, State> {
 
     // React profiler becomes unusable if we pass all rows to all rows and their labels, using getter instead
     const getRows = () => processedRows;
+    const timeSeries = data.series.map(series => new TimeSeries(series));
 
     return (
       <div className="logs-panel">
         <div className="logs-panel-graph">
           <Graph
-            data={data.series}
-            height="100px"
+            data={timeSeries}
+            height={100}
+            width={width}
             range={range}
             id={`explore-logs-graph-${exploreId}`}
             onChangeTime={this.props.onChangeTime}

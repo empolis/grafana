@@ -2,35 +2,45 @@
 import React, { PureComponent } from 'react';
 
 // Services & Utils
-import { processTimeSeries } from '@grafana/ui';
+import { processTimeSeries, ThemeContext } from '@grafana/ui';
 
 // Components
 import { Gauge } from '@grafana/ui';
 
 // Types
 import { GaugeOptions } from './types';
-import { PanelProps, NullValueMode } from '@grafana/ui/src/types';
-import { ThemeProvider } from 'app/core/utils/ConfigProvider';
+import { PanelProps, NullValueMode, TimeSeriesValue } from '@grafana/ui/src/types';
 
 interface Props extends PanelProps<GaugeOptions> {}
 
 export class GaugePanel extends PureComponent<Props> {
   render() {
-    const { timeSeries, width, height, onInterpolate, options } = this.props;
+    const { panelData, width, height, onInterpolate, options } = this.props;
 
     const prefix = onInterpolate(options.prefix);
     const suffix = onInterpolate(options.suffix);
+    let value: TimeSeriesValue;
 
-    const vmSeries = processTimeSeries({
-      timeSeries: timeSeries,
-      nullValueMode: NullValueMode.Null,
-    });
+    if (panelData.timeSeries) {
+      const vmSeries = processTimeSeries({
+        timeSeries: panelData.timeSeries,
+        nullValueMode: NullValueMode.Null,
+      });
+
+      if (vmSeries[0]) {
+        value = vmSeries[0].stats[options.stat];
+      } else {
+        value = null;
+      }
+    } else if (panelData.tableData) {
+      value = panelData.tableData.rows[0].find(prop => prop > 0);
+    }
 
     return (
-      <ThemeProvider>
-        {(theme) => (
+      <ThemeContext.Consumer>
+        {theme => (
           <Gauge
-            timeSeries={vmSeries}
+            value={value}
             {...this.props.options}
             width={width}
             height={height}
@@ -39,7 +49,7 @@ export class GaugePanel extends PureComponent<Props> {
             theme={theme}
           />
         )}
-      </ThemeProvider>
+      </ThemeContext.Consumer>
     );
   }
 }

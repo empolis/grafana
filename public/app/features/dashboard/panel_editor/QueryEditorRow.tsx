@@ -7,10 +7,11 @@ import _ from 'lodash';
 import { getDatasourceSrv } from 'app/features/plugins/datasource_srv';
 import { AngularComponent, getAngularLoader } from 'app/core/services/AngularLoader';
 import { Emitter } from 'app/core/utils/emitter';
+import { getTimeSrv } from 'app/features/dashboard/services/TimeSrv';
 
 // Types
-import { PanelModel } from '../panel_model';
-import { DataQuery, DataSourceApi } from '@grafana/ui';
+import { PanelModel } from '../state/PanelModel';
+import { DataQuery, DataSourceApi, TimeRange } from '@grafana/ui';
 
 interface Props {
   panel: PanelModel;
@@ -18,6 +19,7 @@ interface Props {
   onAddQuery: (query?: DataQuery) => void;
   onRemoveQuery: (query: DataQuery) => void;
   onMoveQuery: (query: DataQuery, direction: number) => void;
+  onChange: (query: DataQuery) => void;
   dataSourceValue: string | null;
   inMixedMode: boolean;
 }
@@ -42,7 +44,14 @@ export class QueryEditorRow extends PureComponent<Props, State> {
 
   componentDidMount() {
     this.loadDatasource();
+    this.props.panel.events.on('refresh', this.onPanelRefresh);
   }
+
+  onPanelRefresh = () => {
+    if (this.state.angularScope) {
+      this.state.angularScope.range = getTimeSrv().timeRange();
+    }
+  };
 
   getAngularQueryComponentScope(): AngularQueryComponentScope {
     const { panel, query } = this.props;
@@ -55,6 +64,7 @@ export class QueryEditorRow extends PureComponent<Props, State> {
       refresh: () => panel.refresh(),
       render: () => panel.render(),
       events: panel.events,
+      range: getTimeSrv().timeRange(),
     };
   }
 
@@ -96,6 +106,8 @@ export class QueryEditorRow extends PureComponent<Props, State> {
   }
 
   componentWillUnmount() {
+    this.props.panel.events.off('refresh', this.onPanelRefresh);
+
     if (this.angularQueryEditor) {
       this.angularQueryEditor.destroy();
     }
@@ -105,17 +117,12 @@ export class QueryEditorRow extends PureComponent<Props, State> {
     this.setState({ isCollapsed: !this.state.isCollapsed });
   };
 
-  onQueryChange = (query: DataQuery) => {
-    Object.assign(this.props.query, query);
-    this.onExecuteQuery();
-  };
-
-  onExecuteQuery = () => {
+  onRunQuery = () => {
     this.props.panel.refresh();
   };
 
   renderPluginEditor() {
-    const { query } = this.props;
+    const { query, onChange } = this.props;
     const { datasource } = this.state;
 
     if (datasource.pluginExports.QueryCtrl) {
@@ -128,8 +135,8 @@ export class QueryEditorRow extends PureComponent<Props, State> {
         <QueryEditor
           query={query}
           datasource={datasource}
-          onQueryChange={this.onQueryChange}
-          onExecuteQuery={this.onExecuteQuery}
+          onChange={onChange}
+          onRunQuery={this.onRunQuery}
         />
       );
     }
@@ -166,7 +173,7 @@ export class QueryEditorRow extends PureComponent<Props, State> {
 
   onDisableQuery = () => {
     this.props.query.hide = !this.props.query.hide;
-    this.onExecuteQuery();
+    this.onRunQuery();
     this.forceUpdate();
   };
 
@@ -254,4 +261,5 @@ export interface AngularQueryComponentScope {
   datasource: DataSourceApi;
   toggleEditorMode?: () => void;
   getCollapsedText?: () => string;
+  range: TimeRange;
 }

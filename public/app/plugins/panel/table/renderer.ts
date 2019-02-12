@@ -1,8 +1,7 @@
 import _ from 'lodash';
 import moment from 'moment';
 import kbn from 'app/core/utils/kbn';
-import { getColorFromHexRgbOrName } from '@grafana/ui';
-import { GrafanaTheme } from '@grafana/ui';
+import { getValueFormat, getColorFromHexRgbOrName, GrafanaThemeType } from '@grafana/ui';
 
 export class TableRenderer {
   formatters: any[];
@@ -14,7 +13,7 @@ export class TableRenderer {
     private isUtc,
     private sanitize,
     private templateSrv,
-    private theme?: GrafanaTheme
+    private theme?: GrafanaThemeType
   ) {
     this.initColumns();
   }
@@ -170,7 +169,7 @@ export class TableRenderer {
     }
 
     if (column.style.type === 'number') {
-      const valueFormatter = kbn.valueFormats[column.unit || column.style.unit];
+      const valueFormatter = getValueFormat(column.unit || column.style.unit);
 
       return v => {
         if (v === null || v === void 0) {

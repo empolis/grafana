@@ -1,6 +1,6 @@
 import '../all';
 import { VariableSrv } from '../variable_srv';
-import { DashboardModel } from '../../dashboard/dashboard_model';
+import { DashboardModel } from '../../dashboard/state/DashboardModel';
 import moment from 'moment';
 import $q from 'q';
 
@@ -48,7 +48,6 @@ describe('VariableSrv', function(this: any) {
         ds.metricFindQuery = () => Promise.resolve(scenario.queryResult);
 
         ctx.variableSrv = new VariableSrv(
-          ctx.$rootScope,
           $q,
           ctx.$location,
           ctx.$injector,

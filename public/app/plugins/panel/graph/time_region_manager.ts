@@ -1,7 +1,7 @@
 import 'vendor/flot/jquery.flot';
 import _ from 'lodash';
 import moment from 'moment';
-import { GrafanaTheme, getColorFromHexRgbOrName } from '@grafana/ui';
+import { GrafanaThemeType, getColorFromHexRgbOrName } from '@grafana/ui';
 
 type TimeRegionColorDefinition = {
   fill: string;
@@ -43,27 +43,27 @@ export function getColorModes() {
   });
 }
 
-function getColor(timeRegion, theme: GrafanaTheme): TimeRegionColorDefinition {
+function getColor(timeRegion, theme: GrafanaThemeType): TimeRegionColorDefinition {
   if (Object.keys(colorModes).indexOf(timeRegion.colorMode) === -1) {
     timeRegion.colorMode = 'red';
   }
 
   if (timeRegion.colorMode === 'custom') {
     return {
-      fill: getColorFromHexRgbOrName(timeRegion.fillColor, theme),
-      line: getColorFromHexRgbOrName(timeRegion.lineColor, theme),
+      fill: timeRegion.fill && timeRegion.fillColor ? getColorFromHexRgbOrName(timeRegion.fillColor, theme) : null,
+      line: timeRegion.line && timeRegion.lineColor ? getColorFromHexRgbOrName(timeRegion.lineColor, theme) : null,
     };
   }
 
   const colorMode = colorModes[timeRegion.colorMode];
 
   if (colorMode.themeDependent === true) {
-    return theme === GrafanaTheme.Light ? colorMode.lightColor : colorMode.darkColor;
+    return theme === GrafanaThemeType.Light ? colorMode.lightColor : colorMode.darkColor;
   }
 
   return {
-    fill: getColorFromHexRgbOrName(colorMode.color.fill, theme),
-    line: getColorFromHexRgbOrName(colorMode.color.line, theme),
+    fill: timeRegion.fill ? getColorFromHexRgbOrName(colorMode.color.fill, theme) : null,
+    line: timeRegion.fill ? getColorFromHexRgbOrName(colorMode.color.line, theme) : null,
   };
 }
 
@@ -71,7 +71,7 @@ export class TimeRegionManager {
   plot: any;
   timeRegions: any;
 
-  constructor(private panelCtrl, private theme: GrafanaTheme = GrafanaTheme.Dark) {}
+  constructor(private panelCtrl, private theme: GrafanaThemeType = GrafanaThemeType.Dark) {}
 
   draw(plot) {
     this.timeRegions = this.panelCtrl.panel.timeRegions;

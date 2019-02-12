@@ -2,8 +2,8 @@ import React from 'react';
 import { shallow } from 'enzyme';
 
 import { Gauge, Props } from './Gauge';
-import { TimeSeriesVMs } from '../../types/series';
 import { ValueMapping, MappingType } from '../../types';
+import { getTheme } from '../../themes';
 
 jest.mock('jquery', () => ({
   plot: jest.fn(),
@@ -23,8 +23,9 @@ const setup = (propOverrides?: object) => {
     stat: 'avg',
     height: 300,
     width: 300,
-    timeSeries: {} as TimeSeriesVMs,
+    value: 25,
     decimals: 0,
+    theme: getTheme()
   };
 
   Object.assign(props, propOverrides);
