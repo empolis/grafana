@@ -700,8 +700,6 @@ export class DashboardModel {
     const timezone = this.getTimezone();
 
     if (timezone === 'data' && tzName) {
-      // TODO: get Timezone from variable
-      const tzName = 'Asia/Tokyo';
       return moment(date)
         .tz(tzName)
         .format(format);
