@@ -925,5 +925,4 @@ export class DashboardModel {
       }
     }
   }
-
 }
