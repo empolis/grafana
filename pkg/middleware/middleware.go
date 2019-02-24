@@ -50,7 +50,7 @@ func GetContextHandler(ats m.UserTokenService) macaron.Handler {
 		case initContextWithRenderAuth(ctx):
 		case initContextWithApiKey(ctx):
 		case initContextWithBasicAuth(ctx, orgId):
-		case initContextWithAuthProxy(ctx, orgId):
+		case initContextWithAuthProxy(ats, ctx, orgId):
 		case initContextWithToken(ats, ctx, orgId):
 		case initContextWithAnonymousUser(ctx):
 		}

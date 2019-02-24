@@ -20,7 +20,7 @@ var (
 	AUTH_PROXY_SESSION_VAR = "authProxyHeaderValue"
 )
 
-func initContextWithAuthProxy(ctx *m.ReqContext, orgID int64) bool {
+func initContextWithAuthProxy(authTokenService m.UserTokenService, ctx *m.ReqContext, orgID int64) bool {
 	if !setting.AuthProxyEnabled {
 		return false
 	}
@@ -168,6 +168,12 @@ func initContextWithAuthProxy(ctx *m.ReqContext, orgID int64) bool {
 	ctx.SignedInUser = query.Result
 	ctx.IsSignedIn = true
 	ctx.Session.Set(session.SESS_KEY_USERID, ctx.UserId)
+
+	userToken, err := authTokenService.CreateToken(ctx.UserId, ctx.RemoteAddr(), ctx.Req.UserAgent())
+	if err != nil {
+		log.Error(3, "failed to create auth token. error: %v", err)
+	}
+	WriteSessionCookie(ctx, userToken.UnhashedToken, setting.LoginMaxLifetimeDays)
 
 	return true
 }
