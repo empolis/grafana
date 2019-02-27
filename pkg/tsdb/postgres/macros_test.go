@@ -37,6 +37,34 @@ func TestMacroEngine(t *testing.T) {
 				So(sql, ShouldEqual, "select min(time_column AS \"time\")")
 			})
 
+			Convey("interpolate __timeEpochMilli function", func() {
+				sql, err := engine.Interpolate(query, timeRange, "select $__timeEpochMilli(time_column)")
+				So(err, ShouldBeNil)
+
+				So(sql, ShouldEqual, "select time_column / 1000.0 AS \"time\"")
+			})
+
+			Convey("interpolate __timeEpochMilli function wrapped in aggregation", func() {
+				sql, err := engine.Interpolate(query, timeRange, "select min($__timeEpochMilli(time_column))")
+				So(err, ShouldBeNil)
+
+				So(sql, ShouldEqual, "select min(time_column / 1000.0 AS \"time\")")
+			})
+
+			Convey("interpolate __timeEpochNano function", func() {
+				sql, err := engine.Interpolate(query, timeRange, "select $__timeEpochNano(time_column)")
+				So(err, ShouldBeNil)
+
+				So(sql, ShouldEqual, "select time_column / 1000000000.0 AS \"time\"")
+			})
+
+			Convey("interpolate __timeEpochNano function wrapped in aggregation", func() {
+				sql, err := engine.Interpolate(query, timeRange, "select min($__timeEpochNano(time_column))")
+				So(err, ShouldBeNil)
+
+				So(sql, ShouldEqual, "select min(time_column / 1000000000.0 AS \"time\")")
+			})
+
 			Convey("interpolate __timeFilter function", func() {
 				sql, err := engine.Interpolate(query, timeRange, "WHERE $__timeFilter(time_column)")
 				So(err, ShouldBeNil)
@@ -115,19 +143,38 @@ func TestMacroEngine(t *testing.T) {
 
 				So(sql, ShouldEqual, fmt.Sprintf("select time >= %d AND time <= %d", from.Unix(), to.Unix()))
 			})
+			Convey("interpolate __unixEpochMilliFilter function", func() {
+				sql, err := engine.Interpolate(query, timeRange, "select $__unixEpochMilliFilter(time)")
+				So(err, ShouldBeNil)
+
+				So(sql, ShouldEqual, fmt.Sprintf("select time >= %d AND time <= %d", tsdb.TimeUnixMilli(from), TimeUnixMilli(to)))
+			})
 			Convey("interpolate __unixEpochNanoFilter function", func() {
 				sql, err := engine.Interpolate(query, timeRange, "select $__unixEpochNanoFilter(time)")
 				So(err, ShouldBeNil)
 
 				So(sql, ShouldEqual, fmt.Sprintf("select time >= %d AND time <= %d", from.UnixNano(), to.UnixNano()))
 			})
+
+			Convey("interpolate __unixEpochMilliFrom function", func() {
+				sql, err := engine.Interpolate(query, timeRange, "select $__unixEpochMilliFrom()")
+				So(err, ShouldBeNil)
+
+				So(sql, ShouldEqual, fmt.Sprintf("select %d", tsdb.TimeUnixMilli(from)))
+			})
+			Convey("interpolate __unixEpochMilliTo function", func() {
+				sql, err := engine.Interpolate(query, timeRange, "select $__unixEpochMilliTo()")
+				So(err, ShouldBeNil)
+
+				So(sql, ShouldEqual, fmt.Sprintf("select %d", tsdb.TimeUnixMilli(to)))
+			})
+
 			Convey("interpolate __unixEpochNanoFrom function", func() {
 				sql, err := engine.Interpolate(query, timeRange, "select $__unixEpochNanoFrom()")
 				So(err, ShouldBeNil)
 
 				So(sql, ShouldEqual, fmt.Sprintf("select %d", from.UnixNano()))
 			})
-
 			Convey("interpolate __unixEpochNanoTo function", func() {
 				sql, err := engine.Interpolate(query, timeRange, "select $__unixEpochNanoTo()")
 				So(err, ShouldBeNil)
@@ -143,6 +190,26 @@ func TestMacroEngine(t *testing.T) {
 				So(err, ShouldBeNil)
 
 				So(sql, ShouldEqual, "SELECT floor(time_column/300)*300")
+				So(sql2, ShouldEqual, sql+" AS \"time\"")
+			})
+			Convey("interpolate __unixEpochMilliGroup function", func() {
+
+				sql, err := engine.Interpolate(query, timeRange, "SELECT $__unixEpochGroup(time_column,'5m')")
+				So(err, ShouldBeNil)
+				sql2, err := engine.Interpolate(query, timeRange, "SELECT $__unixEpochGroupAlias(time_column,'5m')")
+				So(err, ShouldBeNil)
+
+				So(sql, ShouldEqual, "SELECT floor(time_column/300000)*300000")
+				So(sql2, ShouldEqual, sql+" AS \"time\"")
+			})
+			Convey("interpolate __unixEpochNanoGroup function", func() {
+
+				sql, err := engine.Interpolate(query, timeRange, "SELECT $__unixEpochGroup(time_column,'5m')")
+				So(err, ShouldBeNil)
+				sql2, err := engine.Interpolate(query, timeRange, "SELECT $__unixEpochGroupAlias(time_column,'5m')")
+				So(err, ShouldBeNil)
+
+				So(sql, ShouldEqual, "SELECT floor(time_column/300000000000)*300000000000")
 				So(sql2, ShouldEqual, sql+" AS \"time\"")
 			})
 
@@ -165,6 +232,12 @@ func TestMacroEngine(t *testing.T) {
 				So(err, ShouldBeNil)
 
 				So(sql, ShouldEqual, fmt.Sprintf("select time >= %d AND time <= %d", from.Unix(), to.Unix()))
+			})
+			Convey("interpolate __unixEpochMilliFilter function", func() {
+				sql, err := engine.Interpolate(query, timeRange, "select $__unixEpochMilliFilter(time)")
+				So(err, ShouldBeNil)
+
+				So(sql, ShouldEqual, fmt.Sprintf("select time >= %d AND time <= %d", tsdb.TimeUnixMilli(from), tsdb.TimeUnixMill(to)))
 			})
 			Convey("interpolate __unixEpochNanoFilter function", func() {
 				sql, err := engine.Interpolate(query, timeRange, "select $__unixEpochNanoFilter(time)")
@@ -191,6 +264,12 @@ func TestMacroEngine(t *testing.T) {
 				So(err, ShouldBeNil)
 
 				So(sql, ShouldEqual, fmt.Sprintf("select time >= %d AND time <= %d", from.Unix(), to.Unix()))
+			})
+			Convey("interpolate __unixEpochMiliFilter function", func() {
+				sql, err := engine.Interpolate(query, timeRange, "select $__unixEpochMilliFilter(time)")
+				So(err, ShouldBeNil)
+
+				So(sql, ShouldEqual, fmt.Sprintf("select time >= %d AND time <= %d", tsdb.TimeUnixMilli(from), tsdb.TimeUnixMilli(to)))
 			})
 			Convey("interpolate __unixEpochNanoFilter function", func() {
 				sql, err := engine.Interpolate(query, timeRange, "select $__unixEpochNanoFilter(time)")
