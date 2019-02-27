@@ -142,7 +142,7 @@ Macros can be used within a query to simplify syntax and allow for dynamic parts
 Macro example | Description
 ------------ | -------------
 *$__time(dateColumn)* | Will be replaced by an expression to rename the column to `time`. For example, *dateColumn as time*
-*$__timeSec(dateColumn)* | Will be replaced by an expression to rename the column to `time` and converting the value to unix timestamp. For example, *extract(epoch from dateColumn) as time*
+*$__timeSec(dateColumn)* | Will be replaced by an expression to rename the column to `time` and converting the value to unix timestamp. For example, *extract(epoch from dateColumn) as "time"*
 *$__timeFilter(dateColumn)* | Will be replaced by a time range filter using the specified column name. For example, *dateColumn BETWEEN '2017-04-21T05:01:17Z' AND '2017-04-21T05:06:17Z'*
 *$__timeFrom()* | Will be replaced by the start of the currently active time selection. For example, *'2017-04-21T05:01:17Z'*
 *$__timeTo()* | Will be replaced by the end of the currently active time selection. For example, *'2017-04-21T05:06:17Z'*
@@ -154,11 +154,20 @@ Macro example | Description
 *$__unixEpochFilter(dateColumn)* | Will be replaced by a time range filter using the specified column name with times represented as unix timestamps. For example, *dateColumn >= 1494410783 AND dateColumn <= 1494497183*
 *$__unixEpochFrom()* | Will be replaced by the start of the currently active time selection as unix timestamp. For example, *1494410783*
 *$__unixEpochTo()* | Will be replaced by the end of the currently active time selection as unix timestamp. For example, *1494497183*
-*$__unixEpochNanoFilter(dateColumn)* | Will be replaced by a time range filter using the specified column name with times represented as nanosecond timestamps. For example, *dateColumn >= 1494410783152415214 AND dateColumn <= 1494497183142514872*
-*$__unixEpochNanoFrom()* | Will be replaced by the start of the currently active time selection as nanosecond timestamp. For example, *1494410783152415214*
-*$__unixEpochNanoTo()* | Will be replaced by the end of the currently active time selection as unix timestamp. For example, *1494497183142514872*
 *$__unixEpochGroup(dateColumn,'5m', [fillmode])* | Same as $__timeGroup, but for times stored as unix timestamp (only available in Grafana 5.3+).
 *$__unixEpochGroupAlias(dateColumn,'5m', [fillmode])* | Same as above, but also adds a column alias (only available in Grafana 5.3+).
+*$__unixEpochMilliFilter(dateColumn)* | Will be replaced by a time range filter using the specified column name with times represented as millisecond timestamps. For example, *dateColumn >= 1494410783152 AND dateColumn <= 1494497183142* (only available in Grafana 6.1+)
+*$__timeEpochMilli(dateColumn)* | Will be replaced by an expression to rename the column to `time` and converting the value to unix timestamp. For example, *dateColumn / 1000.0 as "time"* (only available in Grafana 6.1+)
+*$__unixEpochMilliFrom()* | Will be replaced by the start of the currently active time selection as millisecond timestamp. For example, *1494410783152* (only available in Grafana 6.1+)
+*$__unixEpochMilliTo()* | Will be replaced by the end of the currently active time selection as millisecond timestamp. For example, *1494497183142* (only available in Grafana 6.1+)
+*$__unixEpochMilliGroup(dateColumn,'5m', [fillmode])* | Same as $__timeGroup, but for times stored as milliseconds timestamp (only available in Grafana 6.1+).
+*$__unixEpochMilliGroupAlias(dateColumn,'5m', [fillmode])* | Same as above, but also adds a column alias (only available in Grafana 5.3+).
+*$__timeEpochNano(dateColumn)* | Will be replaced by an expression to rename the column to `time` and converting the value to unix timestamp. For example, *dateColumn / 1000000000.0 as "time"* (only available in Grafana 6.1+)
+*$__unixEpochNanoFilter(dateColumn)* | Will be replaced by a time range filter using the specified column name with times represented as nanosecond timestamps. For example, *dateColumn >= 1494410783152415214 AND dateColumn <= 1494497183142514872*
+*$__unixEpochNanoFrom()* | Will be replaced by the start of the currently active time selection as nanosecond timestamp. For example, *1494410783152415214*
+*$__unixEpochNanoTo()* | Will be replaced by the end of the currently active time selection as nanosecond timestamp. For example, *1494497183142514872*
+*$__unixEpochNanoGroup(dateColumn,'5m', [fillmode])* | Same as $__timeGroup, but for times stored as nanoseconds timestamp (only available in Grafana 6.1+).
+*$__unixEpochNanoGroupAlias(dateColumn,'5m', [fillmode])* | Same as above, but also adds a column alias (only available in Grafana 5.3+).
 
 We plan to add many more macros. If you have suggestions for what macros you would like to see, please [open an issue](https://github.com/grafana/grafana) in our GitHub repo.
 
