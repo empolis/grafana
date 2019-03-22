@@ -32,6 +32,15 @@ build-docker-dev:
 build-docker-full:
 	docker build --tag grafana/grafana:dev .
 
+EMPOLIS_NAME   := empolis/grafana
+EMPOLIS_TAG    := $(shell git rev-parse --short HEAD)
+EMPOLIS_IMG    := ${EMPOLIS_NAME}:${EMPOLIS_TAG}
+EMPOLIS_LATEST := ${EMPOLIS_NAME}:latest
+
+build-docker-empolis:
+	docker build -t ${EMPOLIS_IMG} --build-arg GIT_TAG=${EMPOLIS_TAG} .
+	docker tag ${EMPOLIS_IMG} ${EMPOLIS_LATEST}
+
 test-go:
 	go test -v ./pkg/...
 
