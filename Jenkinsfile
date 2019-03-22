@@ -20,7 +20,7 @@ pipeline {
         branch 'v6.0.x'
       }
       steps {
-        sh "docker build -t '${env.REGISTRY}/${env.IMAGE}:${env.GIT_COMMIT}' ."
+        sh "docker build -t '${env.REGISTRY}/${env.IMAGE}:${env.GIT_COMMIT}' --build-arg GIT_TAG=${env.GIT_COMMIT} ."
         sh "docker tag '${env.REGISTRY}${env.IMAGE}:${env.GIT_COMMIT}' '${env.REGISTRY}/${env.IMAGE}:latest'"
       }
     }
