@@ -14,6 +14,8 @@ RUN if [ ! -z "${DEP_ENSURE}" ]; then \
 
 COPY pkg pkg
 COPY build.go build.go
+ARG GIT_TAG="unknown-dev"
+RUN sed -i "s/unknown-dev/${GIT_TAG}/g" build.go
 COPY package.json package.json
 
 RUN go run build.go build
