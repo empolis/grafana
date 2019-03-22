@@ -85,4 +85,15 @@ EXPOSE 3000
 COPY ./packaging/docker/run.sh /run.sh
 
 USER grafana
+
+ARG GF_INSTALL_PLUGINS="petrslavotinek-carpetplot-panel,grafana-piechart-panel,natel-plotly-panel"
+RUN if [ ! -z "${GF_INSTALL_PLUGINS}" ]; then \
+    OLDIFS=$IFS; \
+        IFS=','; \
+    for plugin in ${GF_INSTALL_PLUGINS}; do \
+        IFS=$OLDIFS; \
+        grafana-cli --pluginsDir "$GF_PATHS_PLUGINS" plugins install ${plugin}; \
+    done; \
+fi
+
 ENTRYPOINT [ "/run.sh" ]
