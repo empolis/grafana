@@ -17,7 +17,7 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        sh "docker build -t '${env.REGISTRY}/${env.IMAGE}:${env.GIT_COMMIT}' --build-arg GIT_TAG=${env.GIT_COMMIT} ."
+        sh "docker build -t '${env.IMAGE}:${env.GIT_COMMIT}' --build-arg GIT_TAG=${env.GIT_COMMIT} ."
       }
     }
 
@@ -26,7 +26,7 @@ pipeline {
         branch 'v6.0.x'
       }
       steps {
-        sh "docker tag '${env.REGISTRY}/${env.IMAGE}:${env.GIT_COMMIT}' '${env.REGISTRY}/${env.IMAGE}:latest'"
+        sh "docker tag '${env.IMAGE}:${env.GIT_COMMIT}' '${env.IMAGE}:latest'"
       }
     }
 
@@ -37,8 +37,8 @@ pipeline {
       steps {
         script {
           docker.withRegistry("https://${env.REGISTRY}", "ecr:eu-central-1:JenkinsAWS") {
-            docker.image("${env.REGISTRY}/${env.IMAGE}:${env.GIT_COMMIT}").push()
-            docker.image("${env.REGISTRY}/${env.IMAGE}:latest").push()
+            docker.image("${env.IMAGE}:${env.GIT_COMMIT}").push()
+            docker.image("${env.IMAGE}:latest").push()
           }
         }
       }
