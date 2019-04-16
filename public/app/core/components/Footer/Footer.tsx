@@ -15,8 +15,8 @@ export const Footer: FC<Props> = React.memo(
         <div className="text-center">
           <ul>
             <li>
-              <a href="https://empolis.com" target="_blank">
-                {appName}
+              <a href="https://www.empolis.com/empolis-industrial-analytics/" target="_blank">
+                Empolis Industrial Analytics
               </a>{' '}
               <span>
                 v{buildVersion} (commit: {buildCommit})
