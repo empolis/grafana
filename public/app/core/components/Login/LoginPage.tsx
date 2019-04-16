@@ -12,7 +12,6 @@ export const LoginPage: FC = () => {
       <div className="login-content">
         <div className="login-branding">
           <img className="logo-icon" src="public/img/empolis/logo.svg" alt="Empolis" style="width:100%" />
-          <div className="logo-wordmark" />
         </div>
         <LoginCtrl>
           {({
