@@ -4,7 +4,6 @@ pipeline {
   }
 
   environment {
-    REGISTRY = '402631066376.dkr.ecr.eu-central-1.amazonaws.com'
     IMAGE = 'empolis/grafana'
   }
 
@@ -36,7 +35,11 @@ pipeline {
       }
       steps {
         script {
-          docker.withRegistry("https://${env.REGISTRY}", "ecr:eu-central-1:JenkinsAWS") {
+          docker.withRegistry("https://402631066376.dkr.ecr.eu-central-1.amazonaws.com", "ecr:eu-central-1:JenkinsAWS") {
+            docker.image("${env.IMAGE}:${env.GIT_COMMIT}").push()
+            docker.image("${env.IMAGE}:latest").push()
+          }
+          docker.withRegistry("https://402631066376.dkr.ecr.eu-west-1.amazonaws.com", "ecr:eu-west-1:JenkinsAWS") {
             docker.image("${env.IMAGE}:${env.GIT_COMMIT}").push()
             docker.image("${env.IMAGE}:latest").push()
           }
