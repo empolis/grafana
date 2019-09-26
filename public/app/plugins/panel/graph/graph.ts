@@ -36,6 +36,7 @@ import { provideTheme, getCurrentTheme } from 'app/core/utils/ConfigProvider';
 import { toUtc, LinkModelSupplier, DataFrameView } from '@grafana/data';
 import { GraphContextMenuCtrl } from './GraphContextMenuCtrl';
 import { TimeSrv } from 'app/features/dashboard/services/TimeSrv';
+import { VariableSrv } from 'app/features/templating/variable_srv';
 import { ContextSrv } from 'app/core/services/context_srv';
 import { getFieldLinksSupplier } from 'app/features/panel/panellinks/linkSuppliers';
 

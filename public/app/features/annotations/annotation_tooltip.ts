@@ -3,6 +3,7 @@ import $ from 'jquery';
 import coreModule from 'app/core/core_module';
 import alertDef from '../alerting/state/alertDef';
 import { DashboardSrv } from '../dashboard/services/DashboardSrv';
+import { VariableSrv } from 'app/features/templating/variable_srv';
 import { ContextSrv } from 'app/core/services/context_srv';
 
 /** @ngInject */

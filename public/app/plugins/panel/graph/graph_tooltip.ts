@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import { appEvents } from 'app/core/core';
+import { VariableSrv } from 'app/features/templating/variable_srv';
 
 export default function GraphTooltip(this: any, elem: any, dashboard: any, scope: any, getSeriesFn: any, variableSrv: VariableSrv) {
   const self = this;

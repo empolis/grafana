@@ -1,5 +1,6 @@
 // Libaries
-import moment from 'moment-timezone';
+import moment, { MomentInput } from 'moment-timezone';
+
 import _ from 'lodash';
 
 // Constants
@@ -711,11 +712,11 @@ export class DashboardModel {
     const timezone = this.getTimezone();
 
     if (timezone === 'data' && tzName) {
-      return moment(date)
+      return moment(date as MomentInput)
         .tz(tzName)
         .format(format);
     }
-    return timezone === 'browser' ? moment(date).format(format) : moment.utc(date).format(format);
+    return timezone === 'browser' ? moment(date as MomentInput).format(format) : moment.utc(date as MomentInput).format(format);
   }
 
   destroy() {
