@@ -102,7 +102,7 @@ COPY ./packaging/docker/run.sh /run.sh
 
 USER grafana
 
-ARG GF_INSTALL_PLUGINS="petrslavotinek-carpetplot-panel,grafana-piechart-panel,natel-plotly-panel"
+ARG GF_INSTALL_PLUGINS="petrslavotinek-carpetplot-panel,grafana-piechart-panel,natel-plotly-panel,grafana-image-renderer"
 RUN if [ ! -z "${GF_INSTALL_PLUGINS}" ]; then \
     OLDIFS=$IFS; \
         IFS=','; \
