@@ -4,7 +4,7 @@ pipeline {
   }
 
   environment {
-    IMAGE = 'empolis/grafana-test'
+    IMAGE = 'empolis/grafana'
   }
 
   options {
@@ -35,18 +35,18 @@ pipeline {
       }
       steps {
         script {
-//          docker.withRegistry("https://402631066376.dkr.ecr.eu-central-1.amazonaws.com", "ecr:eu-central-1:JenkinsAWS") {
-//            docker.image("${env.IMAGE}:${env.GIT_COMMIT}").push()
-//            docker.image("${env.IMAGE}:latest").push()
-//          }
+          docker.withRegistry("https://402631066376.dkr.ecr.eu-central-1.amazonaws.com", "ecr:eu-central-1:JenkinsAWS") {
+            docker.image("${env.IMAGE}:${env.GIT_COMMIT}").push()
+            docker.image("${env.IMAGE}:latest").push()
+          }
           docker.withRegistry("https://402631066376.dkr.ecr.eu-west-1.amazonaws.com", "ecr:eu-west-1:JenkinsAWS") {
             docker.image("${env.IMAGE}:${env.GIT_COMMIT}").push()
             docker.image("${env.IMAGE}:latest").push()
           }
-//          docker.withRegistry("https://187689283976.dkr.ecr.eu-central-1.amazonaws.com", "ecr:eu-central-1:jenkins-eia-kba-prod") {
-//            docker.image("${env.IMAGE}:${env.GIT_COMMIT}").push()
-//            docker.image("${env.IMAGE}:latest").push()
-//          }
+          docker.withRegistry("https://187689283976.dkr.ecr.eu-central-1.amazonaws.com", "ecr:eu-central-1:jenkins-eia-kba-prod") {
+            docker.image("${env.IMAGE}:${env.GIT_COMMIT}").push()
+            docker.image("${env.IMAGE}:latest").push()
+          }
         }
       }
     }
