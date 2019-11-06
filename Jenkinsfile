@@ -47,7 +47,7 @@ pipeline {
             docker.image("${env.IMAGE}:${env.GIT_COMMIT}").push()
             docker.image("${env.IMAGE}:latest").push()
           }
-          docker.withRegistry("https://.174193726300.dkr.ecr.eu-central-1.amazonaws.com", "ecr:eu-central-1:jenkins-eia-kba-stage-2") {
+          docker.withRegistry("https://174193726300.dkr.ecr.eu-central-1.amazonaws.com", "ecr:eu-central-1:jenkins-eia-kba-stage-2") {
             docker.image("${env.IMAGE}:${env.GIT_COMMIT}").push()
             docker.image("${env.IMAGE}:latest").push()
           }
