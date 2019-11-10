@@ -1,8 +1,10 @@
 import $ from 'jquery';
 import { appEvents } from 'app/core/core';
 import { CoreEvents } from 'app/types';
+import { VariableSrv } from 'app/features/templating/variable_srv';
 
-export default function GraphTooltip(this: any, elem: any, dashboard: any, scope: any, getSeriesFn: any) {
+export default function GraphTooltip(this: any, elem: any, dashboard: any, scope: any, getSeriesFn: any, variableSrv: VariableSrv) {
+
   const self = this;
   const ctrl = scope.ctrl;
   const panel = ctrl.panel;
@@ -177,6 +179,15 @@ export default function GraphTooltip(this: any, elem: any, dashboard: any, scope
     plot.unhighlight();
   };
 
+  this.getTzName = () => {
+    if (variableSrv) {
+      const tzVariable = variableSrv.variables.find(v => v.name === 'timezone');
+      if (tzVariable && tzVariable.current.value) {
+        return tzVariable.current.value;
+      }
+    }
+  };
+
   this.show = (pos: any, item: any) => {
     const plot = elem.data().plot;
     const plotData = plot.getData();
@@ -228,7 +239,7 @@ export default function GraphTooltip(this: any, elem: any, dashboard: any, scope
 
       seriesHtml = '';
 
-      absoluteTime = dashboard.formatDate(seriesHoverInfo.time, tooltipFormat);
+      absoluteTime = dashboard.formatDate(seriesHoverInfo.time, tooltipFormat, this.getTzName());
 
       // Dynamically reorder the hovercard for the current time point if the
       // option is enabled.
@@ -282,7 +293,7 @@ export default function GraphTooltip(this: any, elem: any, dashboard: any, scope
 
       value = series.formatValue(value);
 
-      absoluteTime = dashboard.formatDate(item.datapoint[0], tooltipFormat);
+      absoluteTime = dashboard.formatDate(item.datapoint[0], tooltipFormat, this.getTzName());
 
       group += '<div class="graph-tooltip-value">' + value + '</div>';
 

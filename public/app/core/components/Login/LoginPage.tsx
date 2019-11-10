@@ -11,8 +11,7 @@ export const LoginPage: FC = () => {
     <div className="login container">
       <div className="login-content">
         <div className="login-branding">
-          <img className="logo-icon" src="public/img/grafana_icon.svg" alt="Grafana" />
-          <div className="logo-wordmark" />
+          <img className="logo-icon" src="public/img/empolis/logo.svg" alt="Empolis" />
         </div>
         <LoginCtrl>
           {({

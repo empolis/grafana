@@ -3,7 +3,7 @@
   "license": "Apache-2.0",
   "private": true,
   "name": "grafana",
-  "version": "6.5.0-beta1",
+  "version": "6.5.0-beta1-empolis",
   "repository": {
     "type": "git",
     "url": "http://github.com/grafana/grafana.git"
@@ -44,6 +44,7 @@
     "@types/react-grid-layout": "0.16.7",
     "@types/react-redux": "7.1.2",
     "@types/react-select": "2.0.15",
+    "@types/moment-timezone": "^0.5.12",
     "@types/react-table": "6.8.5",
     "@types/react-test-renderer": "16.8.2",
     "@types/react-transition-group": "2.0.16",
@@ -225,6 +226,7 @@
     "marked": "0.6.2",
     "memoize-one": "5.1.1",
     "moment": "2.24.0",
+    "moment-timezone": "0.5.23",
     "mousetrap": "1.6.3",
     "mousetrap-global-bind": "1.1.0",
     "nodemon": "1.18.10",

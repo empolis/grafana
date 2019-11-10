@@ -41,6 +41,7 @@ import { TimeSrv } from 'app/features/dashboard/services/TimeSrv';
 import { ContextSrv } from 'app/core/services/context_srv';
 import { getFieldLinksSupplier } from 'app/features/panel/panellinks/linkSuppliers';
 import { CoreEvents } from 'app/types';
+import { VariableSrv } from 'app/features/templating/variable_srv';
 
 const LegendWithThemeProvider = provideTheme(Legend);
 
@@ -60,7 +61,7 @@ class GraphElement {
   timeRegionManager: TimeRegionManager;
   legendElem: HTMLElement;
 
-  constructor(private scope: any, private elem: JQuery, private timeSrv: TimeSrv) {
+  constructor(private scope: any, private elem: JQuery, private timeSrv: TimeSrv, private variableSrv: VariableSrv) {
     this.ctrl = scope.ctrl;
     this.contextMenu = scope.ctrl.contextMenuCtrl;
     this.dashboard = this.ctrl.dashboard;
@@ -74,7 +75,7 @@ class GraphElement {
     // @ts-ignore
     this.tooltip = new GraphTooltip(this.elem, this.ctrl.dashboard, this.scope, () => {
       return this.sortedSeries;
-    });
+    }, variableSrv);
 
     // panel events
     this.ctrl.events.on(PanelEvents.panelTeardown, this.onPanelTeardown.bind(this));
@@ -594,13 +595,25 @@ class GraphElement {
     }
   }
 
+  getTimezone() {
+    const tz = this.dashboard.getTimezone();
+    if (tz === 'data') {
+      const tzVariable = this.variableSrv.variables.find(v => v.name === 'timezone');
+      if (tzVariable && tzVariable.current.value) {
+        return tzVariable.current.value;
+      }
+      return 'utc';
+    }
+    return tz;
+  }
+
   addTimeAxis(options: any) {
     const ticks = this.panelWidth / 100;
     const min = _.isUndefined(this.ctrl.range.from) ? null : this.ctrl.range.from.valueOf();
     const max = _.isUndefined(this.ctrl.range.to) ? null : this.ctrl.range.to.valueOf();
 
     options.xaxis = {
-      timezone: this.dashboard.getTimezone(),
+      timezone: this.getTimezone(),
       show: this.panel.xaxis.show,
       mode: 'time',
       min: min,
@@ -617,7 +630,7 @@ class GraphElement {
     });
 
     options.xaxis = {
-      timezone: this.dashboard.getTimezone(),
+      timezone: this.getTimezone(),
       show: this.panel.xaxis.show,
       mode: null,
       min: 0,
@@ -672,7 +685,7 @@ class GraphElement {
     }
 
     options.xaxis = {
-      timezone: this.dashboard.getTimezone(),
+      timezone: this.getTimezone(),
       show: this.panel.xaxis.show,
       mode: null,
       min: min,
@@ -696,7 +709,7 @@ class GraphElement {
     ticks = _.flatten(ticks, true);
 
     options.xaxis = {
-      timezone: this.dashboard.getTimezone(),
+      timezone: this.getTimezone(),
       show: this.panel.xaxis.show,
       mode: null,
       min: 0,
@@ -881,10 +894,10 @@ class GraphElement {
         return '%H:%M';
       }
       if (secPerTick <= 80000) {
-        return '%m/%d %H:%M';
+        return '%Y-%m-%d %H:%M';
       }
       if (secPerTick <= 2419200 || range <= oneYear) {
-        return '%m/%d';
+        return '%Y-%m-%d';
       }
       return '%Y-%m';
     }
@@ -894,12 +907,12 @@ class GraphElement {
 }
 
 /** @ngInject */
-function graphDirective(timeSrv: TimeSrv, popoverSrv: any, contextSrv: ContextSrv) {
+function graphDirective(timeSrv: TimeSrv, popoverSrv: any, contextSrv: ContextSrv, variableSrv: VariableSrv) {
   return {
     restrict: 'A',
     template: '',
     link: (scope: any, elem: JQuery) => {
-      return new GraphElement(scope, elem, timeSrv);
+      return new GraphElement(scope, elem, timeSrv, variableSrv);
     },
   };
 }

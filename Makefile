@@ -52,6 +52,15 @@ scripts/go/bin/bra: scripts/go/go.mod
 run: scripts/go/bin/bra ## Build and run web server on filesystem changes.
 	@GO111MODULE=on scripts/go/bin/bra run
 
+EMPOLIS_NAME   := empolis/grafana
+EMPOLIS_TAG    := $(shell git rev-parse --short HEAD)
+EMPOLIS_IMG    := ${EMPOLIS_NAME}:${EMPOLIS_TAG}
+EMPOLIS_LATEST := ${EMPOLIS_NAME}:latest
+
+build-docker-empolis:
+	docker build -t ${EMPOLIS_IMG} --build-arg GIT_TAG=${EMPOLIS_TAG} .
+	docker tag ${EMPOLIS_IMG} ${EMPOLIS_LATEST}
+
 ##@ Testing
 
 test-go: ## Run tests for backend.

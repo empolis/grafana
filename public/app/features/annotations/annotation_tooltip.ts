@@ -3,12 +3,14 @@ import $ from 'jquery';
 import coreModule from 'app/core/core_module';
 import alertDef from '../alerting/state/alertDef';
 import { DashboardSrv } from '../dashboard/services/DashboardSrv';
+import { VariableSrv } from 'app/features/templating/variable_srv';
 import { ContextSrv } from 'app/core/services/context_srv';
 
 /** @ngInject */
 export function annotationTooltipDirective(
   $sanitize: any,
   dashboardSrv: DashboardSrv,
+  variableSrv: VariableSrv,
   contextSrv: ContextSrv,
   $compile: any
 ) {
@@ -18,6 +20,15 @@ export function annotationTooltipDirective(
     } catch (err) {
       console.log('Could not sanitize annotation string, html escaping instead');
       return _.escape(str);
+    }
+  }
+
+  function getTzName() {
+    if (variableSrv) {
+      const tzVariable = variableSrv.variables.find(v => v.name === 'timezone');
+      if (tzVariable && tzVariable.current.value) {
+        return tzVariable.current.value;
+      }
     }
   }
 
@@ -55,9 +66,10 @@ export function annotationTooltipDirective(
           event.avatarUrl
         }" /></div>`;
       }
+      const tz = getTzName();
       header += `
           <span class="graph-annotation__title ${titleStateClass}">${sanitizeString(title)}</span>
-          <span class="graph-annotation__time">${dashboard.formatDate(event.min)}</span>
+          <span class="graph-annotation__time">${dashboard.formatDate(event.min, null, tz)}</span>
       `;
 
       // Show edit icon only for users with at least Editor role
