@@ -10,6 +10,8 @@ import {
 import { ColumnStyle } from '@grafana/ui/src/components/Table/TableCellBuilder';
 import { TemplateSrv } from 'app/features/templating/template_srv';
 import { TableRenderModel, ColumnRender } from './types';
+import moment, { MomentInput } from 'moment-timezone';
+import { VariableSrv } from 'app/features/templating/variable_srv';
 
 export class TableRenderer {
   formatters: any[];
@@ -18,9 +20,10 @@ export class TableRenderer {
   constructor(
     private panel: { styles: ColumnStyle[]; pageSize: number },
     private table: TableRenderModel,
-    private isUtc: boolean,
+    private timezone: string,
     private sanitize: (v: any) => any,
     private templateSrv: TemplateSrv,
+    private variableSrv: VariableSrv,
     private theme?: GrafanaThemeType
   ) {
     this.initColumns();
@@ -87,6 +90,15 @@ export class TableRenderer {
     }
   }
 
+  getTzName() {
+    if (this.variableSrv) {
+      const tzVariable = this.variableSrv.variables.find(v => v.name === 'timezone');
+      if (tzVariable && tzVariable.current.value) {
+        return tzVariable.current.value;
+      }
+    }
+  }
+
   createColumnFormatter(column: ColumnRender) {
     if (!column.style) {
       return this.defaultCellFormatter;
@@ -111,13 +123,17 @@ export class TableRenderer {
           v = parseInt(v, 10);
         }
 
-        let date = dateTime(v);
+        const date = dateTime(v);
 
-        if (this.isUtc) {
-          date = date.utc();
+        const tzName = this.getTzName();
+        if (this.timezone === 'data' && tzName) {
+          return moment(date as MomentInput)
+            .tz(tzName)
+            .format(column.style.dateFormat);
         }
-
-        return date.format(column.style.dateFormat);
+        return this.timezone === 'utc'
+          ? moment.utc(date as MomentInput).format(column.style.dateFormat)
+          : moment(date as MomentInput).format(column.style.dateFormat);
       };
     }
 

@@ -142,9 +142,10 @@ class TablePanelCtrl extends MetricsPanelCtrl {
     this.renderer = new TableRenderer(
       this.panel,
       this.table,
-      this.dashboard.isTimezoneUtc(),
+      this.dashboard.timezone,
       this.$sanitize,
       this.templateSrv,
+      this.variableSrv,
       config.theme.type
     );
 
