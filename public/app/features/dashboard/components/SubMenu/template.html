@@ -1,5 +1,5 @@
 <div class="submenu-controls">
-  <div ng-repeat="variable in ctrl.variables" ng-show="variable.hide !== 2 && variable.name != 'device_id'" class="submenu-item gf-form-inline">
+  <div ng-repeat="variable in ctrl.variables" ng-show="variable.hide !== 2 && variable.name != 'device_id'" class="submenu-item gf-form-inline var-{{variable.name}}">
     <div class="gf-form">
       <label class="gf-form-label template-variable" ng-show="variable.hide !== 1">
         {{variable.label || variable.name}}
