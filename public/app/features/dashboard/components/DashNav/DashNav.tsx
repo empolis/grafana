@@ -233,6 +233,15 @@ export class DashNav extends PureComponent<Props> {
             />
           )}
 
+          {canShare && (
+            <DashNavButton
+              tooltip="Share dashboard"
+              classSuffix="share"
+              icon="fa fa-share-square-o"
+              onClick={this.onOpenShare}
+            />
+          )}
+
           {canSave && (
             <DashNavButton tooltip="Save dashboard" classSuffix="save" icon="fa fa-save" onClick={this.onSave} />
           )}
@@ -267,15 +276,6 @@ export class DashNav extends PureComponent<Props> {
 
         {!dashboard.timepicker.hidden && (
           <div className="navbar-buttons">
-            {canShare && (
-              <DashNavButton
-                tooltip="Share dashboard"
-                classSuffix="share"
-                icon="fa fa-share-square-o"
-                onClick={this.onOpenShare}
-              />
-            )}
-
             {canShare && (
               <DashNavButton
                 tooltip="Create snapshot"
