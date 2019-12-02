@@ -280,7 +280,7 @@ export class DashNav extends PureComponent<Props> {
               <DashNavButton
                 tooltip="Create snapshot"
                 classSuffix="share"
-                icon="gicon gicon-snapshots"
+                icon="gicon gicon-snapshot"
                 onClick={this.onOpenEmpolisShare}
               />
             )}

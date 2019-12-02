@@ -150,6 +150,11 @@
   							<br>
   							<button class="btn btn-inverse" clipboard-button="getSnapshotUrl()">Copy Link</button>
   						</div>
+              <div class="gf-form-row" ng-if="restrictedSnapshot">
+                Snapshot created!
+  							<br><br>
+  							<button class="btn btn-inverse" ng-click="dismiss()">Done</button>
+  						</div>
   					</div>
   				</div>
 
