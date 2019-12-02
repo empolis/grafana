@@ -118,6 +118,19 @@ export class DashNav extends PureComponent<Props> {
     });
   };
 
+  onOpenEmpolisShare = () => {
+    const $rootScope = this.props.$injector.get('$rootScope');
+    const modalScope = $rootScope.$new();
+    modalScope.tabIndex = 0;
+    modalScope.restrictedSnapshot = true;
+    modalScope.dashboard = this.props.dashboard;
+
+    appEvents.emit(CoreEvents.showModal, {
+      src: 'public/app/features/dashboard/components/ShareModal/template.html',
+      scope: modalScope,
+    });
+  };
+
   renderDashboardTitleSearchButton() {
     const { dashboard } = this.props;
 
@@ -260,6 +273,15 @@ export class DashNav extends PureComponent<Props> {
                 classSuffix="share"
                 icon="fa fa-share-square-o"
                 onClick={this.onOpenShare}
+              />
+            )}
+
+            {canShare && (
+              <DashNavButton
+                tooltip="Create snapshot"
+                classSuffix="share"
+                icon="gicon gicon-snapshots"
+                onClick={this.onOpenEmpolisShare}
               />
             )}
 

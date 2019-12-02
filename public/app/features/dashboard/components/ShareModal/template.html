@@ -106,9 +106,14 @@
   			</div>
         <div class="share-modal-content">
           <div ng-if="step === 1">
-            <p class="share-modal-info-text">
+            <p class="share-modal-info-text" ng-show="!restrictedSnapshot">
               A snapshot is an instant way to share an interactive dashboard publicly.
               When created, we <strong>strip sensitive data</strong> like queries (metric, template and annotation) and panel links,
+              leaving only the visible metric data and series names embedded into your dashboard.
+            </p>
+            <p class="share-modal-info-text" ng-show="restrictedSnapshot">
+              Creating a snapshot replaces the dashboard for this finding with a static version:
+              We <strong>strip sensitive data</strong> like queries (metric, template and annotation) and panel links,
               leaving only the visible metric data and series names embedded into your dashboard.
             </p>
             <p class="share-modal-info-text">
@@ -125,11 +130,11 @@
   				</div>
 
   				<div class="gf-form-group share-modal-options">
-  					<div class="gf-form" ng-if="step === 1">
+  					<div class="gf-form" ng-if="step === 1 && !restrictedSnapshot">
   						<span class="gf-form-label width-12">Snapshot name</span>
   						<input type="text" ng-model="snapshot.name" class="gf-form-input max-width-15">
   					</div>
-  					<div class="gf-form" ng-if="step === 1">
+  					<div class="gf-form" ng-if="step === 1 && !restrictedSnapshot">
   						<span class="gf-form-label width-12">Expire</span>
   						<div class="gf-form-select-wrapper max-width-15">
   							<select class="gf-form-input" ng-model="snapshot.expires" ng-options="f.value as f.text for f in expireOptions"></select>
@@ -137,7 +142,7 @@
   					</div>
 
   					<div class="gf-form" ng-if="step === 2" style="margin-top: 40px">
-  						<div class="gf-form-row">
+  						<div class="gf-form-row" ng-if="!restrictedSnapshot">
   							<a href="{{snapshotUrl}}" class="large share-modal-link" target="_blank">
   								<i class="fa fa-external-link-square"></i>
   								{{snapshotUrl}}
@@ -162,16 +167,19 @@
   				</div>
 
   				<div ng-if="step === 1" class="gf-form-button-row">
-  					<button class="btn gf-form-btn width-10 btn-primary" ng-click="createSnapshot()" ng-disabled="loading">
+  					<button class="btn gf-form-btn width-10 btn-primary" ng-click="createSnapshot()" ng-disabled="loading" ng-show="!restrictedSnapshot">
   						Local Snapshot
   					</button>
-  					<button class="btn gf-form-btn width-16 btn-secondary" ng-if="externalEnabled" ng-click="createSnapshot(true)" ng-disabled="loading">
+            <button class="btn gf-form-btn width-10 btn-primary" ng-click="createSnapshot()" ng-disabled="loading" ng-show="restrictedSnapshot">
+  						Create Snapshot
+  					</button>
+  					<button class="btn gf-form-btn width-16 btn-secondary" ng-if="externalEnabled" ng-click="createSnapshot(true)" ng-disabled="loading" ng-show="!restrictedSnapshot">
   						{{sharingButtonText}}
   					</button>
   					<a class="btn btn-link" ng-click="dismiss()">Cancel</a>
   				</div>
 
-  				<div class="pull-right" ng-if="step === 2" style="padding: 5px">
+  				<div class="pull-right" ng-if="step === 2" style="padding: 5px" ng-show="!restrictedSnapshot">
   					Did you make a mistake? <a class="pointer" ng-click="deleteSnapshot()" target="_blank">delete snapshot.</a>
   				</div>
   			</div>

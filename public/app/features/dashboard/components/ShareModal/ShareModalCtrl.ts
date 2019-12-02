@@ -29,11 +29,17 @@ export function ShareModalCtrl(
     $scope.dashboard = $scope.model && $scope.model.dashboard ? $scope.model.dashboard : $scope.dashboard; // ^
     $scope.modeSharePanel = $scope.panel ? true : false;
 
-    $scope.tabs = [{ title: 'Link', src: 'shareLink.html' }];
+    if ($scope.restrictedSnapshot) {
+      $scope.tabs = [];
+    } else {
+      $scope.tabs = [{ title: 'Link', src: 'shareLink.html' }];
+    }
 
     if ($scope.modeSharePanel) {
       $scope.modalTitle = 'Share Panel';
       $scope.tabs.push({ title: 'Embed', src: 'shareEmbed.html' });
+    } else if ($scope.restrictedSnapshot) {
+      $scope.modalTitle = 'Create Snapshot';
     } else {
       $scope.modalTitle = 'Share';
     }
@@ -42,7 +48,7 @@ export function ShareModalCtrl(
       $scope.tabs.push({ title: 'Snapshot', src: 'shareSnapshot.html' });
     }
 
-    if (!$scope.dashboard.meta.isSnapshot && !$scope.modeSharePanel) {
+    if (!$scope.dashboard.meta.isSnapshot && !$scope.modeSharePanel && !$scope.restrictedSnapshot) {
       $scope.tabs.push({ title: 'Export', src: 'shareExport.html' });
     }
 
