@@ -19,7 +19,7 @@ export class ShareSnapshotCtrl {
     $scope.snapshot = {
       name: $scope.dashboard.title,
       expires: 0,
-      timeoutSeconds: 10,
+      timeoutSeconds: 20,
     };
 
     $scope.step = 1;
