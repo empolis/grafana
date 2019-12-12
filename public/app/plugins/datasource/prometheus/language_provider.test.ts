@@ -1,9 +1,10 @@
 import Plain from 'slate-plain-serializer';
 import { Editor as SlateEditor } from 'slate';
-import LanguageProvider from '../language_provider';
-import { PrometheusDatasource } from '../datasource';
+import LanguageProvider from './language_provider';
+import { PrometheusDatasource } from './datasource';
 import { HistoryItem } from '@grafana/data';
-import { PromQuery } from '../types';
+import { PromQuery } from './types';
+import Mock = jest.Mock;
 
 describe('Language completion provider', () => {
   const datasource: PrometheusDatasource = ({
@@ -25,7 +26,8 @@ describe('Language completion provider', () => {
     });
 
     it('returns default suggestions with metrics on empty context when metrics were provided', async () => {
-      const instance = new LanguageProvider(datasource, { metrics: ['foo', 'bar'] });
+      const instance = new LanguageProvider(datasource);
+      instance.metrics = ['foo', 'bar'];
       const value = Plain.deserialize('');
       const result = await instance.provideCompletionItems({ text: '', prefix: '', value, wrapperClasses: [] });
       expect(result.context).toBeUndefined();
@@ -100,7 +102,8 @@ describe('Language completion provider', () => {
 
   describe('metric suggestions', () => {
     it('returns metrics and function suggestions in an unknown context', async () => {
-      const instance = new LanguageProvider(datasource, { metrics: ['foo', 'bar'] });
+      const instance = new LanguageProvider(datasource);
+      instance.metrics = ['foo', 'bar'];
       let value = Plain.deserialize('a');
       value = value.setSelection({ anchor: { offset: 1 }, focus: { offset: 1 } });
       const result = await instance.provideCompletionItems({ text: 'a', prefix: 'a', value, wrapperClasses: [] });
@@ -116,7 +119,8 @@ describe('Language completion provider', () => {
     });
 
     it('returns metrics and function  suggestions after a binary operator', async () => {
-      const instance = new LanguageProvider(datasource, { metrics: ['foo', 'bar'] });
+      const instance = new LanguageProvider(datasource);
+      instance.metrics = ['foo', 'bar'];
       const value = Plain.deserialize('*');
       const result = await instance.provideCompletionItems({ text: '*', prefix: '', value, wrapperClasses: [] });
       expect(result.context).toBeUndefined();
@@ -131,7 +135,7 @@ describe('Language completion provider', () => {
     });
 
     it('returns no suggestions at the beginning of a non-empty function', async () => {
-      const instance = new LanguageProvider(datasource, { metrics: ['foo', 'bar'] });
+      const instance = new LanguageProvider(datasource);
       const value = Plain.deserialize('sum(up)');
       const ed = new SlateEditor({ value });
 
@@ -168,7 +172,7 @@ describe('Language completion provider', () => {
         metadataRequest: () => ({ data: { data: [{ __name__: 'metric', bar: 'bazinga' }] as any[] } }),
         getTimeRange: () => ({ start: 0, end: 1 }),
       } as any) as PrometheusDatasource;
-      const instance = new LanguageProvider(datasources, { labelKeys: { '{__name__="metric"}': ['bar'] } });
+      const instance = new LanguageProvider(datasources);
       const value = Plain.deserialize('metric{}');
       const ed = new SlateEditor({ value });
       const valueWithSelection = ed.moveForward(7).value;
@@ -183,7 +187,7 @@ describe('Language completion provider', () => {
     });
 
     it('returns label suggestions on label context but leaves out labels that already exist', async () => {
-      const datasources: PrometheusDatasource = ({
+      const datasource: PrometheusDatasource = ({
         metadataRequest: () => ({
           data: {
             data: [
@@ -199,11 +203,7 @@ describe('Language completion provider', () => {
         }),
         getTimeRange: () => ({ start: 0, end: 1 }),
       } as any) as PrometheusDatasource;
-      const instance = new LanguageProvider(datasources, {
-        labelKeys: {
-          '{job1="foo",job2!="foo",job3=~"foo",__name__="metric"}': ['bar', 'job1', 'job2', 'job3', '__name__'],
-        },
-      });
+      const instance = new LanguageProvider(datasource);
       const value = Plain.deserialize('{job1="foo",job2!="foo",job3=~"foo",__name__="metric",}');
       const ed = new SlateEditor({ value });
       const valueWithSelection = ed.moveForward(54).value;
@@ -218,31 +218,33 @@ describe('Language completion provider', () => {
     });
 
     it('returns label value suggestions inside a label value context after a negated matching operator', async () => {
-      const instance = new LanguageProvider(datasource, {
-        labelKeys: { '{}': ['label'] },
-        labelValues: { '{}': { label: ['a', 'b', 'c'] } },
-      });
-      const value = Plain.deserialize('{label!=}');
+      const instance = new LanguageProvider(({
+        ...datasource,
+        metadataRequest: () => {
+          return { data: { data: ['value1', 'value2'] } };
+        },
+      } as any) as PrometheusDatasource);
+      const value = Plain.deserialize('{job!=}');
       const ed = new SlateEditor({ value });
       const valueWithSelection = ed.moveForward(8).value;
       const result = await instance.provideCompletionItems({
         text: '!=',
         prefix: '',
         wrapperClasses: ['context-labels'],
-        labelKey: 'label',
+        labelKey: 'job',
         value: valueWithSelection,
       });
       expect(result.context).toBe('context-label-values');
       expect(result.suggestions).toEqual([
         {
-          items: [{ label: 'a' }, { label: 'b' }, { label: 'c' }],
-          label: 'Label values for "label"',
+          items: [{ label: 'value1' }, { label: 'value2' }],
+          label: 'Label values for "job"',
         },
       ]);
     });
 
     it('returns a refresher on label context and unavailable metric', async () => {
-      const instance = new LanguageProvider(datasource, { labelKeys: { '{__name__="foo"}': ['bar'] } });
+      const instance = new LanguageProvider(datasource);
       const value = Plain.deserialize('metric{}');
       const ed = new SlateEditor({ value });
       const valueWithSelection = ed.moveForward(7).value;
@@ -257,10 +259,10 @@ describe('Language completion provider', () => {
     });
 
     it('returns label values on label context when given a metric and a label key', async () => {
-      const instance = new LanguageProvider(datasource, {
-        labelKeys: { '{__name__="metric"}': ['bar'] },
-        labelValues: { '{__name__="metric"}': { bar: ['baz'] } },
-      });
+      const instance = new LanguageProvider(({
+        ...datasource,
+        metadataRequest: () => simpleMetricLabelsResponse,
+      } as any) as PrometheusDatasource);
       const value = Plain.deserialize('metric{bar=ba}');
       const ed = new SlateEditor({ value });
       const valueWithSelection = ed.moveForward(13).value;
@@ -276,7 +278,10 @@ describe('Language completion provider', () => {
     });
 
     it('returns label suggestions on aggregation context and metric w/ selector', async () => {
-      const instance = new LanguageProvider(datasource, { labelKeys: { '{__name__="metric",foo="xx"}': ['bar'] } });
+      const instance = new LanguageProvider(({
+        ...datasource,
+        metadataRequest: () => simpleMetricLabelsResponse,
+      } as any) as PrometheusDatasource);
       const value = Plain.deserialize('sum(metric{foo="xx"}) by ()');
       const ed = new SlateEditor({ value });
       const valueWithSelection = ed.moveForward(26).value;
@@ -291,7 +296,10 @@ describe('Language completion provider', () => {
     });
 
     it('returns label suggestions on aggregation context and metric w/o selector', async () => {
-      const instance = new LanguageProvider(datasource, { labelKeys: { '{__name__="metric"}': ['bar'] } });
+      const instance = new LanguageProvider(({
+        ...datasource,
+        metadataRequest: () => simpleMetricLabelsResponse,
+      } as any) as PrometheusDatasource);
       const value = Plain.deserialize('sum(metric) by ()');
       const ed = new SlateEditor({ value });
       const valueWithSelection = ed.moveForward(16).value;
@@ -306,9 +314,10 @@ describe('Language completion provider', () => {
     });
 
     it('returns label suggestions inside a multi-line aggregation context', async () => {
-      const instance = new LanguageProvider(datasource, {
-        labelKeys: { '{__name__="metric"}': ['label1', 'label2', 'label3'] },
-      });
+      const instance = new LanguageProvider(({
+        ...datasource,
+        metadataRequest: () => simpleMetricLabelsResponse,
+      } as any) as PrometheusDatasource);
       const value = Plain.deserialize('sum(\nmetric\n)\nby ()');
       const aggregationTextBlock = value.document.getBlocks().get(3);
       const ed = new SlateEditor({ value });
@@ -323,16 +332,17 @@ describe('Language completion provider', () => {
       expect(result.context).toBe('context-aggregation');
       expect(result.suggestions).toEqual([
         {
-          items: [{ label: 'label1' }, { label: 'label2' }, { label: 'label3' }],
+          items: [{ label: 'bar' }],
           label: 'Labels',
         },
       ]);
     });
 
     it('returns label suggestions inside an aggregation context with a range vector', async () => {
-      const instance = new LanguageProvider(datasource, {
-        labelKeys: { '{__name__="metric"}': ['label1', 'label2', 'label3'] },
-      });
+      const instance = new LanguageProvider(({
+        ...datasource,
+        metadataRequest: () => simpleMetricLabelsResponse,
+      } as any) as PrometheusDatasource);
       const value = Plain.deserialize('sum(rate(metric[1h])) by ()');
       const ed = new SlateEditor({ value });
       const valueWithSelection = ed.moveForward(26).value;
@@ -345,16 +355,17 @@ describe('Language completion provider', () => {
       expect(result.context).toBe('context-aggregation');
       expect(result.suggestions).toEqual([
         {
-          items: [{ label: 'label1' }, { label: 'label2' }, { label: 'label3' }],
+          items: [{ label: 'bar' }],
           label: 'Labels',
         },
       ]);
     });
 
     it('returns label suggestions inside an aggregation context with a range vector and label', async () => {
-      const instance = new LanguageProvider(datasource, {
-        labelKeys: { '{__name__="metric",label1="value"}': ['label1', 'label2', 'label3'] },
-      });
+      const instance = new LanguageProvider(({
+        ...datasource,
+        metadataRequest: () => simpleMetricLabelsResponse,
+      } as any) as PrometheusDatasource);
       const value = Plain.deserialize('sum(rate(metric{label1="value"}[1h])) by ()');
       const ed = new SlateEditor({ value });
       const valueWithSelection = ed.moveForward(42).value;
@@ -367,16 +378,14 @@ describe('Language completion provider', () => {
       expect(result.context).toBe('context-aggregation');
       expect(result.suggestions).toEqual([
         {
-          items: [{ label: 'label1' }, { label: 'label2' }, { label: 'label3' }],
+          items: [{ label: 'bar' }],
           label: 'Labels',
         },
       ]);
     });
 
     it('returns no suggestions inside an unclear aggregation context using alternate syntax', async () => {
-      const instance = new LanguageProvider(datasource, {
-        labelKeys: { '{__name__="metric"}': ['label1', 'label2', 'label3'] },
-      });
+      const instance = new LanguageProvider(datasource);
       const value = Plain.deserialize('sum by ()');
       const ed = new SlateEditor({ value });
       const valueWithSelection = ed.moveForward(8).value;
@@ -391,9 +400,10 @@ describe('Language completion provider', () => {
     });
 
     it('returns label suggestions inside an aggregation context using alternate syntax', async () => {
-      const instance = new LanguageProvider(datasource, {
-        labelKeys: { '{__name__="metric"}': ['label1', 'label2', 'label3'] },
-      });
+      const instance = new LanguageProvider(({
+        ...datasource,
+        metadataRequest: () => simpleMetricLabelsResponse,
+      } as any) as PrometheusDatasource);
       const value = Plain.deserialize('sum by () (metric)');
       const ed = new SlateEditor({ value });
       const valueWithSelection = ed.moveForward(8).value;
@@ -406,10 +416,46 @@ describe('Language completion provider', () => {
       expect(result.context).toBe('context-aggregation');
       expect(result.suggestions).toEqual([
         {
-          items: [{ label: 'label1' }, { label: 'label2' }, { label: 'label3' }],
+          items: [{ label: 'bar' }],
           label: 'Labels',
         },
       ]);
     });
+
+    it('does not re-fetch default labels', async () => {
+      const datasource: PrometheusDatasource = ({
+        metadataRequest: jest.fn(() => ({ data: { data: [] as any[] } })),
+        getTimeRange: jest.fn(() => ({ start: 0, end: 1 })),
+      } as any) as PrometheusDatasource;
+
+      const instance = new LanguageProvider(datasource);
+      const value = Plain.deserialize('{}');
+      const ed = new SlateEditor({ value });
+      const valueWithSelection = ed.moveForward(1).value;
+      const args = {
+        text: '',
+        prefix: '',
+        wrapperClasses: ['context-labels'],
+        value: valueWithSelection,
+      };
+      const promise1 = instance.provideCompletionItems(args);
+      // one call for 2 default labels job, instance
+      expect((datasource.metadataRequest as Mock).mock.calls.length).toBe(2);
+      const promise2 = instance.provideCompletionItems(args);
+      expect((datasource.metadataRequest as Mock).mock.calls.length).toBe(2);
+      await Promise.all([promise1, promise2]);
+      expect((datasource.metadataRequest as Mock).mock.calls.length).toBe(2);
+    });
   });
 });
+
+const simpleMetricLabelsResponse = {
+  data: {
+    data: [
+      {
+        __name__: 'metric',
+        bar: 'baz',
+      },
+    ],
+  },
+};
