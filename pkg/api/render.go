@@ -13,7 +13,7 @@ import (
 	"github.com/grafana/grafana/pkg/util"
 )
 
-func (hs *HTTPServer) RenderToPng(c *m.ReqContext) {
+func Render(hs *HTTPServer, c *m.ReqContext, pdf bool, landscape bool) {
 	queryReader, err := util.NewURLQueryReader(c.Req.URL)
 	if err != nil {
 		c.Handle(400, "Render parameters error", err)
@@ -52,6 +52,8 @@ func (hs *HTTPServer) RenderToPng(c *m.ReqContext) {
 		Timezone:        queryReader.Get("tz", ""),
 		Encoding:        queryReader.Get("encoding", ""),
 		ConcurrentLimit: maxConcurrentLimitForApiCalls,
+		Pdf:             pdf,
+		Landscape:       landscape,
 	})
 
 	if err != nil && err == rendering.ErrTimeout {
@@ -73,6 +75,22 @@ func (hs *HTTPServer) RenderToPng(c *m.ReqContext) {
 		return
 	}
 
-	c.Resp.Header().Set("Content-Type", "image/png")
+  if pdf {
+		c.Resp.Header().Set("Content-Type", "application/pdf")
+	} else {
+		c.Resp.Header().Set("Content-Type", "image/png")
+	}
 	http.ServeFile(c.Resp, c.Req.Request, result.FilePath)
+}
+
+func (hs *HTTPServer) RenderToPng(c *m.ReqContext) {
+	Render(hs, c, false, false);
+}
+
+func (hs *HTTPServer) RenderToPdf(c *m.ReqContext) {
+	Render(hs, c, true, false);
+}
+
+func (hs *HTTPServer) RenderToPdfLandscape(c *m.ReqContext) {
+	Render(hs, c, true, true);
 }

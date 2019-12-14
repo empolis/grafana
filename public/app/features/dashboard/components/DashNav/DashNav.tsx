@@ -121,8 +121,8 @@ export class DashNav extends PureComponent<Props> {
   onOpenEmpolisShare = () => {
     const $rootScope = this.props.$injector.get('$rootScope');
     const modalScope = $rootScope.$new();
-    modalScope.tabIndex = 0;
-    modalScope.restrictedSnapshot = true;
+    modalScope.tabIndex = 1;
+    modalScope.empolisShare = true;
     modalScope.dashboard = this.props.dashboard;
 
     appEvents.emit(CoreEvents.showModal, {

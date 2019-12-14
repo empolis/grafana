@@ -23,6 +23,8 @@ type Opts struct {
 	Encoding        string
 	Timezone        string
 	ConcurrentLimit int
+	Pdf             bool
+	Landscape       bool
 }
 
 type RenderResult struct {

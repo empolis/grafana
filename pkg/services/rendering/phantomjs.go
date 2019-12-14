@@ -30,7 +30,7 @@ func (rs *RenderingService) renderViaPhantomJS(ctx context.Context, opts Opts) (
 	}
 
 	scriptPath, _ := filepath.Abs(filepath.Join(rs.Cfg.PhantomDir, "render.js"))
-	pngPath, err := rs.getFilePathForNewImage()
+	pngPath, err := rs.getFilePathForNewImage(false)
 	if err != nil {
 		return nil, err
 	}

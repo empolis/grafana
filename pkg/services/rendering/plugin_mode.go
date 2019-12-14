@@ -53,7 +53,7 @@ func (rs *RenderingService) watchAndRestartPlugin(ctx context.Context) error {
 }
 
 func (rs *RenderingService) renderViaPlugin(ctx context.Context, opts Opts) (*RenderResult, error) {
-	pngPath, err := rs.getFilePathForNewImage()
+	pngPath, err := rs.getFilePathForNewImage(false)
 	if err != nil {
 		return nil, err
 	}
