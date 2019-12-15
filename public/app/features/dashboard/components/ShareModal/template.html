@@ -91,17 +91,16 @@
   				</div>
   			</div>
   		</div>
-		<div class="gf-form-button-row" ng-hide="modeSharePanel">
-			<a href="{{pdfUrl}}" target="_blank" aria-label="Generate portrait PDF">
-				<button class="btn gf-form-btn width-15 btn-primary">
-					<p><i class="fa fa-file-pdf-o"></i> Generate Portrait PDF</p>
+		<div class="gf-form" ng-hide="modeSharePanel">
+			<div class="gf-form-row">
+				<button class="btn width-15 btn-primary" ng-click="generatePdf(); dismiss();">
+					<i class="fa fa-file-pdf-o"></i>&nbsp;&nbsp;Generate Portrait PDF
 				</button>
-			</a>
-			<a href="{{pdfLandscapeUrl}}" target="_blank" aria-label="Generate landscape PDF">
-				<button class="btn gf-form-btn width-15 btn-inverse">
-					<p><i class="fa fa-file-pdf-o"></i > Generate Landscape PDF</p>
+				&nbsp;
+				<button class="btn width-15 btn-secondary" ng-click="generateLandscapePdf(); dismiss();">
+					<i class="fa fa-file-pdf-o"></i>&nbsp;&nbsp;Generate Landscape PDF
 				</button>
-			</a>
+			</div>
 		</div>
   		<div class="gf-form" ng-show="modeSharePanel">
   			<a href="{{imageUrl}}" target="_blank" aria-label="Link to rendered image"><i class="fa fa-camera"></i> Direct link rendered image</a>
@@ -187,7 +186,7 @@
   					<button class="btn gf-form-btn width-10 btn-primary" ng-click="createSnapshot()" ng-disabled="loading" ng-show="!empolisShare">
   						Local Snapshot
   					</button>
-            <button class="btn gf-form-btn width-10 btn-primary" ng-click="createSnapshot()" ng-disabled="loading" ng-show="empolisShare">
+					<button class="btn gf-form-btn width-10 btn-primary" ng-click="createSnapshot()" ng-disabled="loading" ng-show="empolisShare">
   						Create Snapshot
   					</button>
   					<button class="btn gf-form-btn width-16 btn-secondary" ng-if="externalEnabled" ng-click="createSnapshot(true)" ng-disabled="loading" ng-show="!empolisShare">

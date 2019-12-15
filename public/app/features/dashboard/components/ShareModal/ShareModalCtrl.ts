@@ -115,6 +115,14 @@ export function ShareModalCtrl(
     $scope.pdfLandscapeUrl = appendQueryToUrl($scope.pdfLandscapeUrl, toUrlParams(params)) + $scope.getLocalTimeZone();
   };
 
+  $scope.generatePdf = () => {
+    window.open($scope.pdfUrl, '_blank');
+  };
+
+  $scope.generateLandscapePdf = () => {
+    window.open($scope.pdfLandscapeUrl, '_blank');
+  };
+
   // This function will try to return the proper full name of the local timezone
   // Chrome does not handle the timezone offset (but phantomjs does)
   $scope.getLocalTimeZone = () => {
