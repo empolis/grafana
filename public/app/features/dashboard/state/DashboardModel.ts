@@ -1,4 +1,6 @@
 // Libaries
+import moment, { MomentInput } from 'moment-timezone';
+
 import _ from 'lodash';
 // Constants
 import { DEFAULT_ANNOTATION_COLOR } from '@grafana/ui';
@@ -576,6 +578,11 @@ export class DashboardModel {
   }
 
   getSelectedVariableOptions(variable: any) {
+    if (variable.defaults.type === 'constant' && _.includes(variable.current.text, ',')) {
+        return _.map(variable.current.text.split(','), v => {
+            return {selected: true, text: v, value: Number(v)};
+        });
+    }
     let selectedOptions: any[];
     if (variable.current.text === 'All') {
       selectedOptions = variable.options.slice(1, variable.options.length);
@@ -704,12 +711,17 @@ export class DashboardModel {
     return newPanel;
   }
 
-  formatDate(date: DateTimeInput, format?: string) {
+  formatDate(date: DateTimeInput, format?: string, tzName?: string) {
     date = isDateTime(date) ? date : dateTime(date);
     format = format || 'YYYY-MM-DD HH:mm:ss';
     const timezone = this.getTimezone();
 
-    return timezone === 'browser' ? dateTime(date).format(format) : toUtc(date).format(format);
+    if (timezone === 'data' && tzName) {
+      return moment(date as MomentInput)
+        .tz(tzName)
+        .format(format);
+    }
+    return timezone === 'browser' ? moment(date as MomentInput).format(format) : moment.utc(date as MomentInput).format(format);
   }
 
   destroy() {

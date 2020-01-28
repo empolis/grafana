@@ -13,15 +13,14 @@ export const LoginLogo: FC<BrandComponentProps> = ({ className }) => {
 
   return (
     <>
-      <img className={cx(className, maxSize)} src="public/img/grafana_icon.svg" alt="Grafana" />
-      <div className="logo-wordmark" />
+      <img className={cx(className, maxSize)} src="public/img/empolis/logo.svg" alt="Empolis" />
     </>
   );
 };
 
 export const LoginBackground: FC<BrandComponentProps> = ({ className, children }) => {
   const background = css`
-    background: url(public/img/heatmap_bg_test.svg);
+    background: url(public/img/empolis/GettyImages.jpg);
     background-size: cover;
   `;
 

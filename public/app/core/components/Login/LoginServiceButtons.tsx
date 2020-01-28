@@ -87,7 +87,7 @@ export const LoginServiceButtons = () => {
         key={key}
         className={`btn btn-medium btn-service btn-service--${service.className || key} login-btn`}
         href={`login/${service.hrefName ? service.hrefName : key}`}
-        target="_self"
+        target="_blank"
       >
         <i className={`btn-service-icon fa fa-${service.icon ? service.icon : key}`} />
         Sign in with {service.name}

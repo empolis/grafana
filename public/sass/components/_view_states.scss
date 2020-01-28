@@ -40,39 +40,15 @@
 
 .view-mode--tv {
   @extend .view-mode--inactive;
-
-  .sidemenu {
-    position: fixed;
-    background-color: transparent;
-    box-shadow: none;
-
-    .sidemenu__top,
-    .sidemenu__bottom,
-    .sidemenu__logo_small_breakpoint {
-      display: none;
-    }
-
-    .sidemenu__logo {
-      @include media-breakpoint-down(sm) {
-        display: block;
-      }
-    }
-  }
-
-  .navbar {
-    padding-left: $side-menu-width;
-  }
-
-  .submenu-controls {
-    display: none;
-  }
 }
 
 .view-mode--kiosk {
   @extend .view-mode--tv;
 
   .sidemenu,
-  .navbar {
+  .navbar-page-btn,
+  .navbar-buttons--actions,
+  .navbar-buttons--tv {
     display: none;
   }
 
@@ -80,7 +56,15 @@
     height: 100%;
   }
 
-  .submenu-controls {
-    display: none;
+  .submenu-item.gf-form-inline.ng-hide {
+    display: none !important;
   }
+}
+
+.submenu-item.gf-form-inline.ng-hide {
+  display: flex !important;
+}
+
+.submenu-item.gf-form-inline.ng-hide.var-device_id {
+    display: none !important;
 }

@@ -32,7 +32,7 @@ function describeSharedTooltip(desc: string, fn: any) {
     beforeEach(() => {
       ctx.setupFn();
       // @ts-ignore
-      const tooltip = new GraphTooltip(elem, dashboard, scope, getSeriesFn);
+      const tooltip = new GraphTooltip(elem, dashboard, scope, getSeriesFn, null);
       ctx.results = tooltip.getMultiSeriesPlotHoverInfo(ctx.data, ctx.pos);
     });
 
@@ -42,7 +42,7 @@ function describeSharedTooltip(desc: string, fn: any) {
 
 describe('findHoverIndexFromData', () => {
   // @ts-ignore
-  const tooltip = new GraphTooltip(elem, dashboard, scope, getSeriesFn);
+  const tooltip = new GraphTooltip(elem, dashboard, scope, getSeriesFn, null);
   const series = {
     data: [
       [100, 0],

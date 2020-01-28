@@ -32,7 +32,11 @@ export function ShareModalCtrl(
     $scope.dashboard = $scope.model && $scope.model.dashboard ? $scope.model.dashboard : $scope.dashboard; // ^
     $scope.modeSharePanel = $scope.panel ? true : false;
 
-    $scope.tabs = [{ title: 'Link', src: 'shareLink.html' }];
+    if ($scope.empolisShare) {
+      $scope.tabs = [{ title: 'PDF', src: 'shareLink.html' }];
+    } else {
+      $scope.tabs = [{ title: 'Link / PDF', src: 'shareLink.html' }];
+    }
 
     if ($scope.modeSharePanel) {
       $scope.modalTitle = 'Share Panel';
@@ -45,7 +49,7 @@ export function ShareModalCtrl(
       $scope.tabs.push({ title: 'Snapshot', src: 'shareSnapshot.html' });
     }
 
-    if (!$scope.dashboard.meta.isSnapshot && !$scope.modeSharePanel) {
+    if (!$scope.dashboard.meta.isSnapshot && !$scope.modeSharePanel && !$scope.empolisShare) {
       $scope.tabs.push({ title: 'Export', src: 'shareExport.html' });
     }
 
@@ -104,6 +108,22 @@ export function ShareModalCtrl(
     );
     $scope.imageUrl = $scope.imageUrl.replace(config.appSubUrl + '/d-solo/', config.appSubUrl + '/render/d-solo/');
     $scope.imageUrl += '&width=1000&height=500' + $scope.getLocalTimeZone();
+
+    $scope.pdfUrl = baseUrl.replace(config.appSubUrl + '/dashboard/', config.appSubUrl + '/renderPdf/dashboard/');
+    $scope.pdfUrl = $scope.pdfUrl.replace(config.appSubUrl + '/d/', config.appSubUrl + '/renderPdf/d/');
+    $scope.pdfUrl = appendQueryToUrl($scope.pdfUrl, toUrlParams(params)) + $scope.getLocalTimeZone();
+
+    $scope.pdfLandscapeUrl = baseUrl.replace(config.appSubUrl + '/dashboard/', config.appSubUrl + '/renderPdfLandscape/dashboard/');
+    $scope.pdfLandscapeUrl = $scope.pdfLandscapeUrl.replace(config.appSubUrl + '/d/', config.appSubUrl + '/renderPdfLandscape/d/');
+    $scope.pdfLandscapeUrl = appendQueryToUrl($scope.pdfLandscapeUrl, toUrlParams(params)) + $scope.getLocalTimeZone();
+  };
+
+  $scope.generatePdf = () => {
+    window.open($scope.pdfUrl, '_blank');
+  };
+
+  $scope.generateLandscapePdf = () => {
+    window.open($scope.pdfLandscapeUrl, '_blank');
   };
 
   // This function will try to return the proper full name of the local timezone
