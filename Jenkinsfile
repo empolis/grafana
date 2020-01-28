@@ -22,7 +22,7 @@ pipeline {
 
     stage('Tag') {
       when {
-        branch 'v6.5.x'
+        branch 'v6.6.x'
       }
       steps {
         sh "docker tag '${env.IMAGE}:${env.GIT_COMMIT}' '${env.IMAGE}:latest'"
@@ -31,7 +31,7 @@ pipeline {
 
     stage('Push') {
       when {
-        branch 'v6.5.x'
+        branch 'v6.6.x'
       }
       steps {
         script {
