@@ -150,6 +150,17 @@ func (s *SocialGenericOAuth) UserInfo(client *http.Client, token *oauth2.Token) 
 				userInfo.Role = role
 			}
 		}
+
+		if len(userInfo.Groups) == 0 {
+			groups, err := s.searchJSONForArray("groups", data.rawJSON)
+			if err != nil {
+				s.log.Error("Failed to extract groups", "error", err)
+			} else {
+				s.log.Debug("Set groups in user info", "groups", groups)
+				userInfo.Groups = groups
+			}
+		}
+
 	}
 
 	if userInfo.Email == "" {

@@ -101,3 +101,19 @@ export function getLocalTimeZone() {
 
   return '&tz=' + encodeURIComponent(options.timeZone);
 }
+
+export function buildPdfUrl(landscape: boolean, selectedTheme?: string, panel?: PanelModel) {
+  const baseUrl = buildBaseUrl();
+  const urlFragment = landscape ? '/renderPdfLandscape' : '/renderPdf';
+
+  const params = buildParams(true, true, selectedTheme, panel);
+  params.panelId = params.editPanel ?? params.viewPanel;
+  delete params.editPanel;
+  delete params.viewPanel;
+
+  let pdfUrl = baseUrl.replace(config.appSubUrl + '/dashboard/', config.appSubUrl + urlFragment + '/dashboard/');
+  pdfUrl = pdfUrl.replace(config.appSubUrl + '/d/', config.appSubUrl + urlFragment + '/d/');
+  pdfUrl = urlUtil.appendQueryToUrl(pdfUrl, urlUtil.toUrlParams(params)) + getLocalTimeZone();
+
+  return pdfUrl;
+}

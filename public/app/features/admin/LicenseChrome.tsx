@@ -1,6 +1,7 @@
 import React from 'react';
 import { stylesFactory, useTheme } from '@grafana/ui';
 import { css } from 'emotion';
+import config from 'app/core/config';
 import { GrafanaTheme } from '@grafana/data';
 
 const title = { fontWeight: 500, fontSize: '26px', lineHeight: '123%' };
@@ -35,6 +36,7 @@ interface Props {
 }
 
 export const LicenseChrome: React.FC<Props> = ({ header, editionNotice, subheader, children }) => {
+  const { empolisOptions } = config;
   const theme = useTheme();
   const styles = getStyles(theme);
 
@@ -55,7 +57,7 @@ export const LicenseChrome: React.FC<Props> = ({ header, editionNotice, subheade
           }}
         >
           <img
-            src="public/img/grafana_icon.svg"
+            src={empolisOptions.menuLogo}
             alt="Grafana"
             width="80px"
             style={{ position: 'absolute', left: '23px', top: '20px' }}

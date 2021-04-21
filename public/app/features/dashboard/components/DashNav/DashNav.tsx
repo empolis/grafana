@@ -269,6 +269,7 @@ class DashNav extends PureComponent<Props> {
   render() {
     const { dashboard, isFullscreen } = this.props;
     const onGoBack = isFullscreen ? this.onClose : undefined;
+    const { canShare } = dashboard.meta;
 
     return (
       <PageToolbar

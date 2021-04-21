@@ -2,11 +2,14 @@ import React from 'react';
 import { Modal, ModalTabsHeader, TabContent } from '@grafana/ui';
 import { DashboardModel, PanelModel } from 'app/features/dashboard/state';
 import { ShareLink } from './ShareLink';
+import { SharePdf } from './SharePdf';
 import { ShareSnapshot } from './ShareSnapshot';
 import { ShareExport } from './ShareExport';
 import { ShareEmbed } from './ShareEmbed';
 import { ShareModalTabModel } from './types';
 import { contextSrv } from 'app/core/core';
+
+const sharePdfTabs: ShareModalTabModel[] = [{ label: 'PDF', value: 'pdf', component: SharePdf }];
 
 const customDashboardTabs: ShareModalTabModel[] = [];
 const customPanelTabs: ShareModalTabModel[] = [];
@@ -29,6 +32,7 @@ function getInitialState(props: Props): State {
 
 function getTabs(props: Props) {
   const { panel } = props;
+  const { empolisShare } = props;
 
   const tabs: ShareModalTabModel[] = [{ label: 'Link', value: 'link', component: ShareLink }];
 
@@ -39,6 +43,11 @@ function getTabs(props: Props) {
   if (panel) {
     tabs.push({ label: 'Embed', value: 'embed', component: ShareEmbed });
     tabs.push(...customPanelTabs);
+  } else if (empolisShare) {
+    const tabs2 = tabs.filter(x => x.value === 'snapshot');
+    tabs2.push(...sharePdfTabs);
+    tabs2.push(...customDashboardTabs);
+    return tabs2;
   } else {
     tabs.push({ label: 'Export', value: 'export', component: ShareExport });
     tabs.push(...customDashboardTabs);
@@ -50,6 +59,7 @@ function getTabs(props: Props) {
 interface Props {
   dashboard: DashboardModel;
   panel?: PanelModel;
+  empolisShare?: boolean;
 
   onDismiss(): void;
 }
@@ -102,13 +112,14 @@ export class ShareModal extends React.Component<Props, State> {
 
   render() {
     const { dashboard, panel } = this.props;
+    const { empolisShare } = this.props;
     const activeTabModel = this.getActiveTab();
     const ActiveTab = activeTabModel.component;
 
     return (
       <Modal isOpen={true} title={this.renderTitle()} onDismiss={this.onDismiss}>
         <TabContent>
-          <ActiveTab dashboard={dashboard} panel={panel} onDismiss={this.onDismiss} />
+          <ActiveTab dashboard={dashboard} panel={panel} onDismiss={this.onDismiss} empolisShare={empolisShare} />
         </TabContent>
       </Modal>
     );

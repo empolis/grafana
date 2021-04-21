@@ -19,6 +19,7 @@ const expireOptions: Array<SelectableValue<number>> = [
 interface Props {
   dashboard: DashboardModel;
   panel?: PanelModel;
+  empolisShare?: boolean;
   onDismiss(): void;
 }
 
@@ -47,7 +48,7 @@ export class ShareSnapshot extends PureComponent<Props, State> {
       selectedExpireOption: expireOptions[0],
       snapshotExpires: expireOptions[0].value,
       snapshotName: props.dashboard.title,
-      timeoutSeconds: 4,
+      timeoutSeconds: 20,
       snapshotUrl: '',
       deleteUrl: '',
       externalEnabled: false,
@@ -197,6 +198,7 @@ export class ShareSnapshot extends PureComponent<Props, State> {
 
   renderStep1() {
     const { onDismiss } = this.props;
+    const { empolisShare } = this.props;
     const {
       snapshotName,
       selectedExpireOption,
@@ -210,7 +212,9 @@ export class ShareSnapshot extends PureComponent<Props, State> {
       <>
         <div>
           <p className="share-modal-info-text">
-            A snapshot is an instant way to share an interactive dashboard publicly. When created, we{' '}
+            {empolisShare
+              ? 'Creating a snapshot replaces the dashboard for this finding with a static version: we '
+              : 'A snapshot is an instant way to share an interactive dashboard publicly. When created, we '}
             <strong>strip sensitive data</strong> like queries (metric, template and annotation) and panel links,
             leaving only the visible metric data and series names embedded into your dashboard.
           </p>
@@ -219,25 +223,27 @@ export class ShareSnapshot extends PureComponent<Props, State> {
             URL. Share wisely.
           </p>
         </div>
-        <Field label="Snapshot name">
-          <Input width={30} value={snapshotName} onChange={this.onSnapshotNameChange} />
-        </Field>
-        <Field label="Expire">
-          <Select width={30} options={expireOptions} value={selectedExpireOption} onChange={this.onExpireChange} />
-        </Field>
-        <Field
-          label="Timeout (seconds)"
-          description="You may need to configure the timeout value if it takes a long time to collect your dashboard's
-            metrics."
-        >
-          <Input type="number" width={21} value={timeoutSeconds} onChange={this.onTimeoutChange} />
-        </Field>
+        {!empolisShare && (
+          <Field label="Snapshot name">
+            <Input width={30} value={snapshotName} onChange={this.onSnapshotNameChange} />
+          </Field>
+          <Field label="Expire">
+            <Select width={30} options={expireOptions} value={selectedExpireOption} onChange={this.onExpireChange} />
+          </Field>
+          <Field
+            label="Timeout (seconds)"
+            description="You may need to configure the timeout value if it takes a long time to collect your dashboard's
+              metrics."
+          >
+            <Input type="number" width={21} value={timeoutSeconds} onChange={this.onTimeoutChange} />
+          </Field>
+        )}
 
         <div className="gf-form-button-row">
           <Button variant="primary" disabled={isLoading} onClick={this.createSnapshot()}>
-            Local Snapshot
+            {empolisShare ? 'Create Snapshot' : 'Local Snapshot'}
           </Button>
-          {externalEnabled && (
+          {externalEnabled && !empolisShare && (
             <Button variant="secondary" disabled={isLoading} onClick={this.createSnapshot(true)}>
               {sharingButtonText}
             </Button>
@@ -252,27 +258,46 @@ export class ShareSnapshot extends PureComponent<Props, State> {
 
   renderStep2() {
     const { snapshotUrl } = this.state;
+    const { onDismiss, empolisShare } = this.props;
 
     return (
       <>
         <div className="gf-form" style={{ marginTop: '40px' }}>
-          <div className="gf-form-row">
-            <a href={snapshotUrl} className="large share-modal-link" target="_blank" rel="noreferrer">
-              <Icon name="external-link-alt" /> {snapshotUrl}
-            </a>
-            <br />
-            <ClipboardButton variant="secondary" getText={this.getSnapshotUrl} onClipboardCopy={this.onSnapshotUrlCopy}>
-              Copy Link
-            </ClipboardButton>
-          </div>
+          {!empolisShare && (
+            <div className="gf-form-row">
+              <a href={snapshotUrl} className="large share-modal-link" target="_blank" rel="noreferrer">
+                <Icon name="external-link-alt" /> {snapshotUrl}
+              </a>
+              <br />
+              <ClipboardButton
+                variant="secondary"
+                getText={this.getSnapshotUrl}
+                onClipboardCopy={this.onSnapshotUrlCopy}
+              >
+                Copy Link
+              </ClipboardButton>
+            </div>
+          )}
+          {empolisShare && (
+            <div className="gf-form-row">
+              Snapshot created!
+              <br />
+              <br />
+              <Button variant="secondary" onClick={onDismiss}>
+                Done
+              </Button>
+            </div>
+          )}
         </div>
 
-        <div className="pull-right" style={{ padding: '5px' }}>
-          Did you make a mistake?{' '}
-          <LinkButton variant="link" target="_blank" onClick={this.deleteSnapshot}>
-            delete snapshot.
-          </LinkButton>
-        </div>
+        {!empolisShare && (
+          <div className="pull-right" style={{ padding: '5px' }}>
+            Did you make a mistake?{' '}
+            <LinkButton variant="link" target="_blank" onClick={this.deleteSnapshot}>
+              delete snapshot.
+            </LinkButton>
+          </div>
+        )}
       </>
     );
   }

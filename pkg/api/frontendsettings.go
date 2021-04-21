@@ -246,6 +246,16 @@ func (hs *HTTPServer) getFrontendSettingsMap(c *models.ReqContext) (map[string]i
 		"expressionsEnabled":      hs.Cfg.ExpressionsEnabled,
 		"awsAllowedAuthProviders": hs.Cfg.AWSAllowedAuthProviders,
 		"awsAssumeRoleEnabled":    hs.Cfg.AWSAssumeRoleEnabled,
+		"empolisOptions": map[string]interface{}{
+			"footerUrl":      setting.EmpolisFooterUrl,
+			"footerLabel":    setting.EmpolisFooterLabel,
+			"loginBgImg":     setting.EmpolisLoginBgImg,
+			"appleTouchIcon": setting.EmpolisAppleTouchIcon,
+			"favIcon":        setting.EmpolisFavIcon,
+			"menuLogo":       setting.EmpolisMenuLogo,
+			"customLogo":     setting.EmpolisCustomLogo,
+			"hideVersion":    setting.EmpolisHideVersion,
+		},
 	}
 
 	return jsonObj, nil

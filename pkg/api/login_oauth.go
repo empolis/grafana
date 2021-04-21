@@ -8,10 +8,12 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"github.com/grafana/grafana/pkg/services/sqlstore"
 	"net/http"
 	"net/url"
 
 	"golang.org/x/oauth2"
+	"strings"
 
 	"github.com/grafana/grafana/pkg/bus"
 	"github.com/grafana/grafana/pkg/infra/log"
@@ -226,12 +228,26 @@ func buildExternalUserInfo(token *oauth2.Token, userInfo *social.BasicUserInfo, 
 				orgID = int64(setting.AutoAssignOrgId)
 				plog.Debug("The user has a role assignment and organization membership is auto-assigned",
 					"role", userInfo.Role, "orgId", orgID)
+				extUser.OrgRoles[orgID] = rt
+			} else if len(userInfo.Groups) > 0 {
+				for _, group := range userInfo.Groups {
+					query := models.GetOrgByNameQuery{Name: group}
+					err := sqlstore.GetOrgByName(&query)
+					if err != nil {
+						query = models.GetOrgByNameQuery{Name: strings.ToLower(group)}
+						err = sqlstore.GetOrgByName(&query)
+					}
+					if err == nil {
+						extUser.OrgRoles[query.Result.Id] = rt
+					}
+				}
 			} else {
 				orgID = int64(1)
 				plog.Debug("The user has a role assignment and organization membership is not auto-assigned",
 					"role", userInfo.Role, "orgId", orgID)
+				extUser.OrgRoles[orgID] = rt
 			}
-			extUser.OrgRoles[orgID] = rt
+			oauthLogger.Debug("Set org roles", "extUser.OrgRoles", extUser.OrgRoles)
 		}
 	}
 

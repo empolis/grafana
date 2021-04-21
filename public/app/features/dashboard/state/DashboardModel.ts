@@ -26,6 +26,7 @@ import { variableAdapters } from 'app/features/variables/adapters';
 import { onTimeRangeUpdated } from 'app/features/variables/state/actions';
 import { dispatch } from '../../../store/store';
 import { isAllVariable } from '../../variables/utils';
+import { VariableWithOptions } from 'app/features/variables/types';
 import { DashboardPanelsChangedEvent, RefreshEvent, RenderEvent } from 'app/types/events';
 
 export interface CloneOptions {
@@ -662,6 +663,11 @@ export class DashboardModel {
   }
 
   getSelectedVariableOptions(variable: any) {
+    if (variable.current.type === 'constant' && _.includes(variable.current.text, ',')) {
+      return _.map(variable.current.text.split(','), v => {
+        return { selected: true, text: v, value: Number(v) };
+      });
+    }
     let selectedOptions: any[];
     if (isAllVariable(variable)) {
       selectedOptions = variable.options.slice(1, variable.options.length);
@@ -922,7 +928,15 @@ export class DashboardModel {
   }
 
   getTimezone(): TimeZone {
-    return (this.timezone ? this.timezone : contextSrv?.user?.timezone) as TimeZone;
+    const tz = (this.timezone ? this.timezone : contextSrv?.user?.timezone) as TimeZone;
+    if (tz === 'data') {
+      const tzVariable = this.getVariables().find(v => v.name === 'timezone') as VariableWithOptions;
+      if (tzVariable && tzVariable.current.value) {
+        return tzVariable.current.value.toString();
+      }
+      return 'utc'; // needs casting?
+    }
+    return tz;
   }
 
   private updateSchema(old: any) {

@@ -2,6 +2,7 @@
   .react-resizable-handle,
   .add-row-panel-hint,
   .dash-row-menu-container,
+  .navbar-buttons--actions,
   .panel-info-corner--info,
   .panel-info-corner--links {
     display: none;
@@ -11,34 +12,13 @@
 .view-mode--tv {
   @extend .view-mode--inactive;
 
-  .sidemenu {
-    position: fixed;
-    background-color: transparent;
-    box-shadow: none;
-
-    .sidemenu__top,
-    .sidemenu__bottom,
-    .sidemenu__logo_small_breakpoint {
-      display: none;
-    }
-
-    .sidemenu__logo {
-      @include media-breakpoint-down(sm) {
-        display: block;
-      }
-    }
-  }
-
   .page-toolbar {
     padding-left: $side-menu-width;
+
 
     &--fullscreen {
       padding-left: $space-md;
     }
-  }
-
-  .submenu-controls {
-    display: none;
   }
 }
 
@@ -46,13 +26,24 @@
   @extend .view-mode--tv;
 
   .sidemenu,
-  .page-toolbar {
+  .page-toolbar,
+  .navbar-page-btn,
+  .navbar-buttons--actions,
+  .navbar-buttons--tv {
     display: none;
   }
 
-  .submenu-controls {
-    display: none;
+  .submenu-item.gf-form-inline.ng-hide {
+    display: none !important;
   }
+}
+
+.submenu-item.gf-form-inline.ng-hide {
+  display: flex !important;
+}
+
+.submenu-item.gf-form-inline.ng-hide.var-device_id {
+  display: none !important;
 }
 
 @include media-breakpoint-down(sm) {

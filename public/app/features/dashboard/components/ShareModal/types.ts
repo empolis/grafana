@@ -5,6 +5,7 @@ import { DashboardModel } from 'app/features/dashboard/state';
 export interface ShareModalTabProps {
   dashboard: DashboardModel;
   panel?: PanelModel;
+  empolisShare?: boolean;
   onDismiss?(): void;
 }
 

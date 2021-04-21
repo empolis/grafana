@@ -23,7 +23,8 @@ export interface IntervalValues {
 
 export type TimeZoneUtc = 'utc';
 export type TimeZoneBrowser = 'browser';
-export type TimeZone = TimeZoneBrowser | TimeZoneUtc | string;
+export type TimeZoneData = 'data';
+export type TimeZone = TimeZoneBrowser | TimeZoneUtc | TimeZoneData | string;
 
 export const DefaultTimeZone: TimeZone = 'browser';
 

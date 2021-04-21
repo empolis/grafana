@@ -204,7 +204,7 @@ func (rs *RenderingService) GetRenderUser(key string) (*RenderUser, bool) {
 	return nil, false
 }
 
-func (rs *RenderingService) getFilePathForNewImage() (string, error) {
+func (rs *RenderingService) getFilePathForNewImage(pdf bool) (string, error) {
 	rand, err := util.GetRandomString(20)
 	if err != nil {
 		return "", err
@@ -214,7 +214,11 @@ func (rs *RenderingService) getFilePathForNewImage() (string, error) {
 		return "", err
 	}
 
-	return pngPath + ".png", nil
+	if pdf {
+		return pngPath + ".pdf", nil
+	} else {
+		return pngPath + ".png", nil
+	}
 }
 
 func (rs *RenderingService) getURL(path string) string {

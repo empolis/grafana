@@ -27,7 +27,7 @@ func (rs *RenderingService) renderViaPlugin(ctx context.Context, renderKey strin
 }
 
 func (rs *RenderingService) renderViaPluginV1(ctx context.Context, renderKey string, opts Opts) (*RenderResult, error) {
-	pngPath, err := rs.getFilePathForNewImage()
+	pngPath, err := rs.getFilePathForNewImage(false)
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +61,7 @@ func (rs *RenderingService) renderViaPluginV1(ctx context.Context, renderKey str
 }
 
 func (rs *RenderingService) renderViaPluginV2(ctx context.Context, renderKey string, opts Opts) (*RenderResult, error) {
-	pngPath, err := rs.getFilePathForNewImage()
+	pngPath, err := rs.getFilePathForNewImage(false)
 	if err != nil {
 		return nil, err
 	}

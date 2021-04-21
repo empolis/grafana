@@ -3,6 +3,7 @@ import { getTheme } from '@grafana/ui';
 import {
   BuildInfo,
   DataSourceInstanceSettings,
+  EmpolisOptions,
   FeatureToggles,
   GrafanaConfig,
   GrafanaTheme,
@@ -59,6 +60,7 @@ export class GrafanaBootConfig implements GrafanaConfig {
     reportVariables: false,
   };
   licenseInfo: LicenseInfo = {} as LicenseInfo;
+  empolisOptions: EmpolisOptions = {} as EmpolisOptions;
   rendererAvailable = false;
   http2Enabled = false;
   dateFormats?: SystemDateFormatSettings;

@@ -127,17 +127,21 @@ func CreateDashboardSnapshot(c *models.ReqContext, cmd models.CreateDashboardSna
 		metrics.MApiDashboardSnapshotCreate.Inc()
 	}
 
+	dashboard := cmd.Dashboard
+	atlantaResponse := postSnapshotAtlanta(dashboard, cmd.Key, cmd.DeleteKey)
+
 	if err := bus.Dispatch(&cmd); err != nil {
 		c.JsonApiErr(500, "Failed to create snapshot", err)
 		return
 	}
 
 	c.JSON(200, util.DynMap{
-		"key":       cmd.Key,
-		"deleteKey": cmd.DeleteKey,
-		"url":       url,
-		"deleteUrl": setting.ToAbsUrl("api/snapshots-delete/" + cmd.DeleteKey),
-		"id":        cmd.Result.Id,
+		"key":             cmd.Key,
+		"deleteKey":       cmd.DeleteKey,
+		"url":             url,
+		"deleteUrl":       setting.ToAbsUrl("api/snapshots-delete/" + cmd.DeleteKey),
+		"atlantaResponse": atlantaResponse,
+		"id":        	   cmd.Result.Id,
 	})
 }
 
@@ -230,6 +234,9 @@ func DeleteDashboardSnapshotByDeleteKey(c *models.ReqContext) response.Response 
 	if err := bus.Dispatch(cmd); err != nil {
 		return response.Error(500, "Failed to delete dashboard snapshot", err)
 	}
+
+	//atlantaResponse := deleteSnapshotAtlanta(key)
+	//log.Info("DeleteDashboardSnapshotByDeleteKey: Atlanta response [%v]", atlantaResponse)
 
 	return response.JSON(200, util.DynMap{
 		"message": "Snapshot deleted. It might take an hour before it's cleared from any CDN caches.",

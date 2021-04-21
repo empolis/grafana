@@ -31,4 +31,4 @@ export * from './live';
 export * from './variables';
 export * from './geometry';
 
-export { GrafanaConfig, BuildInfo, FeatureToggles, LicenseInfo } from './config';
+export { GrafanaConfig, BuildInfo, EmpolisOptions, FeatureToggles, LicenseInfo } from './config';

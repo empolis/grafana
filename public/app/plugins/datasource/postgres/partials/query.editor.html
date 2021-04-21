@@ -150,8 +150,11 @@ Table:
 Macros:
 - $__time(column) -&gt; column as "time"
 - $__timeEpoch -&gt; extract(epoch from column) as "time"
+- $__timeEpochMilli(column) -&gt; column / 1000.0 as "time"
+- $__timeEpochNano(column) -&gt; column / 1000000000.0 as "time"
 - $__timeFilter(column) -&gt; column BETWEEN '2017-04-21T05:01:17Z' AND '2017-04-21T05:01:17Z'
 - $__unixEpochFilter(column) -&gt;  column &gt;= 1492750877 AND column &lt;= 1492750877
+- $__unixEpochMilliFilter(column) -&gt;  column &gt;= 1494410783152 AND column &lt;= 1494497183142
 - $__unixEpochNanoFilter(column) -&gt;  column &gt;= 1494410783152415214 AND column &lt;= 1494497183142514872
 - $__timeGroup(column,'5m'[, fillvalue]) -&gt; (extract(epoch from column)/300)::bigint*300
      by setting fillvalue grafana will fill in missing values according to the interval
@@ -159,6 +162,10 @@ Macros:
 - $__timeGroupAlias(column,'5m') -&gt; (extract(epoch from column)/300)::bigint*300 AS "time"
 - $__unixEpochGroup(column,'5m') -&gt; floor(column/300)*300
 - $__unixEpochGroupAlias(column,'5m') -&gt; floor(column/300)*300 AS "time"
+- $__unixEpochMilliGroup(column,'5m') -&gt; floor(column/300)*300
+- $__unixEpochMilliGroupAlias(column,'5m') -&gt; floor(column/300)*300 AS "time"
+- $__unixEpochNanoGroup(column,'5m') -&gt; floor(column/300000)*300000
+- $__unixEpochNanoGroupAlias(column,'5m') -&gt; floor(column/300000000000)*300000000000 AS "time"
 
 Example of group by and order by with $__timeGroup:
 SELECT
@@ -173,6 +180,8 @@ Or build your own conditionals using these macros which just return the values:
 - $__timeTo() -&gt;  '2017-04-21T05:01:17Z'
 - $__unixEpochFrom() -&gt;  1492750877
 - $__unixEpochTo() -&gt;  1492750877
+- $__unixEpochMilliFrom() -&gt;  1494410783152
+- $__unixEpochMilliTo() -&gt;  1494497183142
 - $__unixEpochNanoFrom() -&gt;  1494410783152415214
 - $__unixEpochNanoTo() -&gt;  1494497183142514872
     </pre>

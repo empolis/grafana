@@ -23,6 +23,8 @@ type Opts struct {
 	Timezone          string
 	ConcurrentLimit   int
 	DeviceScaleFactor float64
+	Pdf               bool
+	Landscape         bool
 	Headers           map[string][]string
 }
 

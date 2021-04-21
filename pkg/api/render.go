@@ -14,7 +14,7 @@ import (
 	"github.com/grafana/grafana/pkg/util"
 )
 
-func (hs *HTTPServer) RenderToPng(c *models.ReqContext) {
+func Render(hs *HTTPServer, c *models.ReqContext, pdf bool, landscape bool) {
 	queryReader, err := util.NewURLQueryReader(c.Req.URL)
 	if err != nil {
 		c.Handle(hs.Cfg, 400, "Render parameters error", err)
@@ -65,6 +65,8 @@ func (hs *HTTPServer) RenderToPng(c *models.ReqContext) {
 		Encoding:          queryReader.Get("encoding", ""),
 		ConcurrentLimit:   hs.Cfg.RendererConcurrentRequestLimit,
 		DeviceScaleFactor: scale,
+		Pdf:               pdf,
+		Landscape:         landscape,
 		Headers:           headers,
 	})
 	if err != nil {
@@ -85,6 +87,22 @@ func (hs *HTTPServer) RenderToPng(c *models.ReqContext) {
 		return
 	}
 
-	c.Resp.Header().Set("Content-Type", "image/png")
+	if pdf {
+		c.Resp.Header().Set("Content-Type", "application/pdf")
+	} else {
+		c.Resp.Header().Set("Content-Type", "image/png")
+	}
 	http.ServeFile(c.Resp, c.Req.Request, result.FilePath)
+}
+
+func (hs *HTTPServer) RenderToPng(c *models.ReqContext) {
+	Render(hs, c, false, false)
+}
+
+func (hs *HTTPServer) RenderToPdf(c *models.ReqContext) {
+	Render(hs, c, true, false)
+}
+
+func (hs *HTTPServer) RenderToPdfLandscape(c *models.ReqContext) {
+	Render(hs, c, true, true)
 }

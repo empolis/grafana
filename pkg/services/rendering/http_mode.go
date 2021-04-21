@@ -28,7 +28,7 @@ var netClient = &http.Client{
 }
 
 func (rs *RenderingService) renderViaHttp(ctx context.Context, renderKey string, opts Opts) (*RenderResult, error) {
-	filePath, err := rs.getFilePathForNewImage()
+	filePath, err := rs.getFilePathForNewImage(opts.Pdf)
 	if err != nil {
 		return nil, err
 	}
@@ -48,6 +48,12 @@ func (rs *RenderingService) renderViaHttp(ctx context.Context, renderKey string,
 	queryParams.Add("encoding", opts.Encoding)
 	queryParams.Add("timeout", strconv.Itoa(int(opts.Timeout.Seconds())))
 	queryParams.Add("deviceScaleFactor", fmt.Sprintf("%f", opts.DeviceScaleFactor))
+	if opts.Pdf {
+		queryParams.Add("pdf", "1")
+	}
+	if opts.Landscape {
+		queryParams.Add("landscape", "1")
+	}
 	rendererUrl.RawQuery = queryParams.Encode()
 
 	req, err := http.NewRequest("GET", rendererUrl.String(), nil)

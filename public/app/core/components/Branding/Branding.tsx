@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import { css, cx } from 'emotion';
+import config from 'app/core/config';
 import { useTheme } from '@grafana/ui';
 
 export interface BrandComponentProps {
@@ -8,13 +9,17 @@ export interface BrandComponentProps {
 }
 
 const LoginLogo: FC<BrandComponentProps> = ({ className }) => {
-  return <img className={className} src="public/img/grafana_icon.svg" alt="Grafana" />;
+  const { empolisOptions } = config;
+  if (empolisOptions.customLogo.trim()) {
+    return <img className={className} src={empolisOptions.customLogo} alt="Empolis" />;
+  }
+  return null;
 };
 
 const LoginBackground: FC<BrandComponentProps> = ({ className, children }) => {
-  const theme = useTheme();
+  const { empolisOptions } = config;
   const background = css`
-    background: url(public/img/login_background_${theme.isDark ? 'dark' : 'light'}.svg);
+    background: url(${empolisOptions.loginBgImg});
     background-size: cover;
   `;
 
@@ -22,7 +27,8 @@ const LoginBackground: FC<BrandComponentProps> = ({ className, children }) => {
 };
 
 const MenuLogo: FC<BrandComponentProps> = ({ className }) => {
-  return <img className={className} src="public/img/grafana_icon.svg" alt="Grafana" />;
+  const { empolisOptions } = config;
+  return <img className={className} src={empolisOptions.menuLogo} alt="Empolis" />;
 };
 
 const LoginBoxBackground = () => {

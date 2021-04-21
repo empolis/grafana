@@ -182,6 +182,16 @@ var (
 	GrafanaComUrl string
 
 	ImageUploadProvider string
+
+	// Empolis
+	EmpolisFooterUrl      string
+	EmpolisFooterLabel    string
+	EmpolisLoginBgImg     string
+	EmpolisAppleTouchIcon string
+	EmpolisFavIcon        string
+	EmpolisMenuLogo       string
+	EmpolisCustomLogo     string
+	EmpolisHideVersion    bool
 )
 
 // AddChangePasswordLink returns if login form is disabled or not since
@@ -335,6 +345,16 @@ type Cfg struct {
 
 	// Sentry config
 	Sentry Sentry
+
+	// Empolis
+	EmpolisFooterUrl      string
+	EmpolisFooterLabel    string
+	EmpolisLoginBgImg     string
+	EmpolisAppleTouchIcon string
+	EmpolisFavIcon        string
+	EmpolisMenuLogo       string
+	EmpolisCustomLogo     string
+	EmpolisHideVersion    bool
 
 	// Data sources
 	DataSourceLimit int
@@ -924,6 +944,26 @@ func (cfg *Cfg) Load(args *CommandLineArgs) error {
 		Name:    dbName,
 		ConnStr: connStr,
 	}
+
+	empolisSettings := iniFile.Section("empolis")
+	EmpolisFooterUrl = valueAsString(empolisSettings, "footer_url", "")
+	EmpolisFooterLabel = valueAsString(empolisSettings, "footer_label", "")
+	EmpolisHideVersion = empolisSettings.Key("hide_version").MustBool(false)
+	EmpolisLoginBgImg = valueAsString(empolisSettings, "login_bg_img", "")
+	EmpolisAppleTouchIcon = valueAsString(empolisSettings, "apple_touch_icon", "")
+	EmpolisFavIcon = valueAsString(empolisSettings, "fav_icon", "")
+	EmpolisMenuLogo = valueAsString(empolisSettings, "menu_logo", "")
+	EmpolisCustomLogo = valueAsString(empolisSettings, "custom_logo", "")
+
+	cfg.EmpolisFooterUrl = EmpolisFooterUrl
+	cfg.EmpolisFooterLabel = EmpolisFooterLabel
+	cfg.EmpolisHideVersion = EmpolisHideVersion
+	cfg.EmpolisLoginBgImg = EmpolisLoginBgImg
+	cfg.EmpolisAppleTouchIcon = EmpolisAppleTouchIcon
+	cfg.EmpolisFavIcon = EmpolisFavIcon
+	cfg.EmpolisMenuLogo = EmpolisMenuLogo
+	cfg.EmpolisCustomLogo = EmpolisCustomLogo
+
 
 	cfg.readDateFormats()
 	cfg.readSentryConfig()
