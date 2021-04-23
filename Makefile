@@ -65,6 +65,10 @@ build-docker-empolis:
 	docker build -t ${EMPOLIS_IMG} --build-arg GIT_TAG=${EMPOLIS_TAG} .
 	docker tag ${EMPOLIS_IMG} ${EMPOLIS_LATEST}
 
+build-docker-empolis-ubuntu:
+	docker build -f Dockerfile.ubuntu -t ${EMPOLIS_IMG} --build-arg GIT_TAG=${EMPOLIS_TAG} .
+	docker tag ${EMPOLIS_IMG} ${EMPOLIS_LATEST}
+
 ##@ Testing
 
 test-go: ## Run tests for backend.

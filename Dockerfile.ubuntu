@@ -1,11 +1,13 @@
-FROM node:14.15.1-slim AS js-builder
+FROM node:14.16.1-slim AS js-builder
 
 WORKDIR /usr/src/app/
 
 COPY package.json yarn.lock ./
 COPY packages packages
 
-RUN yarn install --pure-lockfile
+RUN apt-get update && apt-get install -yq git
+RUN yarn set version berry
+RUN yarn install
 
 COPY tsconfig.json .eslintrc .editorconfig .browserslistrc .prettierrc.js ./
 COPY public public
