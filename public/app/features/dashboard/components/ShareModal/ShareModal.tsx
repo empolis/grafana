@@ -44,7 +44,7 @@ function getTabs(props: Props) {
     tabs.push({ label: 'Embed', value: 'embed', component: ShareEmbed });
     tabs.push(...customPanelTabs);
   } else if (empolisShare) {
-    const tabs2 = tabs.filter(x => x.value === 'snapshot');
+    const tabs2 = tabs.filter((x) => x.value === 'snapshot');
     tabs2.push(...sharePdfTabs);
     tabs2.push(...customDashboardTabs);
     return tabs2;

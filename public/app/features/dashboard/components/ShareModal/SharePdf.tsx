@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react';
-import { LegacyForms, Icon } from '@grafana/ui';
-import { Button } from '@grafana/ui';
+import { LegacyForms, Icon, Button } from '@grafana/ui';
 const { Select } = LegacyForms;
 import { SelectableValue, PanelModel } from '@grafana/data';
 import { DashboardModel } from 'app/features/dashboard/state';

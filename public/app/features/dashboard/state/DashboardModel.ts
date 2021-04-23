@@ -664,7 +664,7 @@ export class DashboardModel {
 
   getSelectedVariableOptions(variable: any) {
     if (variable.current.type === 'constant' && _.includes(variable.current.text, ',')) {
-      return _.map(variable.current.text.split(','), v => {
+      return _.map(variable.current.text.split(','), (v) => {
         return { selected: true, text: v, value: Number(v) };
       });
     }
@@ -930,7 +930,7 @@ export class DashboardModel {
   getTimezone(): TimeZone {
     const tz = (this.timezone ? this.timezone : contextSrv?.user?.timezone) as TimeZone;
     if (tz === 'data') {
-      const tzVariable = this.getVariables().find(v => v.name === 'timezone') as VariableWithOptions;
+      const tzVariable = this.getVariables().find((v) => v.name === 'timezone') as VariableWithOptions;
       if (tzVariable && tzVariable.current.value) {
         return tzVariable.current.value.toString();
       }

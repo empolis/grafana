@@ -106,7 +106,7 @@ export function buildPdfUrl(landscape: boolean, selectedTheme?: string, panel?: 
   const baseUrl = buildBaseUrl();
   const urlFragment = landscape ? '/renderPdfLandscape' : '/renderPdf';
 
-  const params = buildParams(true, true, selectedTheme, panel);
+  const params = buildParams(true, selectedTheme, panel);
   params.panelId = params.editPanel ?? params.viewPanel;
   delete params.editPanel;
   delete params.viewPanel;

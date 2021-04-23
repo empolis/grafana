@@ -224,19 +224,21 @@ export class ShareSnapshot extends PureComponent<Props, State> {
           </p>
         </div>
         {!empolisShare && (
-          <Field label="Snapshot name">
-            <Input width={30} value={snapshotName} onChange={this.onSnapshotNameChange} />
-          </Field>
-          <Field label="Expire">
-            <Select width={30} options={expireOptions} value={selectedExpireOption} onChange={this.onExpireChange} />
-          </Field>
-          <Field
-            label="Timeout (seconds)"
-            description="You may need to configure the timeout value if it takes a long time to collect your dashboard's
-              metrics."
-          >
-            <Input type="number" width={21} value={timeoutSeconds} onChange={this.onTimeoutChange} />
-          </Field>
+          <div>
+            <Field label="Snapshot name">
+              <Input width={30} value={snapshotName} onChange={this.onSnapshotNameChange} />
+            </Field>
+            <Field label="Expire">
+              <Select width={30} options={expireOptions} value={selectedExpireOption} onChange={this.onExpireChange} />
+            </Field>
+            <Field
+              label="Timeout (seconds)"
+              description="You may need to configure the timeout value if it takes a long time to collect your dashboard's
+                metrics."
+            >
+              <Input type="number" width={21} value={timeoutSeconds} onChange={this.onTimeoutChange} />
+            </Field>
+          </div>
         )}
 
         <div className="gf-form-button-row">
