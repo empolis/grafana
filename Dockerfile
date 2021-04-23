@@ -1,4 +1,4 @@
-FROM node:14.15.5-alpine3.13 as js-builder
+FROM node:14.16.1-alpine3.13 as js-builder
 
 WORKDIR /usr/src/app/
 
@@ -6,7 +6,8 @@ COPY package.json yarn.lock ./
 COPY packages packages
 
 RUN apk add --no-cache git
-RUN yarn install --pure-lockfile --no-progress
+RUN yarn set version berry && yarn config set nodeLinker node-modules
+RUN yarn install
 
 COPY tsconfig.json .eslintrc .editorconfig .browserslistrc .prettierrc.js ./
 COPY public public
