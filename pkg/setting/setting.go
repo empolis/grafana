@@ -16,6 +16,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"html/template"
 
 	"github.com/prometheus/common/model"
 	ini "gopkg.in/ini.v1"
@@ -187,8 +188,8 @@ var (
 	EmpolisFooterUrl      string
 	EmpolisFooterLabel    string
 	EmpolisLoginBgImg     string
-	EmpolisAppleTouchIcon string
-	EmpolisFavIcon        string
+	EmpolisAppleTouchIcon template.URL
+	EmpolisFavIcon        template.URL
 	EmpolisMenuLogo       string
 	EmpolisCustomLogo     string
 	EmpolisHideVersion    bool
@@ -350,8 +351,8 @@ type Cfg struct {
 	EmpolisFooterUrl      string
 	EmpolisFooterLabel    string
 	EmpolisLoginBgImg     string
-	EmpolisAppleTouchIcon string
-	EmpolisFavIcon        string
+	EmpolisAppleTouchIcon template.URL
+	EmpolisFavIcon        template.URL
 	EmpolisMenuLogo       string
 	EmpolisCustomLogo     string
 	EmpolisHideVersion    bool
@@ -950,8 +951,8 @@ func (cfg *Cfg) Load(args *CommandLineArgs) error {
 	EmpolisFooterLabel = valueAsString(empolisSettings, "footer_label", "")
 	EmpolisHideVersion = empolisSettings.Key("hide_version").MustBool(false)
 	EmpolisLoginBgImg = valueAsString(empolisSettings, "login_bg_img", "")
-	EmpolisAppleTouchIcon = valueAsString(empolisSettings, "apple_touch_icon", "")
-	EmpolisFavIcon = valueAsString(empolisSettings, "fav_icon", "")
+	EmpolisAppleTouchIcon = template.URL(valueAsString(empolisSettings, "apple_touch_icon", ""))
+	EmpolisFavIcon = template.URL(valueAsString(empolisSettings, "fav_icon", ""))
 	EmpolisMenuLogo = valueAsString(empolisSettings, "menu_logo", "")
 	EmpolisCustomLogo = valueAsString(empolisSettings, "custom_logo", "")
 
