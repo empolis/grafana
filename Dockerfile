@@ -6,7 +6,7 @@ COPY package.json yarn.lock ./
 COPY packages packages
 
 RUN apk add --no-cache git
-RUN yarn set version berry
+RUN yarn set version berry && yarn config set nodeLinker node-modules
 RUN yarn install
 
 COPY tsconfig.json .eslintrc .editorconfig .browserslistrc .prettierrc.js ./
