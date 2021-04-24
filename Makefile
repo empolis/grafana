@@ -4,7 +4,7 @@
 
 -include local/Makefile
 
-.PHONY: all deps-go deps-js deps build-go build-server build-cli build-js build build-docker-dev build-docker-full lint-go revive golangci-lint test-go test-js test run run-frontend clean devenv devenv-down revive-strict protobuf help
+.PHONY: all deps-go deps-js deps build-go build-server build-cli build-js build build-docker-dev build-docker-full lint-go revive golangci-lint test-go test-js test run run-frontend clean devenv devenv-down revive-strict protobuf help git-files-for-docker
 
 GO = GO111MODULE=on go
 GO_FILES ?= ./pkg/...
@@ -57,17 +57,21 @@ run-frontend: deps-js ## Fetch js dependencies and watch frontend for rebuild
 	yarn start
 
 EMPOLIS_NAME   := empolis/grafana
-EMPOLIS_TAG    := $(shell git rev-parse --short HEAD)
-EMPOLIS_IMG    := ${EMPOLIS_NAME}:${EMPOLIS_TAG}
-EMPOLIS_LATEST := ${EMPOLIS_NAME}:latest
+EMPOLIS_IMG    := ${EMPOLIS_NAME}:$(shell git rev-parse --short HEAD)
+EMPOLIS_BRANCH := ${EMPOLIS_NAME}:$(subst /,_,$(shell git rev-parse --abbrev-ref HEAD))
 
-build-docker-empolis:
-	docker build -t ${EMPOLIS_IMG} --build-arg GIT_TAG=${EMPOLIS_TAG} .
-	docker tag ${EMPOLIS_IMG} ${EMPOLIS_LATEST}
+git-files-for-docker:
+	git rev-parse --abbrev-ref HEAD > git-branch
+	git rev-parse --short HEAD > git-sha
+	git show -s --format=%ct > git-buildstamp
 
-build-docker-empolis-ubuntu:
-	docker build -f Dockerfile.ubuntu -t ${EMPOLIS_IMG} --build-arg GIT_TAG=${EMPOLIS_TAG} .
-	docker tag ${EMPOLIS_IMG} ${EMPOLIS_LATEST}
+build-docker-empolis: git-files-for-docker
+	docker build -t ${EMPOLIS_IMG} .
+	docker tag ${EMPOLIS_IMG} ${EMPOLIS_BRANCH}
+
+build-docker-empolis-ubuntu: git-files-for-docker
+	docker build -f Dockerfile.ubuntu -t ${EMPOLIS_IMG}-ubuntu .
+	docker tag ${EMPOLIS_IMG}-ubuntu ${EMPOLIS_BRANCH}-ubuntu
 
 ##@ Testing
 

@@ -5,6 +5,10 @@ pipeline {
 
   environment {
     IMAGE = 'empolis/grafana'
+    GIT_COMMIT_SHORT = sh(
+      script: "printf \$(git rev-parse --short HEAD)",
+      returnStdout: true
+    )
   }
 
   options {
@@ -16,7 +20,10 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        sh "docker build -t '${env.IMAGE}:${env.GIT_COMMIT}' --build-arg GIT_TAG=${env.GIT_COMMIT} ."
+        sh "git rev-parse --abbrev-ref HEAD > git-branch"
+        sh "git rev-parse --short HEAD > git-sha"
+        sh "git show -s --format=%ct > git-buildstamp"
+        sh "docker build -t '${env.IMAGE}:${env.GIT_COMMIT_SHORT}' ."
       }
     }
 

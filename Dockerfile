@@ -29,9 +29,7 @@ COPY go.mod go.sum ./
 RUN go mod verify
 
 COPY pkg pkg
-COPY build.go package.json ./
-ARG GIT_TAG="unknown-dev"
-RUN sed -i "s/unknown-dev/${GIT_TAG}/g" build.go
+COPY build.go package.json git-branch git-sha git-buildstamp ./
 
 RUN go run build.go build
 

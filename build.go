@@ -356,7 +356,10 @@ func setBuildEnv() {
 func getGitBranch() string {
 	v, err := runError("git", "rev-parse", "--abbrev-ref", "HEAD")
 	if err != nil {
-		return "master"
+		v, err = ioutil.ReadFile("git-branch")
+		if err != nil {
+			return "master"
+		}
 	}
 	return string(v)
 }
@@ -364,7 +367,10 @@ func getGitBranch() string {
 func getGitSha() string {
 	v, err := runError("git", "rev-parse", "--short", "HEAD")
 	if err != nil {
-		return "unknown-dev"
+		v, err = ioutil.ReadFile("git-sha")
+		if err != nil {
+			return "unknown-dev"
+		}
 	}
 	return string(v)
 }
@@ -377,7 +383,10 @@ func buildStamp() int64 {
 
 	bs, err := runError("git", "show", "-s", "--format=%ct")
 	if err != nil {
-		return time.Now().Unix()
+		bs, err = ioutil.ReadFile("git-buildstamp")
+		if err != nil {
+			return time.Now().Unix()
+		}
 	}
 	s, _ := strconv.ParseInt(string(bs), 10, 64)
 	return s
