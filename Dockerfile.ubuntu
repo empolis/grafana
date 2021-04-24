@@ -5,7 +5,7 @@ WORKDIR /usr/src/app/
 COPY package.json yarn.lock ./
 COPY packages packages
 
-RUN apt-get update && apt-get install -yq git
+RUN apt-get update && apt-get install -yq git && apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN yarn set version berry && yarn config set nodeLinker node-modules
 RUN yarn install
 
@@ -28,7 +28,8 @@ RUN go mod verify
 
 COPY build.go package.json ./
 COPY pkg pkg/
-
+ARG GIT_TAG="unknown-dev"
+RUN sed -i "s/unknown-dev/${GIT_TAG}/g" build.go
 RUN go run build.go build
 
 FROM ubuntu:20.04
@@ -52,7 +53,7 @@ WORKDIR $GF_PATHS_HOME
 COPY conf conf
 
 # curl should be part of the image
-RUN apt-get update && apt-get install -y ca-certificates curl
+RUN apt-get update && apt-get install -y ca-certificates curl && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p "$GF_PATHS_HOME/.aws" && \
   addgroup --system --gid $GF_GID grafana && \
