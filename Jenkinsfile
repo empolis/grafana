@@ -23,12 +23,19 @@ pipeline {
   }
 
   stages {
-    stage('Build') {
+    stage('Prepare workspace') {
       steps {
         sh "/bin/echo -n ${env.GIT_BRANCH} > git-branch"
         sh "/bin/echo -n ${env.GIT_COMMIT_SHORT} > git-sha"
         sh "/bin/echo -n `git show -s --format=%ct` > git-buildstamp"
-        image = docker.build("${env.IMAGE}:${env.GIT_COMMIT_SHORT}")
+      }
+    }
+
+    stage('Build') {
+      steps {
+        script {
+          image = docker.build("${env.IMAGE}:${env.GIT_COMMIT_SHORT}")
+        }
       }
     }
 
