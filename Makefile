@@ -61,9 +61,9 @@ EMPOLIS_IMG    := ${EMPOLIS_NAME}:$(shell git rev-parse --short HEAD)
 EMPOLIS_BRANCH := ${EMPOLIS_NAME}:$(subst /,_,$(shell git rev-parse --abbrev-ref HEAD))
 
 git-files-for-docker:
-	git rev-parse --abbrev-ref HEAD > git-branch
-	git rev-parse --short HEAD > git-sha
-	git show -s --format=%ct > git-buildstamp
+	/bin/echo -n "$(shell git rev-parse --abbrev-ref HEAD)" > git-branch
+	/bin/echo -n "$(shell git rev-parse --short HEAD)" > git-sha
+	/bin/echo -n "$(shell git show -s --format=%ct)" > git-buildstamp
 
 build-docker-empolis: git-files-for-docker
 	docker build -t ${EMPOLIS_IMG} .

@@ -20,9 +20,9 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        sh "echo -n ${env.GIT_BRANCH} > git-branch"
-        sh "echo -n ${env.GIT_COMMIT_SHORT} > git-sha"
-        sh "git show -s --format=%ct > git-buildstamp"
+        sh "/bin/echo -n ${env.GIT_BRANCH} > git-branch"
+        sh "/bin/echo -n ${env.GIT_COMMIT_SHORT} > git-sha"
+        sh "/bin/echo -n `git show -s --format=%ct` > git-buildstamp"
         sh "docker build -t '${env.IMAGE}:${env.GIT_COMMIT_SHORT}' ."
       }
     }
