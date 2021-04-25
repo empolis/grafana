@@ -21,7 +21,7 @@ pipeline {
       steps {
         sh "/bin/echo -n ${env.GIT_BRANCH} > git-branch"
         sh "/bin/echo -n ${env.GIT_COMMIT_SHORT} > git-sha"
-        sh "/bin/echo -n `git show -s --format=%ct` > git-buildstamp"
+        sh "/bin/echo -n \$(git show -s --format=%ct) > git-buildstamp"
       }
     }
 
@@ -43,15 +43,15 @@ pipeline {
             image.push("${env.GIT_COMMIT_SHORT}")
             image.push("${env.GIT_BRANCH_TAG}")
           }
-          sh "docker rmi ${env.DOCKER_REPO}/{env.IMAGE}:${env.GIT_COMMIT_SHORT}"
-          sh "docker rmi ${env.DOCKER_REPO}/{env.IMAGE}:${env.GIT_BRANCH_TAG}"
+          sh "docker rmi ${env.DOCKER_REPO}/${env.IMAGE}:${env.GIT_COMMIT_SHORT}"
+          sh "docker rmi ${env.DOCKER_REPO}/${env.IMAGE}:${env.GIT_BRANCH_TAG}"
         }
       }
     }
 
     stage('Remove image') {
       steps {
-        sh "docker {env.IMAGE}:${env.GIT_COMMIT_SHORT}"
+        sh "docker rmi ${env.IMAGE}:${env.GIT_COMMIT_SHORT}"
       }
     }
   }
