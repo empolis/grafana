@@ -16,12 +16,6 @@ pipeline {
     GIT_BRANCH_TAG = env.GIT_BRANCH.replace('/', '_')
   }
 
-  options {
-    buildDiscarder(
-      logRotator(numToKeepStr: '4', artifactNumToKeepStr: '4')
-    )
-  }
-
   stages {
     stage('Prepare workspace') {
       steps {
