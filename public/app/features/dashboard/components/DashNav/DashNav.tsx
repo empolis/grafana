@@ -197,17 +197,37 @@ class DashNav extends PureComponent<Props> {
     const tvButton = (
       <ToolbarButton tooltip="Cycle view mode" icon="monitor" onClick={this.onToggleTVMode} key="tv-button" />
     );
+    const { canShare } = dashboard.meta;
 
     let timeControls: React.ReactNode | null;
 
     if (!dashboard.timepicker.hidden) {
       timeControls = (
-        <DashNavTimeControls
-          dashboard={dashboard}
-          location={location}
-          onChangeTimeZone={updateTimeZoneForSession}
-          key="time-controls"
-        />
+        <>
+          <DashNavTimeControls
+            dashboard={dashboard}
+            location={location}
+            onChangeTimeZone={updateTimeZoneForSession}
+            key="time-controls"
+          />
+          {canShare && (
+            <ModalsController>
+              {({ showModal, hideModal }) => (
+                <DashNavButton
+                  tooltip="Create snapshot"
+                  icon="camera"
+                  onClick={() => {
+                    showModal(ShareModal, {
+                      dashboard,
+                      empolisShare: true,
+                      onDismiss: hideModal,
+                    });
+                  }}
+                />
+              )}
+            </ModalsController>
+          )}
+        </>
       );
     }
 
