@@ -134,7 +134,7 @@ class DashNav extends PureComponent<Props> {
 
   renderLeftActionsButton() {
     const { dashboard } = this.props;
-    const { canStar, canShare, isStarred } = dashboard.meta;
+    const { canStar, isStarred } = dashboard.meta;
     const buttons: ReactNode[] = [];
 
     if (this.isInKioskMode() || this.isPlaylistRunning()) {
@@ -154,26 +154,6 @@ class DashNav extends PureComponent<Props> {
       );
     }
 
-    if (canShare) {
-      buttons.push(
-        <ModalsController key="button-share">
-          {({ showModal, hideModal }) => (
-            <DashNavButton
-              tooltip="Share dashboard or panel"
-              icon="share-alt"
-              iconSize="lg"
-              onClick={() => {
-                showModal(ShareModal, {
-                  dashboard,
-                  onDismiss: hideModal,
-                });
-              }}
-            />
-          )}
-        </ModalsController>
-      );
-    }
-
     this.addCustomContent(customLeftActions, buttons);
     return buttons;
   }
@@ -190,53 +170,57 @@ class DashNav extends PureComponent<Props> {
 
   renderRightActionsButton() {
     const { dashboard, onAddPanel, location, updateTimeZoneForSession, isFullscreen } = this.props;
-    const { canEdit, showSettings } = dashboard.meta;
+    const { canEdit, showSettings, canShare } = dashboard.meta;
     const { snapshot } = dashboard;
     const snapshotUrl = snapshot && snapshot.originalUrl;
     const buttons: ReactNode[] = [];
     const tvButton = (
-      <ToolbarButton tooltip="Cycle view mode" icon="monitor" onClick={this.onToggleTVMode} key="tv-button" />
+      <ToolbarButton
+        className="cycle-view-mode-button"
+        tooltip="Cycle view mode"
+        icon="monitor"
+        onClick={this.onToggleTVMode}
+        key="tv-button"
+      />
     );
-    const { canShare } = dashboard.meta;
 
     let timeControls: React.ReactNode | null;
+    let shareButton: React.ReactNode | null;
 
     if (!dashboard.timepicker.hidden) {
       timeControls = (
-        <>
-          <DashNavTimeControls
-            dashboard={dashboard}
-            location={location}
-            onChangeTimeZone={updateTimeZoneForSession}
-            key="time-controls"
-          />
-          {canShare && (
-            <ModalsController>
-              {({ showModal, hideModal }) => (
-                <DashNavButton
-                  tooltip="Create snapshot"
-                  icon="camera"
-                  onClick={() => {
-                    showModal(ShareModal, {
-                      dashboard,
-                      empolisShare: true,
-                      onDismiss: hideModal,
-                    });
-                  }}
-                />
-              )}
-            </ModalsController>
-          )}
-        </>
+        <DashNavTimeControls
+          dashboard={dashboard}
+          location={location}
+          onChangeTimeZone={updateTimeZoneForSession}
+          key="time-controls"
+        />
       );
     }
+
+    shareButton = (
+      <ModalsController key="button-share">
+        {({ showModal, hideModal }) => (
+          <ToolbarButton
+            tooltip="Share dashboard or panel"
+            icon="share-alt"
+            onClick={() => {
+              showModal(ShareModal, {
+                dashboard,
+                onDismiss: hideModal,
+              });
+            }}
+          />
+        )}
+      </ModalsController>
+    );
 
     if (this.isPlaylistRunning()) {
       return [this.renderPlaylistControls(), timeControls];
     }
 
     if (this.isInKioskMode()) {
-      return [timeControls, tvButton];
+      return [timeControls, shareButton, tvButton];
     }
 
     if (canEdit && !isFullscreen) {
@@ -278,7 +262,13 @@ class DashNav extends PureComponent<Props> {
 
     this.addCustomContent(customRightActions, buttons);
     buttons.push(timeControls);
+
+    if (canShare) {
+      buttons.push(shareButton);
+    }
+
     buttons.push(tvButton);
+
     return buttons;
   }
 

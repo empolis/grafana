@@ -54,7 +54,7 @@ export const PageToolbar: FC<Props> = React.memo(
 
     return (
       <div className={mainStyle}>
-        <div className={styles.toolbarLeft}>
+        <div className={styles.toolbarLeft + ' ' + 'page-title'}>
           {pageIcon && !onGoBack && (
             <div className={styles.pageIcon}>
               <Icon name={pageIcon} size="lg" />

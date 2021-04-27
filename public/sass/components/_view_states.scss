@@ -15,7 +15,6 @@
   .page-toolbar {
     padding-left: $side-menu-width;
 
-
     &--fullscreen {
       padding-left: $space-md;
     }
@@ -26,11 +25,12 @@
   @extend .view-mode--tv;
 
   .sidemenu,
-  .page-toolbar,
-  .navbar-page-btn,
-  .navbar-buttons--actions,
-  .navbar-buttons--tv {
+  .page-toolbar .page-title {
     display: none;
+  }
+
+  .page-toolbar .cycle-view-mode-button {
+    visibility: hidden;
   }
 
   .submenu-item.gf-form-inline.ng-hide {

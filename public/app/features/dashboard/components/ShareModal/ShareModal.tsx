@@ -4,7 +4,6 @@ import { DashboardModel, PanelModel } from 'app/features/dashboard/state';
 import { ShareLink } from './ShareLink';
 import { SharePdf } from './SharePdf';
 import { ShareSnapshot } from './ShareSnapshot';
-import { ShareExport } from './ShareExport';
 import { ShareEmbed } from './ShareEmbed';
 import { ShareModalTabModel } from './types';
 import { contextSrv } from 'app/core/core';
@@ -49,7 +48,7 @@ function getTabs(props: Props) {
     tabs2.push(...customDashboardTabs);
     return tabs2;
   } else {
-    tabs.push({ label: 'Export', value: 'export', component: ShareExport });
+    //   tabs.push({ label: 'Export', value: 'export', component: ShareExport });
     tabs.push(...customDashboardTabs);
   }
 
