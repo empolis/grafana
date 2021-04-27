@@ -220,7 +220,7 @@ class DashNav extends PureComponent<Props> {
     }
 
     if (this.isInKioskMode()) {
-      return [timeControls, shareButton, tvButton];
+      return [tvButton, timeControls, shareButton];
     }
 
     if (canEdit && !isFullscreen) {
@@ -261,13 +261,12 @@ class DashNav extends PureComponent<Props> {
     }
 
     this.addCustomContent(customRightActions, buttons);
+    buttons.push(tvButton);
     buttons.push(timeControls);
 
     if (canShare) {
       buttons.push(shareButton);
     }
-
-    buttons.push(tvButton);
 
     return buttons;
   }
