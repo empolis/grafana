@@ -28,7 +28,7 @@ pipeline {
     stage('Build') {
       steps {
         script {
-          image = docker.build("${env.IMAGE}:${env.GIT_COMMIT_SHORT}")
+          image = docker.build("${env.IMAGE}:${env.GIT_BRANCH_TAG}-${env.GIT_COMMIT_SHORT}")
         }
       }
     }
@@ -40,10 +40,8 @@ pipeline {
       steps {
         script {
           docker.withRegistry("https://${env.DOCKER_REPO}", env.DOCKER_REPO_CREDENTIALS) {
-            image.push("${env.GIT_COMMIT_SHORT}")
             image.push("${env.GIT_BRANCH_TAG}")
           }
-          sh "docker rmi ${env.DOCKER_REPO}/${env.IMAGE}:${env.GIT_COMMIT_SHORT}"
           sh "docker rmi ${env.DOCKER_REPO}/${env.IMAGE}:${env.GIT_BRANCH_TAG}"
         }
       }
@@ -51,7 +49,7 @@ pipeline {
 
     stage('Remove image') {
       steps {
-        sh "docker rmi ${env.IMAGE}:${env.GIT_COMMIT_SHORT}"
+        sh "docker rmi ${env.IMAGE}:${env.GIT_BRANCH_TAG}-${env.GIT_COMMIT_SHORT}"
       }
     }
   }

@@ -56,13 +56,16 @@ run: scripts/go/bin/bra ## Build and run web server on filesystem changes.
 run-frontend: deps-js ## Fetch js dependencies and watch frontend for rebuild
 	yarn start
 
+_BRANCH        := $(shell git rev-parse --abbrev-ref HEAD)
+_BRANCH_TAG    := $(subst /,_,${_BRANCH})
+_REV           := $(shell git rev-parse --short HEAD)
 EMPOLIS_NAME   := empolis/grafana
-EMPOLIS_IMG    := ${EMPOLIS_NAME}:$(shell git rev-parse --short HEAD)
-EMPOLIS_BRANCH := ${EMPOLIS_NAME}:$(subst /,_,$(shell git rev-parse --abbrev-ref HEAD))
+EMPOLIS_IMG    := ${EMPOLIS_NAME}:${_BRANCH_TAG}-${_REV}
+EMPOLIS_BRANCH := ${EMPOLIS_NAME}:${_BRANCH_TAG}
 
 git-files-for-docker:
-	/bin/echo -n "$(shell git rev-parse --abbrev-ref HEAD)" > git-branch
-	/bin/echo -n "$(shell git rev-parse --short HEAD)" > git-sha
+	/bin/echo -n "${_BRANCH}" > git-branch
+	/bin/echo -n "${_REV}" > git-sha
 	/bin/echo -n "$(shell git show -s --format=%ct)" > git-buildstamp
 
 build-docker-empolis: git-files-for-docker
