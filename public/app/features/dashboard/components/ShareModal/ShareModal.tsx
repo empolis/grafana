@@ -50,6 +50,7 @@ function getTabs(props: Props) {
   } else {
     //   tabs.push({ label: 'Export', value: 'export', component: ShareExport });
     tabs.push(...customDashboardTabs);
+    tabs.push(...sharePdfTabs);
   }
 
   return tabs;
