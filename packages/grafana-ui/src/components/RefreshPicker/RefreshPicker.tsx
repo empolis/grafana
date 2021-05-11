@@ -66,7 +66,7 @@ export class RefreshPicker extends PureComponent<Props> {
     }
 
     return (
-      <div className="refresh-picker">
+      <div className="refresh-picker hide-from-print-view">
         <ButtonGroup className="refresh-picker-buttons">
           <Tooltip placement="bottom" content={tooltip!}>
             <ToolbarButton

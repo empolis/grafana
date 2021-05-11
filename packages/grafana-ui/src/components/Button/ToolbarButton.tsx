@@ -177,7 +177,7 @@ const getStyles = (theme: GrafanaTheme) => {
       display: none;
       padding-left: ${theme.spacing.sm};
 
-      @media ${styleMixins.mediaUp(theme.breakpoints.md)} {
+      @media not speech and (min-width: ${theme.breakpoints.md}) {
         display: block;
       }
     `,
