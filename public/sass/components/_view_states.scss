@@ -24,9 +24,15 @@
 .view-mode--kiosk {
   @extend .view-mode--tv;
 
-  .sidemenu,
+  .sidemenu {
+    display: none;
+  }
+
   .page-toolbar .page-title {
     display: none;
+    @media print {
+      display: block;
+    }
   }
 
   .page-toolbar .cycle-view-mode-button {
@@ -35,6 +41,12 @@
 
   .submenu-item.gf-form-inline.ng-hide {
     display: none !important;
+  }
+}
+
+.page-toolbar .hide-from-print-view {
+  @media print {
+    display: none;
   }
 }
 

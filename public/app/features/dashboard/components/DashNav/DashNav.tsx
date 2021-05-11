@@ -176,7 +176,7 @@ class DashNav extends PureComponent<Props> {
     const buttons: ReactNode[] = [];
     const tvButton = (
       <ToolbarButton
-        className="cycle-view-mode-button"
+        className="cycle-view-mode-button hide-from-print-view"
         tooltip="Cycle view mode"
         icon="monitor"
         onClick={this.onToggleTVMode}
@@ -202,6 +202,7 @@ class DashNav extends PureComponent<Props> {
       <ModalsController key="button-share">
         {({ showModal, hideModal }) => (
           <ToolbarButton
+            className="hide-from-print-view"
             tooltip="Share dashboard or panel"
             icon="share-alt"
             onClick={() => {
@@ -224,11 +225,20 @@ class DashNav extends PureComponent<Props> {
     }
 
     if (canEdit && !isFullscreen) {
-      buttons.push(<ToolbarButton tooltip="Add panel" icon="panel-add" onClick={onAddPanel} key="button-panel-add" />);
+      buttons.push(
+        <ToolbarButton
+          className="hide-from-print-view"
+          tooltip="Add panel"
+          icon="panel-add"
+          onClick={onAddPanel}
+          key="button-panel-add"
+        />
+      );
       buttons.push(
         <ModalsController key="button-save">
           {({ showModal, hideModal }) => (
             <ToolbarButton
+              className="hide-from-print-view"
               tooltip="Save dashboard"
               icon="save"
               onClick={() => {
@@ -256,7 +266,13 @@ class DashNav extends PureComponent<Props> {
 
     if (showSettings) {
       buttons.push(
-        <ToolbarButton tooltip="Dashboard settings" icon="cog" onClick={this.onOpenSettings} key="button-settings" />
+        <ToolbarButton
+          className="hide-from-print-view"
+          tooltip="Dashboard settings"
+          icon="cog"
+          onClick={this.onOpenSettings}
+          key="button-settings"
+        />
       );
     }
 
