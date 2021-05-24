@@ -74,6 +74,16 @@ func (m *postgresMacroEngine) evaluateMacro(timeRange plugins.DataTimeRange, que
 			return "", fmt.Errorf("missing time column argument for macro %v", name)
 		}
 		return fmt.Sprintf("%s AS \"time\"", args[0]), nil
+	case "__timeEpochMilli":
+		if len(args) == 0 {
+			return "", fmt.Errorf("missing time column argument for macro %v", name)
+		}
+		return fmt.Sprintf("%s / 1000.0 AS \"time\"", args[0]), nil
+	case "__timeEpochNano":
+		if len(args) == 0 {
+			return "", fmt.Errorf("missing time column argument for macro %v", name)
+		}
+		return fmt.Sprintf("%s / 1000000000.0 AS \"time\"", args[0]), nil
 	case "__timeEpoch":
 		if len(args) == 0 {
 			return "", fmt.Errorf("missing time column argument for macro %v", name)
@@ -124,11 +134,20 @@ func (m *postgresMacroEngine) evaluateMacro(timeRange plugins.DataTimeRange, que
 			return "", fmt.Errorf("missing time column argument for macro %v", name)
 		}
 		return fmt.Sprintf("%s >= %d AND %s <= %d", args[0], timeRange.GetFromAsSecondsEpoch(), args[0], timeRange.GetToAsSecondsEpoch()), nil
+	case "__unixEpochMilliFilter":
+		if len(args) == 0 {
+			return "", fmt.Errorf("missing time column argument for macro %v", name)
+		}
+		return fmt.Sprintf("%s >= %d AND %s <= %d", args[0], plugins.TimeUnixMilli(timeRange.GetFromAsTimeUTC()), args[0], plugins.TimeUnixMilli(timeRange.GetToAsTimeUTC())), nil
 	case "__unixEpochNanoFilter":
 		if len(args) == 0 {
 			return "", fmt.Errorf("missing time column argument for macro %v", name)
 		}
 		return fmt.Sprintf("%s >= %d AND %s <= %d", args[0], timeRange.GetFromAsTimeUTC().UnixNano(), args[0], timeRange.GetToAsTimeUTC().UnixNano()), nil
+	case "__unixEpochMilliFrom":
+		return fmt.Sprintf("%d", plugins.TimeUnixMilli(timeRange.GetFromAsTimeUTC())), nil
+	case "__unixEpochMilliTo":
+		return fmt.Sprintf("%d", plugins.TimeUnixMilli(timeRange.GetToAsTimeUTC())), nil
 	case "__unixEpochNanoFrom":
 		return fmt.Sprintf("%d", timeRange.GetFromAsTimeUTC().UnixNano()), nil
 	case "__unixEpochNanoTo":
@@ -148,10 +167,52 @@ func (m *postgresMacroEngine) evaluateMacro(timeRange plugins.DataTimeRange, que
 			}
 		}
 		return fmt.Sprintf("floor(%s/%v)*%v", args[0], interval.Seconds(), interval.Seconds()), nil
+	case "__unixEpochMilliGroup":
+		if len(args) < 2 {
+			return "", fmt.Errorf("macro %v needs time column and interval and optional fill value", name)
+		}
+		interval, err := time.ParseDuration(strings.Trim(args[1], `'`))
+		if err != nil {
+			return "", fmt.Errorf("error parsing interval %v", args[1])
+		}
+		if len(args) == 3 {
+			err := sqleng.SetupFillmode(query, interval, args[2])
+			if err != nil {
+				return "", err
+			}
+		}
+		return fmt.Sprintf("floor(%s/%v)*%v", args[0], plugins.DurationMilliseconds(interval), plugins.DurationMilliseconds(interval)), nil
+	case "__unixEpochNanoGroup":
+		if len(args) < 2 {
+			return "", fmt.Errorf("macro %v needs time column and interval and optional fill value", name)
+		}
+		interval, err := time.ParseDuration(strings.Trim(args[1], `'`))
+		if err != nil {
+			return "", fmt.Errorf("error parsing interval %v", args[1])
+		}
+		if len(args) == 3 {
+			err := sqleng.SetupFillmode(query, interval, args[2])
+			if err != nil {
+				return "", err
+			}
+		}
+		return fmt.Sprintf("floor(%s/%v)*%v", args[0], interval.Nanoseconds(), interval.Nanoseconds()), nil
 	case "__unixEpochGroupAlias":
 		tg, err := m.evaluateMacro(timeRange, query, "__unixEpochGroup", args)
 		if err == nil {
 			return tg + " AS \"time\"", nil
+		}
+		return "", err
+	case "__unixEpochMilliGroupAlias":
+		tg, err := m.evaluateMacro(timeRange, query, "__unixEpochMilliGroup", args)
+		if err == nil {
+			return tg + " AS \"time\"", err
+		}
+		return "", err
+	case "__unixEpochNanoGroupAlias":
+		tg, err := m.evaluateMacro(timeRange, query, "__unixEpochNanoGroup", args)
+		if err == nil {
+			return tg + " AS \"time\"", err
 		}
 		return "", err
 	default:

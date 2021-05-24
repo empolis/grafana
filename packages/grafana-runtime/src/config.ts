@@ -3,6 +3,7 @@ import {
   BuildInfo,
   createTheme,
   DataSourceInstanceSettings,
+  EmpolisOptions,
   FeatureToggles,
   GrafanaConfig,
   GrafanaTheme,
@@ -65,6 +66,7 @@ export class GrafanaBootConfig implements GrafanaConfig {
     trimDefaults: false,
   };
   licenseInfo: LicenseInfo = {} as LicenseInfo;
+  empolisOptions: EmpolisOptions = {} as EmpolisOptions;
   rendererAvailable = false;
   rendererVersion = '';
   http2Enabled = false;

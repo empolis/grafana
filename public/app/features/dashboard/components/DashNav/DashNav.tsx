@@ -109,28 +109,14 @@ class DashNav extends PureComponent<Props> {
     const { canStar, canShare, isStarred } = dashboard.meta;
     const buttons: ReactNode[] = [];
 
-    if (kioskMode !== KioskMode.Off || this.isPlaylistRunning()) {
+    if (this.isPlaylistRunning()) {
       return [];
-    }
-
-    if (canStar) {
-      let desc = isStarred ? 'Unmark as favorite' : 'Mark as favorite';
-      buttons.push(
-        <DashNavButton
-          tooltip={desc}
-          icon={isStarred ? 'favorite' : 'star'}
-          iconType={isStarred ? 'mono' : 'default'}
-          iconSize="lg"
-          onClick={this.onStarDashboard}
-          key="button-star"
-        />
-      );
     }
 
     if (canShare) {
       let desc = 'Share dashboard or panel';
       buttons.push(
-        <ModalsController key="button-share">
+        <ModalsController key="button-share hide-from-print-view">
           {({ showModal, hideModal }) => (
             <DashNavButton
               tooltip={desc}
@@ -145,6 +131,24 @@ class DashNav extends PureComponent<Props> {
             />
           )}
         </ModalsController>
+      );
+    }
+
+    if (kioskMode !== KioskMode.Off) {
+      return buttons;
+    }
+
+    if (canStar) {
+      let desc = isStarred ? 'Unmark as favorite' : 'Mark as favorite';
+      buttons.unshift(
+        <DashNavButton
+          tooltip={desc}
+          icon={isStarred ? 'favorite' : 'star'}
+          iconType={isStarred ? 'mono' : 'default'}
+          iconSize="lg"
+          onClick={this.onStarDashboard}
+          key="button-star"
+        />
       );
     }
 
@@ -190,6 +194,10 @@ class DashNav extends PureComponent<Props> {
 
     if (kioskMode === KioskMode.TV) {
       return [this.renderTimeControls(), tvButton];
+    }
+
+    if (kioskMode === KioskMode.Full) {
+      return [this.renderTimeControls()];
     }
 
     if (canEdit && !isFullscreen) {
@@ -241,20 +249,21 @@ class DashNav extends PureComponent<Props> {
   }
 
   render() {
-    const { isFullscreen, title, folderTitle } = this.props;
+    const { isFullscreen, kioskMode, title, folderTitle } = this.props;
     const onGoBack = isFullscreen ? this.onClose : undefined;
+    const fullKiosk = kioskMode === KioskMode.Full;
 
     const titleHref = locationUtil.updateSearchParams(window.location.href, '?search=open');
     const parentHref = locationUtil.updateSearchParams(window.location.href, '?search=open&folder=current');
 
     return (
       <PageToolbar
-        pageIcon={isFullscreen ? undefined : 'apps'}
+        pageIcon={isFullscreen || fullKiosk ? undefined : 'apps'}
         title={title}
-        parent={folderTitle}
-        titleHref={titleHref}
-        parentHref={parentHref}
-        onGoBack={onGoBack}
+        parent={fullKiosk ? undefined : folderTitle}
+        titleHref={fullKiosk ? undefined : titleHref}
+        parentHref={fullKiosk ? undefined : parentHref}
+        onGoBack={fullKiosk ? undefined : onGoBack}
         leftItems={this.renderLeftActionsButton()}
       >
         {this.renderRightActionsButton()}

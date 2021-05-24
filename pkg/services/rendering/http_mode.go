@@ -76,6 +76,65 @@ func (rs *RenderingService) renderViaHTTP(ctx context.Context, renderKey string,
 	return &RenderResult{FilePath: filePath}, nil
 }
 
+func (rs *RenderingService) renderPDFViaHTTP(ctx context.Context, renderKey string, opts PDFOpts) (*RenderPDFResult, error) {
+	filePath, err := rs.getNewFilePath(RenderPDF)
+	if err != nil {
+		return nil, err
+	}
+
+	rendererURL, err := url.Parse(rs.Cfg.RendererUrl + "/pdf")
+	if err != nil {
+		return nil, err
+	}
+
+	queryParams := rendererURL.Query()
+	queryParams.Add("url", rs.getURL(opts.Path))
+	queryParams.Add("renderKey", renderKey)
+	queryParams.Add("width", strconv.Itoa(opts.Width))
+	queryParams.Add("height", strconv.Itoa(opts.Height))
+	queryParams.Add("domain", rs.domain)
+	queryParams.Add("timezone", isoTimeOffsetToPosixTz(opts.Timezone))
+	queryParams.Add("encoding", opts.Encoding)
+	queryParams.Add("timeout", strconv.Itoa(int(opts.Timeout.Seconds())))
+	if (opts.Landscape) {
+		queryParams.Add("landscape", "1")
+	} else {
+		queryParams.Add("landscape", "0")
+	}
+	queryParams.Add("deviceScaleFactor", fmt.Sprintf("%f", opts.DeviceScaleFactor))
+
+	rendererURL.RawQuery = queryParams.Encode()
+
+	// gives service some additional time to timeout and return possible errors.
+	reqContext, cancel := context.WithTimeout(ctx, opts.Timeout+time.Second*2)
+	defer cancel()
+
+	resp, err := rs.doRequest(reqContext, rendererURL, opts.Headers)
+	if err != nil {
+		return nil, err
+	}
+
+	// save response to file
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			rs.log.Warn("Failed to close response body", "err", err)
+		}
+	}()
+
+	_, params, err := mime.ParseMediaType(resp.Header.Get("Content-Disposition"))
+	if err != nil {
+		return nil, err
+	}
+	downloadFileName := params["filename"]
+
+	err = rs.readFileResponse(reqContext, resp, filePath)
+	if err != nil {
+		return nil, err
+	}
+
+	return &RenderPDFResult{FilePath: filePath, FileName: downloadFileName}, nil
+}
+
 func (rs *RenderingService) renderCSVViaHTTP(ctx context.Context, renderKey string, opts CSVOpts) (*RenderCSVResult, error) {
 	filePath, err := rs.getNewFilePath(RenderCSV)
 	if err != nil {

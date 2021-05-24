@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import { css, cx } from '@emotion/css';
+import config from 'app/core/config';
 import { useTheme2, styleMixins } from '@grafana/ui';
 import { colorManipulator } from '@grafana/data';
 
@@ -9,11 +10,16 @@ export interface BrandComponentProps {
 }
 
 const LoginLogo: FC<BrandComponentProps> = ({ className }) => {
+  const { empolisOptions } = config;
+  if (empolisOptions.customLogo.trim()) {
+    return <img className={className} src={empolisOptions.customLogo} alt="Empolis" />;
+  }
   return <img className={className} src="public/img/grafana_icon.svg" alt="Grafana" />;
 };
 
 const LoginBackground: FC<BrandComponentProps> = ({ className, children }) => {
   const theme = useTheme2();
+  const { empolisOptions } = config;
 
   const background = css`
     &:before {
@@ -23,7 +29,7 @@ const LoginBackground: FC<BrandComponentProps> = ({ className, children }) => {
       right: 0;
       bottom: 0;
       top: 0;
-      background: url(public/img/g8_login_${theme.isDark ? 'dark' : 'light'}.svg);
+      background: url(${empolisOptions.loginBgImg !== '' ? empolisOptions.loginBgImg : ('public/img/g8_login_' + (theme.isDark ? 'dark' : 'light') + '.svg')});
       background-position: top center;
       background-size: auto;
       background-repeat: no-repeat;
@@ -42,7 +48,8 @@ const LoginBackground: FC<BrandComponentProps> = ({ className, children }) => {
 };
 
 const MenuLogo: FC<BrandComponentProps> = ({ className }) => {
-  return <img className={className} src="public/img/grafana_icon.svg" alt="Grafana" />;
+  const { empolisOptions } = config;
+  return <img className={className} src={empolisOptions.menuLogo} alt="Empolis" />;
 };
 
 const LoginBoxBackground = () => {

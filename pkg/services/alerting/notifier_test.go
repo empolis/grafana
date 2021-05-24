@@ -361,6 +361,10 @@ func (s *testRenderService) Render(ctx context.Context, opts rendering.Opts) (*r
 	return &rendering.RenderResult{FilePath: "image.png"}, nil
 }
 
+func (s *testRenderService) RenderPDF(ctx context.Context, opts rendering.PDFOpts) (*rendering.RenderPDFResult, error) {
+	return nil, nil
+}
+
 func (s *testRenderService) RenderCSV(ctx context.Context, opts rendering.CSVOpts) (*rendering.RenderCSVResult, error) {
 	return nil, nil
 }

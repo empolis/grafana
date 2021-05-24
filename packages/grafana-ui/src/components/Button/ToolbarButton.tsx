@@ -191,7 +191,7 @@ const getStyles = (theme: GrafanaTheme2) => {
       display: none;
       padding-left: ${theme.spacing(1)};
 
-      @media ${styleMixins.mediaUp(theme.v1.breakpoints.md)} {
+      @media not speech and (min-width: ${theme.v1.breakpoints.md}) {
         display: block;
       }
     `,

@@ -21,13 +21,13 @@ func (hs *HTTPServer) RenderToPng(c *models.ReqContext) {
 
 	queryParams := fmt.Sprintf("?%s", c.Req.URL.RawQuery)
 
-	width, err := strconv.Atoi(queryReader.Get("width", "800"))
+	width, err := strconv.Atoi(queryReader.Get("width", "1600"))
 	if err != nil {
 		c.Handle(hs.Cfg, 400, "Render parameters error", fmt.Errorf("cannot parse width as int: %s", err))
 		return
 	}
 
-	height, err := strconv.Atoi(queryReader.Get("height", "400"))
+	height, err := strconv.Atoi(queryReader.Get("height", "800"))
 	if err != nil {
 		c.Handle(hs.Cfg, 400, "Render parameters error", fmt.Errorf("cannot parse height as int: %s", err))
 		return
@@ -39,7 +39,7 @@ func (hs *HTTPServer) RenderToPng(c *models.ReqContext) {
 		return
 	}
 
-	scale, err := strconv.ParseFloat(queryReader.Get("scale", "1"), 64)
+	scale, err := strconv.ParseFloat(queryReader.Get("scale", "2"), 64)
 	if err != nil {
 		c.Handle(hs.Cfg, 400, "Render parameters error", fmt.Errorf("cannot parse scale as float: %s", err))
 		return
@@ -77,4 +77,82 @@ func (hs *HTTPServer) RenderToPng(c *models.ReqContext) {
 
 	c.Resp.Header().Set("Content-Type", "image/png")
 	http.ServeFile(c.Resp, c.Req.Request, result.FilePath)
+}
+
+func (hs *HTTPServer) RenderToPdf(c *models.ReqContext) {
+	queryReader, err := util.NewURLQueryReader(c.Req.URL)
+	if err != nil {
+		c.Handle(hs.Cfg, 400, "Render parameters error", err)
+		return
+	}
+
+	queryParams := fmt.Sprintf("?%s", c.Req.URL.RawQuery)
+
+	width, err := strconv.Atoi(queryReader.Get("width", "1600"))
+	if err != nil {
+		c.Handle(hs.Cfg, 400, "Render parameters error", fmt.Errorf("cannot parse width as int: %s", err))
+		return
+	}
+
+	height, err := strconv.Atoi(queryReader.Get("height", "800"))
+	if err != nil {
+		c.Handle(hs.Cfg, 400, "Render parameters error", fmt.Errorf("cannot parse height as int: %s", err))
+		return
+	}
+
+	timeout, err := strconv.Atoi(queryReader.Get("timeout", "60"))
+	if err != nil {
+		c.Handle(hs.Cfg, 400, "Render parameters error", fmt.Errorf("cannot parse timeout as int: %s", err))
+		return
+	}
+
+	scale, err := strconv.ParseFloat(queryReader.Get("scale", "2"), 64)
+	if err != nil {
+		c.Handle(hs.Cfg, 400, "Render parameters error", fmt.Errorf("cannot parse scale as float: %s", err))
+		return
+	}
+
+	landscape, err := strconv.Atoi(queryReader.Get("landscape", "0"))
+	if err != nil {
+		c.Handle(hs.Cfg, 400, "Render parameters error", fmt.Errorf("cannot parse scale as float: %s", err))
+		return
+	}
+
+	headers := http.Header{}
+	acceptLanguageHeader := c.Req.Header.Values("Accept-Language")
+	if len(acceptLanguageHeader) > 0 {
+		headers["Accept-Language"] = acceptLanguageHeader
+	}
+
+	result, err := hs.RenderService.RenderPDF(c.Req.Context(), rendering.PDFOpts{
+		Width:             width,
+		Height:            height,
+		Timeout:           time.Duration(timeout) * time.Second,
+		OrgID:             c.OrgId,
+		UserID:            c.UserId,
+		OrgRole:           c.OrgRole,
+		Path:              c.Params("*") + queryParams,
+		Timezone:          queryReader.Get("tz", ""),
+		Encoding:          queryReader.Get("encoding", ""),
+		ConcurrentLimit:   hs.Cfg.RendererConcurrentRequestLimit,
+		DeviceScaleFactor: scale,
+		Landscape:         landscape == 1,
+		Headers:           headers,
+	})
+	if err != nil {
+		if errors.Is(err, rendering.ErrTimeout) {
+			c.Handle(hs.Cfg, 500, err.Error(), err)
+			return
+		}
+
+		c.Handle(hs.Cfg, 500, "Rendering failed.", err)
+		return
+	}
+
+	c.Resp.Header().Set("Content-Type", "application/pdf")
+	http.ServeFile(c.Resp, c.Req.Request, result.FilePath)
+}
+
+func (hs *HTTPServer) RenderToCsv(c *models.ReqContext) {
+	// XXX
 }

@@ -259,6 +259,16 @@ func (hs *HTTPServer) getFrontendSettingsMap(c *models.ReqContext) (map[string]i
 		"caching": map[string]bool{
 			"enabled": hs.Cfg.SectionWithEnvOverrides("caching").Key("enabled").MustBool(true),
 		},
+		"empolisOptions": map[string]interface{}{
+			"footerUrl":      setting.EmpolisFooterUrl,
+			"footerLabel":    setting.EmpolisFooterLabel,
+			"loginBgImg":     setting.EmpolisLoginBgImg,
+			"appleTouchIcon": setting.EmpolisAppleTouchIcon,
+			"favIcon":        setting.EmpolisFavIcon,
+			"menuLogo":       setting.EmpolisMenuLogo,
+			"customLogo":     setting.EmpolisCustomLogo,
+			"hideVersion":    setting.EmpolisHideVersion,
+		},
 	}
 
 	if hs.Cfg.GeomapDefaultBaseLayerConfig != nil {

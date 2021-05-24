@@ -3,6 +3,7 @@ import { Modal, ModalTabsHeader, TabContent } from '@grafana/ui';
 import { DashboardModel, PanelModel } from 'app/features/dashboard/state';
 import { isPanelModelLibraryPanel } from 'app/features/library-panels/guard';
 import { ShareLink } from './ShareLink';
+import { SharePdf } from './SharePdf';
 import { ShareSnapshot } from './ShareSnapshot';
 import { ShareExport } from './ShareExport';
 import { ShareEmbed } from './ShareEmbed';
@@ -46,8 +47,9 @@ function getTabs(props: Props) {
     }
     tabs.push(...customPanelTabs);
   } else {
-    tabs.push({ label: 'Export', value: 'export', component: ShareExport });
+    //tabs.push({ label: 'Export', value: 'export', component: ShareExport });
     tabs.push(...customDashboardTabs);
+    tabs.push({ label: 'PDF', value: 'pdf', component: SharePdf });
   }
 
   return tabs;

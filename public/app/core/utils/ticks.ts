@@ -171,10 +171,10 @@ export function grafanaTimeFormat(ticks: number, min: number, max: number) {
       return 'HH:mm';
     }
     if (secPerTick <= 80000) {
-      return 'MM/DD HH:mm';
+      return 'YYYY-MM-DD HH:mm';
     }
     if (secPerTick <= 2419200 || range <= oneYear) {
-      return 'MM/DD';
+      return 'YYYY-MM-DD';
     }
     return 'YYYY-MM';
   }

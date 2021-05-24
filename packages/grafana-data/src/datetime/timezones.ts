@@ -7,6 +7,7 @@ export enum InternalTimeZones {
   default = '',
   localBrowserTime = 'browser',
   utc = 'utc',
+  data = 'data',
 }
 
 export const timeZoneFormatUserFriendly = (timeZone: TimeZone | undefined) => {
@@ -15,6 +16,8 @@ export const timeZoneFormatUserFriendly = (timeZone: TimeZone | undefined) => {
       return 'Local browser time';
     case 'utc':
       return 'UTC';
+    case 'data':
+      return 'Timezone of data';
     default:
       return timeZone;
   }
@@ -52,7 +55,12 @@ export const getTimeZones = memoize((includeInternal = false): TimeZone[] => {
   const initial: TimeZone[] = [];
 
   if (includeInternal) {
-    initial.push.apply(initial, [InternalTimeZones.default, InternalTimeZones.localBrowserTime, InternalTimeZones.utc]);
+    initial.push.apply(initial, [
+      InternalTimeZones.default,
+      InternalTimeZones.localBrowserTime,
+      InternalTimeZones.utc,
+      InternalTimeZones.data,
+    ]);
   }
 
   return moment.tz.names().reduce((zones: TimeZone[], zone: string) => {
@@ -104,6 +112,22 @@ const mapInternal = (zone: string, timestamp: number): TimeZoneInfo | undefined 
         countries: [],
         abbreviation: 'UTC, GMT',
         offsetInMins: 0,
+      };
+    }
+
+    case InternalTimeZones.data: {
+      // FIXME: tz should equal 'data' which means the rest kind of fails -- can we access template variables here?
+      const tz = getTimeZone();
+      const info = mapToInfo(tz, timestamp) ?? {};
+
+      return {
+        countries: countriesByTimeZone[tz] ?? [],
+        abbreviation: '',
+        offsetInMins: new Date().getTimezoneOffset(),
+        ...info,
+        ianaName: (info as TimeZoneInfo).ianaName,
+        name: 'Timezone of data',
+        zone,
       };
     }
 

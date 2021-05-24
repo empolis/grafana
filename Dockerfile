@@ -1,11 +1,11 @@
-FROM node:14.16.0-alpine3.13 as js-builder
+FROM node:14.16.1-alpine3.13 as js-builder
 
 WORKDIR /usr/src/app/
 
 COPY package.json yarn.lock ./
 COPY packages packages
 
-RUN apk --no-cache add git
+RUN apk add --no-cache git
 RUN yarn install --pure-lockfile --no-progress
 
 COPY tsconfig.json .eslintrc .editorconfig .browserslistrc .prettierrc.js ./
@@ -25,12 +25,12 @@ WORKDIR $GOPATH/src/github.com/grafana/grafana
 
 COPY go.mod go.sum embed.go ./
 
-RUN go mod verify
+RUN go mod download -x && go mod verify
 
 COPY cue cue
 COPY public/app/plugins public/app/plugins
 COPY pkg pkg
-COPY build.go package.json ./
+COPY build.go package.json git-branch git-sha git-buildstamp ./
 
 RUN go run build.go build
 
@@ -86,4 +86,15 @@ EXPOSE 3000
 COPY ./packaging/docker/run.sh /run.sh
 
 USER grafana
+
+#ARG GF_INSTALL_PLUGINS="grafana-piechart-panel"
+#RUN if [ ! -z "${GF_INSTALL_PLUGINS}" ]; then \
+#    OLDIFS=$IFS; \
+#        IFS=','; \
+#    for plugin in ${GF_INSTALL_PLUGINS}; do \
+#        IFS=$OLDIFS; \
+#        grafana-cli --pluginsDir "$GF_PATHS_PLUGINS" plugins install ${plugin}; \
+#    done; \
+#fi
+
 ENTRYPOINT [ "/run.sh" ]

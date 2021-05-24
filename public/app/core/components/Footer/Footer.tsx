@@ -10,49 +10,29 @@ export interface FooterLink {
 }
 
 export let getFooterLinks = (): FooterLink[] => {
-  return [
-    {
-      text: 'Documentation',
-      icon: 'document-info',
-      url: 'https://grafana.com/docs/grafana/latest/?utm_source=grafana_footer',
-      target: '_blank',
-    },
-    {
-      text: 'Support',
-      icon: 'question-circle',
-      url: 'https://grafana.com/products/enterprise/?utm_source=grafana_footer',
-      target: '_blank',
-    },
-    {
-      text: 'Community',
-      icon: 'comments-alt',
-      url: 'https://community.grafana.com/?utm_source=grafana_footer',
-      target: '_blank',
-    },
-  ];
+  const { empolisOptions } = config;
+  if (empolisOptions.footerLabel.trim()) {
+    return [
+      {
+        text: empolisOptions.footerLabel,
+        icon: 'fa fa-support',
+        url: empolisOptions.footerUrl,
+        target: '_blank',
+      },
+    ];
+  }
+  return [];
 };
 
 export let getVersionLinks = (): FooterLink[] => {
-  const { buildInfo, licenseInfo } = config;
+  const { buildInfo, empolisOptions } = config;
   const links: FooterLink[] = [];
-  const stateInfo = licenseInfo.stateInfo ? ` (${licenseInfo.stateInfo})` : '';
 
-  links.push({ text: `${buildInfo.edition}${stateInfo}`, url: licenseInfo.licenseUrl });
-
-  if (buildInfo.hideVersion) {
+  if (empolisOptions.hideVersion) {
     return links;
   }
 
-  links.push({ text: `v${buildInfo.version} (${buildInfo.commit})` });
-
-  if (buildInfo.hasUpdate) {
-    links.push({
-      text: `New version available!`,
-      icon: 'download-alt',
-      url: 'https://grafana.com/grafana/download?utm_source=grafana_footer',
-      target: '_blank',
-    });
-  }
+  links.push({ text: `v${buildInfo.version} (${buildInfo.commit})`, url: 'https://github.com/empolis/grafana' });
 
   return links;
 };

@@ -1,12 +1,12 @@
-FROM node:14.15.1-slim AS js-builder
+FROM node:14.16.1-slim AS js-builder
 
 WORKDIR /usr/src/app/
 
 COPY package.json yarn.lock ./
 COPY packages packages
 
-RUN apt-get update && apt-get install -yq git
-RUN yarn install --pure-lockfile
+RUN apt-get update && apt-get install -yq git && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN yarn install --pure-lockfile --no-progress
 
 COPY tsconfig.json .eslintrc .editorconfig .browserslistrc .prettierrc.js ./
 COPY public public
@@ -23,9 +23,9 @@ WORKDIR /src/grafana
 
 COPY go.mod go.sum embed.go ./
 
-RUN go mod verify
+RUN go mod download -x && go mod verify
 
-COPY build.go package.json ./
+COPY build.go package.json git-branch git-sha git-buildstamp ./
 COPY pkg pkg/
 COPY cue cue/
 COPY public/app/plugins public/app/plugins/
@@ -53,7 +53,7 @@ WORKDIR $GF_PATHS_HOME
 COPY conf conf
 
 # curl should be part of the image
-RUN apt-get update && apt-get install -y ca-certificates curl
+RUN apt-get update && apt-get install -y ca-certificates curl && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p "$GF_PATHS_HOME/.aws" && \
   addgroup --system --gid $GF_GID grafana && \
@@ -78,4 +78,15 @@ COPY --from=js-builder /usr/src/app/tools tools
 COPY packaging/docker/run.sh /
 
 USER grafana
+
+#ARG GF_INSTALL_PLUGINS="grafana-piechart-panel"
+#RUN if [ ! -z "${GF_INSTALL_PLUGINS}" ]; then \
+#    OLDIFS=$IFS; \
+#        IFS=','; \
+#    for plugin in ${GF_INSTALL_PLUGINS}; do \
+#        IFS=$OLDIFS; \
+#        grafana-cli --pluginsDir "$GF_PATHS_PLUGINS" plugins install ${plugin}; \
+#    done; \
+#fi
+
 ENTRYPOINT [ "/run.sh" ]

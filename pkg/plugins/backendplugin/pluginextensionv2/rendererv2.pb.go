@@ -237,6 +237,188 @@ func (x *RenderResponse) GetError() string {
 	return ""
 }
 
+type RenderPDFRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Url               string                 `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
+	Width             int32                  `protobuf:"varint,2,opt,name=width,proto3" json:"width,omitempty"`
+	Height            int32                  `protobuf:"varint,3,opt,name=height,proto3" json:"height,omitempty"`
+	DeviceScaleFactor float32                `protobuf:"fixed32,4,opt,name=deviceScaleFactor,proto3" json:"deviceScaleFactor,omitempty"`
+	FilePath          string                 `protobuf:"bytes,5,opt,name=filePath,proto3" json:"filePath,omitempty"`
+	RenderKey         string                 `protobuf:"bytes,6,opt,name=renderKey,proto3" json:"renderKey,omitempty"`
+	Domain            string                 `protobuf:"bytes,7,opt,name=domain,proto3" json:"domain,omitempty"`
+	Timeout           int32                  `protobuf:"varint,8,opt,name=timeout,proto3" json:"timeout,omitempty"`
+	Timezone          string                 `protobuf:"bytes,9,opt,name=timezone,proto3" json:"timezone,omitempty"`
+	Landscape         string                 `protobuf:"bytes,10,opt,name=landscape,proto3" json:"landscape,omitempty"`
+	Headers           map[string]*StringList `protobuf:"bytes,11,rep,name=headers,proto3" json:"headers,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+}
+
+func (x *RenderPDFRequest) Reset() {
+	*x = RenderPDFRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_rendererv2_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *RenderPDFRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RenderPDFRequest) ProtoMessage() {}
+
+func (x *RenderPDFRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_rendererv2_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RenderRequest.ProtoReflect.Descriptor instead.
+func (*RenderPDFRequest) Descriptor() ([]byte, []int) {
+	return file_rendererv2_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *RenderPDFRequest) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
+func (x *RenderPDFRequest) GetWidth() int32 {
+	if x != nil {
+		return x.Width
+	}
+	return 0
+}
+
+func (x *RenderPDFRequest) GetHeight() int32 {
+	if x != nil {
+		return x.Height
+	}
+	return 0
+}
+
+func (x *RenderPDFRequest) GetDeviceScaleFactor() float32 {
+	if x != nil {
+		return x.DeviceScaleFactor
+	}
+	return 0
+}
+
+func (x *RenderPDFRequest) GetFilePath() string {
+	if x != nil {
+		return x.FilePath
+	}
+	return ""
+}
+
+func (x *RenderPDFRequest) GetRenderKey() string {
+	if x != nil {
+		return x.RenderKey
+	}
+	return ""
+}
+
+func (x *RenderPDFRequest) GetDomain() string {
+	if x != nil {
+		return x.Domain
+	}
+	return ""
+}
+
+func (x *RenderPDFRequest) GetTimeout() int32 {
+	if x != nil {
+		return x.Timeout
+	}
+	return 0
+}
+
+func (x *RenderPDFRequest) GetTimezone() string {
+	if x != nil {
+		return x.Timezone
+	}
+	return ""
+}
+
+func (x *RenderPDFRequest) GetLandscape() string {
+	if x != nil {
+		return x.Landscape
+	}
+	return ""
+}
+
+func (x *RenderPDFRequest) GetHeaders() map[string]*StringList {
+	if x != nil {
+		return x.Headers
+	}
+	return nil
+}
+
+type RenderPDFResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Error    string `protobuf:"bytes,1,opt,name=error,proto3" json:"error,omitempty"`
+	FileName string `protobuf:"bytes,2,opt,name=fileName,proto3" json:"fileName,omitempty"`
+}
+
+func (x *RenderPDFResponse) Reset() {
+	*x = RenderPDFResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_rendererv2_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *RenderPDFResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RenderPDFResponse) ProtoMessage() {}
+
+func (x *RenderPDFResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_rendererv2_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RenderPDFResponse.ProtoReflect.Descriptor instead.
+func (*RenderPDFResponse) Descriptor() ([]byte, []int) {
+	return file_rendererv2_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *RenderPDFResponse) GetError() string {
+	if x != nil {
+		return x.Error
+	}
+	return ""
+}
+
+func (x *RenderPDFResponse) GetFileName() string {
+	if x != nil {
+		return x.FileName
+	}
+	return ""
+}
+
 type RenderCSVRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -482,25 +664,32 @@ var file_rendererv2_proto_goTypes = []interface{}{
 	(*StringList)(nil),        // 0: pluginextensionv2.StringList
 	(*RenderRequest)(nil),     // 1: pluginextensionv2.RenderRequest
 	(*RenderResponse)(nil),    // 2: pluginextensionv2.RenderResponse
-	(*RenderCSVRequest)(nil),  // 3: pluginextensionv2.RenderCSVRequest
-	(*RenderCSVResponse)(nil), // 4: pluginextensionv2.RenderCSVResponse
-	nil,                       // 5: pluginextensionv2.RenderRequest.HeadersEntry
-	nil,                       // 6: pluginextensionv2.RenderCSVRequest.HeadersEntry
+	(*RenderPDFRequest)(nil),  // 3: pluginextensionv2.RenderPDFRequest
+	(*RenderPDFResponse)(nil), // 4: pluginextensionv2.RenderPDFResponse
+	(*RenderCSVRequest)(nil),  // 5: pluginextensionv2.RenderCSVRequest
+	(*RenderCSVResponse)(nil), // 6: pluginextensionv2.RenderCSVResponse
+	nil,                       // 7: pluginextensionv2.RenderRequest.HeadersEntry
+	nil,                       // 8: pluginextensionv2.RenderPDFRequest.HeadersEntry
+	nil,                       // 9: pluginextensionv2.RenderCSVRequest.HeadersEntry
 }
 var file_rendererv2_proto_depIdxs = []int32{
-	5, // 0: pluginextensionv2.RenderRequest.headers:type_name -> pluginextensionv2.RenderRequest.HeadersEntry
-	6, // 1: pluginextensionv2.RenderCSVRequest.headers:type_name -> pluginextensionv2.RenderCSVRequest.HeadersEntry
-	0, // 2: pluginextensionv2.RenderRequest.HeadersEntry.value:type_name -> pluginextensionv2.StringList
-	0, // 3: pluginextensionv2.RenderCSVRequest.HeadersEntry.value:type_name -> pluginextensionv2.StringList
-	1, // 4: pluginextensionv2.Renderer.Render:input_type -> pluginextensionv2.RenderRequest
-	3, // 5: pluginextensionv2.Renderer.RenderCSV:input_type -> pluginextensionv2.RenderCSVRequest
-	2, // 6: pluginextensionv2.Renderer.Render:output_type -> pluginextensionv2.RenderResponse
-	4, // 7: pluginextensionv2.Renderer.RenderCSV:output_type -> pluginextensionv2.RenderCSVResponse
-	6, // [6:8] is the sub-list for method output_type
-	4, // [4:6] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	7, // 0: pluginextensionv2.RenderRequest.headers:type_name -> pluginextensionv2.RenderRequest.HeadersEntry
+	8, // 1: pluginextensionv2.RenderCSVRequest.headers:type_name -> pluginextensionv2.RenderPDFRequest.HeadersEntry
+	9, // 2: pluginextensionv2.RenderCSVRequest.headers:type_name -> pluginextensionv2.RenderCSVRequest.HeadersEntry
+	0, // 3: pluginextensionv2.RenderRequest.HeadersEntry.value:type_name -> pluginextensionv2.StringList
+	0, // 4: pluginextensionv2.RenderPDFRequest.HeadersEntry.value:type_name -> pluginextensionv2.StringList
+	0, // 5: pluginextensionv2.RenderCSVRequest.HeadersEntry.value:type_name -> pluginextensionv2.StringList
+	1, // 6: pluginextensionv2.Renderer.Render:input_type -> pluginextensionv2.RenderRequest
+	3, // 7: pluginextensionv2.Renderer.RenderPDF:input_type -> pluginextensionv2.RenderPDFRequest
+	5, // 8: pluginextensionv2.Renderer.RenderCSV:input_type -> pluginextensionv2.RenderCSVRequest
+	2, // 9: pluginextensionv2.Renderer.Render:output_type -> pluginextensionv2.RenderResponse
+	4, // 10: pluginextensionv2.Renderer.RenderPDF:output_type -> pluginextensionv2.RenderPDFResponse
+	6, // 11: pluginextensionv2.Renderer.RenderCSV:output_type -> pluginextensionv2.RenderCSVResponse
+	9, // [6:11] is the sub-list for method output_type
+	6, // [6:9] is the sub-list for method input_type
+	6, // [6:6] is the sub-list for extension type_name
+	6, // [6:6] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_rendererv2_proto_init() }
@@ -546,7 +735,7 @@ func file_rendererv2_proto_init() {
 			}
 		}
 		file_rendererv2_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RenderCSVRequest); i {
+			switch v := v.(*RenderPDFRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -558,6 +747,30 @@ func file_rendererv2_proto_init() {
 			}
 		}
 		file_rendererv2_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*RenderPDFResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_rendererv2_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*RenderCSVRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_rendererv2_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*RenderCSVResponse); i {
 			case 0:
 				return &v.state
@@ -603,6 +816,7 @@ const _ = grpc.SupportPackageIsVersion6
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type RendererClient interface {
 	Render(ctx context.Context, in *RenderRequest, opts ...grpc.CallOption) (*RenderResponse, error)
+	RenderPDF(ctx context.Context, in *RenderPDFRequest, opts ...grpc.CallOption) (*RenderPDFResponse, error)
 	RenderCSV(ctx context.Context, in *RenderCSVRequest, opts ...grpc.CallOption) (*RenderCSVResponse, error)
 }
 
@@ -623,6 +837,15 @@ func (c *rendererClient) Render(ctx context.Context, in *RenderRequest, opts ...
 	return out, nil
 }
 
+func (c *rendererClient) RenderPDF(ctx context.Context, in *RenderPDFRequest, opts ...grpc.CallOption) (*RenderPDFResponse, error) {
+	out := new(RenderPDFResponse)
+	err := c.cc.Invoke(ctx, "/pluginextensionv2.Renderer/RenderPDF", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *rendererClient) RenderCSV(ctx context.Context, in *RenderCSVRequest, opts ...grpc.CallOption) (*RenderCSVResponse, error) {
 	out := new(RenderCSVResponse)
 	err := c.cc.Invoke(ctx, "/pluginextensionv2.Renderer/RenderCSV", in, out, opts...)
@@ -635,6 +858,7 @@ func (c *rendererClient) RenderCSV(ctx context.Context, in *RenderCSVRequest, op
 // RendererServer is the server API for Renderer service.
 type RendererServer interface {
 	Render(context.Context, *RenderRequest) (*RenderResponse, error)
+	RenderPDF(context.Context, *RenderPDFRequest) (*RenderPDFResponse, error)
 	RenderCSV(context.Context, *RenderCSVRequest) (*RenderCSVResponse, error)
 }
 
@@ -644,6 +868,9 @@ type UnimplementedRendererServer struct {
 
 func (*UnimplementedRendererServer) Render(context.Context, *RenderRequest) (*RenderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Render not implemented")
+}
+func (*UnimplementedRendererServer) RenderPDF(context.Context, *RenderPDFRequest) (*RenderPDFResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RenderPDF not implemented")
 }
 func (*UnimplementedRendererServer) RenderCSV(context.Context, *RenderCSVRequest) (*RenderCSVResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RenderCSV not implemented")
@@ -667,6 +894,24 @@ func _Renderer_Render_Handler(srv interface{}, ctx context.Context, dec func(int
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RendererServer).Render(ctx, req.(*RenderRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Renderer_RenderPDF_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RenderPDFRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RendererServer).RenderPDF(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pluginextensionv2.Renderer/RenderPDF",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RendererServer).RenderPDF(ctx, req.(*RenderPDFRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -696,6 +941,10 @@ var _Renderer_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Render",
 			Handler:    _Renderer_Render_Handler,
+		},
+		{
+			MethodName: "RenderPDF",
+			Handler:    _Renderer_RenderPDF_Handler,
 		},
 		{
 			MethodName: "RenderCSV",

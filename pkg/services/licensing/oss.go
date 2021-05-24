@@ -1,7 +1,7 @@
 package licensing
 
 import (
-	"github.com/grafana/grafana/pkg/api/dtos"
+//	"github.com/grafana/grafana/pkg/api/dtos"
 	"github.com/grafana/grafana/pkg/models"
 	"github.com/grafana/grafana/pkg/services/hooks"
 	"github.com/grafana/grafana/pkg/setting"
@@ -45,6 +45,7 @@ func (l *OSSLicensingService) LicenseURL(user *models.SignedInUser) string {
 }
 
 func (l *OSSLicensingService) Init() error {
+	/*
 	l.HooksService.AddIndexDataHook(func(indexData *dtos.IndexViewData, req *models.ReqContext) {
 		for _, node := range indexData.NavTree {
 			if node.Id == "admin" {
@@ -57,6 +58,7 @@ func (l *OSSLicensingService) Init() error {
 			}
 		}
 	})
+	*/
 
 	return nil
 }

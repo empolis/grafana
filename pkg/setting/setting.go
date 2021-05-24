@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"html/template"
 	"net/http"
 	"net/url"
 	"os"
@@ -173,6 +174,20 @@ var (
 	GrafanaComUrl string
 
 	ImageUploadProvider string
+
+	// Empolis
+	EmpolisFooterUrl           string
+	EmpolisFooterLabel         string
+	EmpolisLoginBgImg          string
+	EmpolisAppleTouchIcon      template.URL
+	EmpolisFavIcon             template.URL
+	EmpolisMenuLogo            string
+	EmpolisCustomLogo          string
+	EmpolisHideVersion         bool
+	EmpolisAtlantaUrl          string
+	EmpolisAtlantaClientId     string
+	EmpolisAtlantaClientSecret string
+	EmpolisAtlantaTokenUrl     string
 )
 
 // AddChangePasswordLink returns if login form is disabled or not since
@@ -226,6 +241,7 @@ type Cfg struct {
 
 	// Rendering
 	ImagesDir                      string
+	PDFsDir                        string
 	CSVsDir                        string
 	RendererUrl                    string
 	RendererCallbackUrl            string
@@ -352,6 +368,16 @@ type Cfg struct {
 
 	// Sentry config
 	Sentry Sentry
+
+	// Empolis
+	EmpolisFooterUrl      string
+	EmpolisFooterLabel    string
+	EmpolisLoginBgImg     string
+	EmpolisAppleTouchIcon template.URL
+	EmpolisFavIcon        template.URL
+	EmpolisMenuLogo       string
+	EmpolisCustomLogo     string
+	EmpolisHideVersion    bool
 
 	// Data sources
 	DataSourceLimit int
@@ -984,6 +1010,29 @@ func (cfg *Cfg) Load(args *CommandLineArgs) error {
 	}
 	cfg.GeomapEnableCustomBaseLayers = geomapSection.Key("enable_custom_baselayers").MustBool(true)
 
+	empolisSettings := iniFile.Section("empolis")
+	EmpolisFooterUrl = valueAsString(empolisSettings, "footer_url", "")
+	EmpolisFooterLabel = valueAsString(empolisSettings, "footer_label", "")
+	EmpolisHideVersion = empolisSettings.Key("hide_version").MustBool(false)
+	EmpolisLoginBgImg = valueAsString(empolisSettings, "login_bg_img", "")
+	EmpolisAppleTouchIcon = template.URL(valueAsString(empolisSettings, "apple_touch_icon", ""))
+	EmpolisFavIcon = template.URL(valueAsString(empolisSettings, "fav_icon", ""))
+	EmpolisMenuLogo = valueAsString(empolisSettings, "menu_logo", "")
+	EmpolisCustomLogo = valueAsString(empolisSettings, "custom_logo", "")
+	EmpolisAtlantaUrl = valueAsString(empolisSettings, "atlanta_url", "")
+	EmpolisAtlantaClientId = valueAsString(empolisSettings, "atlanta_client_id", "")
+	EmpolisAtlantaClientSecret = valueAsString(empolisSettings, "atlanta_client_secret", "")
+	EmpolisAtlantaTokenUrl = valueAsString(empolisSettings, "atlanta_token_url", "")
+
+	cfg.EmpolisFooterUrl = EmpolisFooterUrl
+	cfg.EmpolisFooterLabel = EmpolisFooterLabel
+	cfg.EmpolisHideVersion = EmpolisHideVersion
+	cfg.EmpolisLoginBgImg = EmpolisLoginBgImg
+	cfg.EmpolisAppleTouchIcon = EmpolisAppleTouchIcon
+	cfg.EmpolisFavIcon = EmpolisFavIcon
+	cfg.EmpolisMenuLogo = EmpolisMenuLogo
+	cfg.EmpolisCustomLogo = EmpolisCustomLogo
+
 	cfg.readDateFormats()
 	cfg.readSentryConfig()
 
@@ -1344,6 +1393,7 @@ func readRenderingSettings(iniFile *ini.File, cfg *Cfg) error {
 
 	cfg.RendererConcurrentRequestLimit = renderSec.Key("concurrent_render_request_limit").MustInt(30)
 	cfg.ImagesDir = filepath.Join(cfg.DataPath, "png")
+	cfg.PDFsDir = filepath.Join(cfg.DataPath, "pdf")
 	cfg.CSVsDir = filepath.Join(cfg.DataPath, "csv")
 
 	return nil

@@ -37,6 +37,34 @@ func TestMacroEngine(t *testing.T) {
 			require.Equal(t, "select min(time_column AS \"time\")", sql)
 		})
 
+		t.Run("interpolate __timeEpochMilli function", func(t *testing.T) {
+			sql, err := engine.Interpolate(query, timeRange, "select $__timeEpochMilli(time_column)")
+			require.NoError(t, err)
+
+			require.Equal(t, "select time_column / 1000.0 AS \"time\"", sql)
+		})
+
+		t.Run("interpolate __timeEpochMilli function wrapped in aggregation", func(t *testing.T) {
+			sql, err := engine.Interpolate(query, timeRange, "select min($__timeEpochMilli(time_column))")
+			require.NoError(t, err)
+
+			require.Equal(t, "select min(time_column / 1000.0 AS \"time\")", sql)
+		})
+
+		t.Run("interpolate __timeEpochNano function", func(t *testing.T) {
+			sql, err := engine.Interpolate(query, timeRange, "select $__timeEpochNano(time_column)")
+			require.NoError(t, err)
+
+			require.Equal(t, "select time_column / 1000000000.0 AS \"time\"", sql)
+		})
+
+		t.Run("interpolate __timeEpochNano function wrapped in aggregation", func(t *testing.T) {
+			sql, err := engine.Interpolate(query, timeRange, "select min($__timeEpochNano(time_column))")
+			require.NoError(t, err)
+
+			require.Equal(t, "select min(time_column / 1000000000.0 AS \"time\")", sql)
+		})
+
 		t.Run("interpolate __timeFilter function", func(t *testing.T) {
 			sql, err := engine.Interpolate(query, timeRange, "WHERE $__timeFilter(time_column)")
 			require.NoError(t, err)
@@ -120,10 +148,28 @@ func TestMacroEngine(t *testing.T) {
 			require.Equal(t, fmt.Sprintf("select time >= %d AND time <= %d", from.Unix(), to.Unix()), sql)
 		})
 
+		t.Run("interpolate __unixEpochMilliFilter function", func(t *testing.T) {
+			sql, err := engine.Interpolate(query, timeRange, "select $__unixEpochMilliFilter(time)")
+			require.NoError(t, err)
+			require.Equal(t, fmt.Sprintf("select time >= %d AND time <= %d", plugins.TimeUnixMilli(from), plugins.TimeUnixMilli(to)), sql)
+		})
+
 		t.Run("interpolate __unixEpochNanoFilter function", func(t *testing.T) {
 			sql, err := engine.Interpolate(query, timeRange, "select $__unixEpochNanoFilter(time)")
 			require.NoError(t, err)
 			require.Equal(t, fmt.Sprintf("select time >= %d AND time <= %d", from.UnixNano(), to.UnixNano()), sql)
+		})
+
+		t.Run("interpolate __unixEpochiMilliFrom function", func(t *testing.T) {
+			sql, err := engine.Interpolate(query, timeRange, "select $__unixEpochMilliFrom()")
+			require.NoError(t, err)
+			require.Equal(t, fmt.Sprintf("select %d", plugins.TimeUnixMilli(from)), sql)
+		})
+
+		t.Run("interpolate __unixEpochMilliTo function", func(t *testing.T) {
+			sql, err := engine.Interpolate(query, timeRange, "select $__unixEpochMilliTo()")
+			require.NoError(t, err)
+			require.Equal(t, fmt.Sprintf("select %d", plugins.TimeUnixMilli(to)), sql)
 		})
 
 		t.Run("interpolate __unixEpochNanoFrom function", func(t *testing.T) {
@@ -146,6 +192,24 @@ func TestMacroEngine(t *testing.T) {
 			require.Equal(t, "SELECT floor(time_column/300)*300", sql)
 			require.Equal(t, sql2, sql+" AS \"time\"")
 		})
+
+		t.Run("interpolate __unixEpochMilliGroup function", func(t *testing.T) {
+			sql, err := engine.Interpolate(query, timeRange, "SELECT $__unixEpochMilliGroup(time_column,'5m')")
+			require.NoError(t, err)
+			sql2, err := engine.Interpolate(query, timeRange, "SELECT $__unixEpochMilliGroupAlias(time_column,'5m')")
+			require.NoError(t, err)
+			require.Equal(t, "SELECT floor(time_column/300000)*300000", sql)
+			require.Equal(t, sql2, sql+" AS \"time\"")
+		})
+
+		t.Run("interpolate __unixEpochNanoGroup function", func(t *testing.T) {
+			sql, err := engine.Interpolate(query, timeRange, "SELECT $__unixEpochNanoGroup(time_column,'5m')")
+			require.NoError(t, err)
+			sql2, err := engine.Interpolate(query, timeRange, "SELECT $__unixEpochNanoGroupAlias(time_column,'5m')")
+			require.NoError(t, err)
+			require.Equal(t, "SELECT floor(time_column/300000000000)*300000000000", sql)
+			require.Equal(t, sql2, sql+" AS \"time\"")
+		})
 	})
 
 	t.Run("Given a time range between 1960-02-01 07:00 and 1965-02-03 08:00", func(t *testing.T) {
@@ -165,6 +229,12 @@ func TestMacroEngine(t *testing.T) {
 			sql, err := engine.Interpolate(query, timeRange, "select $__unixEpochFilter(time)")
 			require.NoError(t, err)
 			require.Equal(t, fmt.Sprintf("select time >= %d AND time <= %d", from.Unix(), to.Unix()), sql)
+		})
+
+		t.Run("interpolate __unixEpochMilliFilter function", func(t *testing.T) {
+			sql, err := engine.Interpolate(query, timeRange, "select $__unixEpochMilliFilter(time)")
+			require.NoError(t, err)
+			require.Equal(t, fmt.Sprintf("select time >= %d AND time <= %d", plugins.TimeUnixMilli(from), plugins.TimeUnixMilli(to)), sql)
 		})
 
 		t.Run("interpolate __unixEpochNanoFilter function", func(t *testing.T) {
@@ -191,6 +261,12 @@ func TestMacroEngine(t *testing.T) {
 			sql, err := engine.Interpolate(query, timeRange, "select $__unixEpochFilter(time)")
 			require.NoError(t, err)
 			require.Equal(t, fmt.Sprintf("select time >= %d AND time <= %d", from.Unix(), to.Unix()), sql)
+		})
+
+		t.Run("interpolate __unixEpochMilliFilter function", func(t *testing.T) {
+			sql, err := engine.Interpolate(query, timeRange, "select $__unixEpochMilliFilter(time)")
+			require.NoError(t, err)
+			require.Equal(t, fmt.Sprintf("select time >= %d AND time <= %d", plugins.TimeUnixMilli(from), plugins.TimeUnixMilli(to)), sql)
 		})
 
 		t.Run("interpolate __unixEpochNanoFilter function", func(t *testing.T) {

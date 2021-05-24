@@ -76,6 +76,7 @@ func (srv *CleanUpService) cleanUpOldAnnotations(ctx context.Context) {
 func (srv *CleanUpService) cleanUpTmpFiles() {
 	folders := []string{
 		srv.Cfg.ImagesDir,
+		srv.Cfg.PDFsDir,
 		srv.Cfg.CSVsDir,
 	}
 
