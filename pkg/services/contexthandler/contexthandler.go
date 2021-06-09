@@ -16,6 +16,7 @@ import (
 	"github.com/grafana/grafana/pkg/middleware/cookies"
 	"github.com/grafana/grafana/pkg/models"
 	"github.com/grafana/grafana/pkg/registry"
+	"github.com/grafana/grafana/pkg/services/contexthandler/authjwt"
 	"github.com/grafana/grafana/pkg/services/contexthandler/authproxy"
 	"github.com/grafana/grafana/pkg/services/login"
 	"github.com/grafana/grafana/pkg/services/rendering"
@@ -386,6 +387,21 @@ func logUserIn(auth *authproxy.AuthProxy, username string, logger log.Logger, ig
 	return id, nil
 }
 
+func logUserInWithJWT(auth *authjwt.AuthJWT, logger log.Logger, ignoreCache bool) (int64, error) {
+	logger.Debug("Trying to log user in", "ignoreCache", ignoreCache)
+	id, err := auth.Login(logger, ignoreCache)
+	if err != nil {
+		details := err
+		var e authjwt.Error
+		if errors.As(err, &e) {
+			details = e.DetailsError
+		}
+		logger.Error("Failed to login", "message", err.Error(), "error", details, "ignoreCache", ignoreCache)
+		return 0, err
+	}
+	return id, nil
+}
+
 func (h *ContextHandler) handleError(ctx *models.ReqContext, err error, statusCode int, cb func(error)) {
 	details := err
 	var e authproxy.Error
@@ -476,6 +492,80 @@ func (h *ContextHandler) initContextWithAuthProxy(reqContext *models.ReqContext,
 			logger.Error(
 				"Failed to store user in cache",
 				"username", username,
+				"message", err.Error(),
+				"error", details,
+			)
+		})
+		return true
+	}
+
+	return true
+}
+
+func (h *ContextHandler) initContextWithJWT(ctx *models.ReqContext, orgId int64) bool {
+	if !h.Cfg.JWTAuthEnabled || h.Cfg.JWTAuthHeaderName == "" {
+		return false
+	}
+
+	jwtToken := ctx.Req.Header.Get(h.Cfg.JWTAuthHeaderName)
+	if jwtToken == "" {
+		return false
+	}
+
+	authJwt := authjwt.New(h.Cfg, jwtToken, &authjwt.Options{
+		JWTAuthService: h.JWTAuthService,
+		RemoteCache:    h.RemoteCache,
+		Ctx:            ctx,
+		OrgID:          orgId,
+	})
+
+	logger := log.New("auth.jwt")
+
+	id, err := logUserInWithJWT(authJwt, logger, false)
+	if err != nil {
+		authJwt.HandleError(err, 407, nil)
+		return true
+	}
+
+	logger.Debug("Got user ID, getting full user info", "userID", id)
+
+	user, err := authJwt.GetSignedInUser(id)
+	if err != nil {
+		// The reason we couldn't find the user corresponding to the ID might be that the ID was found from a stale
+		// cache entry. For example, if a user is deleted via the API, corresponding cache entries aren't invalidated
+		// because cache keys are computed from request header values and not just the user ID. Meaning that
+		// we can't easily derive cache keys to invalidate when deleting a user. To work around this, we try to
+		// log the user in again without the cache.
+		logger.Debug("Failed to get user info given ID, retrying without cache", "userID", id)
+		if err := authJwt.RemoveUserFromCache(ctx.Logger); err != nil {
+			if !errors.Is(err, remotecache.ErrCacheItemNotFound) {
+				ctx.Logger.Error("Got unexpected error when removing user from auth cache", "error", err)
+			}
+		}
+		id, err = logUserInWithJWT(authJwt, logger, true)
+		if err != nil {
+			authJwt.HandleError(err, 407, nil)
+			return true
+		}
+
+		user, err = authJwt.GetSignedInUser(id)
+		if err != nil {
+			authJwt.HandleError(err, 407, nil)
+			return true
+		}
+	}
+
+	logger.Debug("Successfully got user info", "userID", user.UserId, "username", user.Login)
+
+	// Add user info to context
+	ctx.SignedInUser = user
+	ctx.IsSignedIn = true
+
+	// Remember user data in cache
+	if err := authJwt.Remember(id); err != nil {
+		authJwt.HandleError(err, 500, func(details error) {
+			logger.Error(
+				"Failed to store user in cache",
 				"message", err.Error(),
 				"error", details,
 			)
