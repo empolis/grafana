@@ -24,6 +24,7 @@ RUN apk add --no-cache gcc g++
 WORKDIR $GOPATH/src/github.com/grafana/grafana
 
 COPY go.mod go.sum embed.go ./
+COPY pkg/macaron ./pkg/macaron
 
 RUN go mod download -x && go mod verify
 

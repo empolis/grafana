@@ -22,6 +22,7 @@ FROM golang:1.16 AS go-builder
 WORKDIR /src/grafana
 
 COPY go.mod go.sum embed.go ./
+COPY pkg/macaron ./pkg/macaron
 
 RUN go mod download -x && go mod verify
 
