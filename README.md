@@ -1,6 +1,6 @@
 ![Empolis Grafana](docs/logo-horizontal.png)
 
-[![License](https://img.shields.io/github/license/jkreileder/grafana)](LICENSE)
+[![License](https://img.shields.io/github/license/empolis/grafana)](LICENSE)
 
 This repo is a fork of https://github.com/grafana/grafana as used by [Empolis Information Management GmbH](https://empolis.com) as part of [Empolis Service Express Industrial Analytics](https://www.service.express/industrial-analytics/).
 
