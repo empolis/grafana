@@ -24,13 +24,14 @@ WORKDIR /src/grafana
 COPY go.mod go.sum embed.go ./
 COPY pkg/macaron ./pkg/macaron
 
-RUN go mod download -x && go mod verify
+RUN go mod download -x
 
 COPY build.go package.json git-branch git-sha git-buildstamp ./
 COPY pkg pkg/
 COPY cue cue/
 COPY public/app/plugins public/app/plugins/
 
+RUN go mod verify
 RUN go run build.go build
 
 FROM ubuntu:20.04

@@ -26,13 +26,14 @@ WORKDIR $GOPATH/src/github.com/grafana/grafana
 COPY go.mod go.sum embed.go ./
 COPY pkg/macaron ./pkg/macaron
 
-RUN go mod download -x && go mod verify
+RUN go mod download -x
 
 COPY cue cue
 COPY public/app/plugins public/app/plugins
 COPY pkg pkg
 COPY build.go package.json git-branch git-sha git-buildstamp ./
 
+RUN go mod verify
 RUN go run build.go build
 
 # Final stage
