@@ -50,7 +50,11 @@ export const UserProfileEditForm: FC<Props> = ({ user, isSavingUser, updateProfi
               />
             </Field>
             <div className="gf-form-button-row">
-              <Button variant="primary" disabled={isSavingUser} aria-label="Edit user profile save button">
+              <Button
+                variant="primary"
+                disabled={isSavingUser || disableLoginForm}
+                aria-label="Edit user profile save button"
+              >
                 Save
               </Button>
             </div>
