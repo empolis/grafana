@@ -212,6 +212,7 @@ func (uss *UsageStatsService) GetUsageReport(ctx context.Context) (UsageReport, 
 	authTypes["basic_auth"] = uss.Cfg.BasicAuthEnabled
 	authTypes["ldap"] = uss.Cfg.LDAPEnabled
 	authTypes["auth_proxy"] = uss.Cfg.AuthProxyEnabled
+	authTypes["auth_jwt"] = uss.Cfg.JWTAuthEnabled
 
 	for provider, enabled := range uss.oauthProviders {
 		authTypes["oauth_"+provider] = enabled

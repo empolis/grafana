@@ -43,6 +43,7 @@ export class GrafanaBootConfig implements GrafanaConfig {
   authProxyEnabled = false;
   exploreEnabled = false;
   ldapEnabled = false;
+  jwtEnabled = false;
   sigV4AuthEnabled = false;
   samlEnabled = false;
   autoAssignOrg = true;

@@ -78,6 +78,9 @@ func UpdateSignedInUser(c *models.ReqContext, cmd models.UpdateUserCommand) resp
 			return response.Error(400, "Not allowed to change username when auth proxy is using username property", nil)
 		}
 	}
+	if setting.GetCfg().JWTAuthEnabled {
+		return response.Error(400, "Not allowed to change email or username when JWT authentication is enabled", nil)
+	}
 	cmd.UserId = c.UserId
 	return handleUpdateUser(cmd)
 }
@@ -217,8 +220,8 @@ func (hs *HTTPServer) ChangeActiveOrgAndRedirectToHome(c *models.ReqContext) {
 }
 
 func ChangeUserPassword(c *models.ReqContext, cmd models.ChangeUserPasswordCommand) response.Response {
-	if setting.LDAPEnabled || setting.AuthProxyEnabled {
-		return response.Error(400, "Not allowed to change password when LDAP or Auth Proxy is enabled", nil)
+	if setting.LDAPEnabled || setting.AuthProxyEnabled || setting.GetCfg().JWTAuthEnabled {
+		return response.Error(400, "Not allowed to change password when LDAP, Auth Proxy or JWT authentication is enabled", nil)
 	}
 
 	userQuery := models.GetUserByIdQuery{Id: c.UserId}
@@ -359,7 +362,7 @@ func GetAuthProviderLabel(authModule string) string {
 		return "SAML"
 	case "ldap", "":
 		return "LDAP"
-	case "auth-jwt":
+	case "auth_jwt":
 		return "JWT"
 	default:
 		return "OAuth"
