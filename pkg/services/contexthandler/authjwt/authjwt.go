@@ -159,7 +159,7 @@ func (auth *AuthJWT) LoginViaJWT(logger log.Logger) (int64, error) {
 	}
 
 	extUser := &models.ExternalUserInfo{
-		AuthModule: "auth-jwt",
+		AuthModule: "auth_jwt",
 		AuthId:     claims["sub"].(string),
 		OrgRoles:   map[int64]models.RoleType{},
 	}
