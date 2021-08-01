@@ -151,11 +151,11 @@ func (auth *AuthJWT) LoginViaJWT(logger log.Logger) (int64, error) {
 				"error", details,
 			)
 		})
-		return 0, fmt.Errorf("Failed to verify JWT")
+		return 0, fmt.Errorf("failed to verify JWT")
 	}
 
 	if claims["sub"] == nil {
-		return 0, fmt.Errorf("Failed to get an authentication claim from JWT")
+		return 0, fmt.Errorf("failed to get an authentication claim from JWT")
 	}
 
 	extUser := &models.ExternalUserInfo{
@@ -175,7 +175,7 @@ func (auth *AuthJWT) LoginViaJWT(logger log.Logger) (int64, error) {
 	}
 
 	if extUser.Login == "" && extUser.Email == "" {
-		return 0, fmt.Errorf("Failed to get an authentication claim from JWT")
+		return 0, fmt.Errorf("failed to get an authentication claim from JWT")
 	}
 
 	jwt, err := json.Marshal(claims)
@@ -187,7 +187,7 @@ func (auth *AuthJWT) LoginViaJWT(logger log.Logger) (int64, error) {
 				"error", details,
 			)
 		})
-		return 0, fmt.Errorf("Failed to get JSON from JWT")
+		return 0, fmt.Errorf("failed to get JSON from JWT")
 	}
 
 	role, err := auth.extractRole(jwt)
@@ -199,7 +199,7 @@ func (auth *AuthJWT) LoginViaJWT(logger log.Logger) (int64, error) {
 				"error", details,
 			)
 		})
-		return 0, fmt.Errorf("Failed to extract role from JWT")
+		return 0, fmt.Errorf("failed to extract role from JWT")
 	} else {
 		logger.Debug("Extracted role from JWT", "role", role)
 	}
@@ -215,7 +215,7 @@ func (auth *AuthJWT) LoginViaJWT(logger log.Logger) (int64, error) {
 					"error", details,
 				)
 			})
-			return 0, fmt.Errorf("Failed to extract groups from JWT")
+			return 0, fmt.Errorf("failed to extract groups from JWT")
 		} else {
 			logger.Debug("Extracted groups from JWT", "groups", groups)
 		}
