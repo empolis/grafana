@@ -16,47 +16,47 @@ import (
 	oauth "golang.org/x/oauth2/clientcredentials"
 )
 
-func init() {
+var datasourcePermissionsLogger = log.New("datasourcepermissions")
 
+func init() {
 	bus.AddHandler("sql", GetDataSourcesPermissions)
 }
 
-type AtlantaClient struct {
+type IaApiClient struct {
 	once   sync.Once
 	client *http.Client
 }
 
-func (ac *AtlantaClient) initClient() {
+func (ac *IaApiClient) initClient() {
 	ac.once.Do(func() {
 		var oauthConfig = oauth.Config{
-			ClientID:     setting.EmpolisAtlantaClientId,
-			ClientSecret: setting.EmpolisAtlantaClientSecret,
-			TokenURL:     setting.EmpolisAtlantaTokenUrl,
+			ClientID:     setting.EmpolisIaApiClientId,
+			ClientSecret: setting.EmpolisIaApiClientSecret,
+			TokenURL:     setting.EmpolisIaApiTokenUrl,
 		}
 
 		ac.client = oauthConfig.Client(context.Background())
 	})
 }
 
-func (ac *AtlantaClient) getClient() *http.Client {
+func (ac *IaApiClient) getClient() *http.Client {
 	ac.initClient()
 	return ac.client
 }
 
-var atlantaOauthClient AtlantaClient
+var iaApiOAuthClient IaApiClient
 
-func getPermissionsAtlanta(userId string, tenantId string) ([]string, error) {
-	atlantaUrl := setting.EmpolisAtlantaUrl
-	permissionsUrl := fmt.Sprintf(atlantaUrl+"/permissions/%s/%s", tenantId, userId)
+func getPermissionsFromIaApi(userId string, tenantId string) ([]string, error) {
+	permissionsUrl := fmt.Sprintf("%s/permissions/%s/%s", setting.EmpolisIaApiUrl, tenantId, userId)
 	req, _ := http.NewRequest("GET", permissionsUrl, nil)
 
 	req.Header.Set("X-Tenant", tenantId)
-	response, err := atlantaOauthClient.getClient().Do(req)
+	response, err := iaApiOAuthClient.getClient().Do(req)
 	if err != nil {
 		return nil, err
 	}
 
-	log.Infof(permissionsUrl)
+	datasourcePermissionsLogger.Info(permissionsUrl)
 	defer response.Body.Close()
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
@@ -74,21 +74,21 @@ func getPermissionsAtlanta(userId string, tenantId string) ([]string, error) {
 
 func GetDataSourcesPermissions(query *m.DatasourcesPermissionFilterQuery) error {
 
-	log.Debugf("### ", "user role", query.User.OrgRole)
+	datasourcePermissionsLogger.Debug("Datasource permissions", "user role", query.User.OrgRole)
 	if query.User.OrgRole == m.ROLE_ADMIN {
 		// do not filter data sources
 		query.Result = query.Datasources
-		log.Debugf("### do not filter data sources", "ds length", len(query.Result))
+		datasourcePermissionsLogger.Debug("Not filtering because of admin role", "ds length", len(query.Result))
 		return nil
 	}
 
-	permissions, err := getPermissionsAtlanta(query.User.Login, query.User.OrgName)
+	permissions, err := getPermissionsFromIaApi(query.User.Login, query.User.OrgName)
 
 	if err != nil {
-		log.Errorf(3, "### atlanta permissions", "error", err)
+		datasourcePermissionsLogger.Error("Error getting IA API permissions", "error", err)
 	}
 
-	log.Debugf("###", "permissions", permissions)
+	datasourcePermissionsLogger.Debug("Datasource permissions", "permissions", permissions)
 
 	var filter []*regexp.Regexp
 
@@ -97,9 +97,9 @@ func GetDataSourcesPermissions(query *m.DatasourcesPermissionFilterQuery) error 
 		filter = append(filter, r)
 	}
 
-	log.Debugf("###", "ds filter", filter)
+	datasourcePermissionsLogger.Debug("Filtering datasources", "ds filter", filter)
 	for _, ds := range query.Datasources {
-		log.Debugf("###", "ds name", ds.Name)
+		datasourcePermissionsLogger.Debug("Inspecting datasource", "ds name", ds.Name)
 		for _, regex := range filter {
 			if regex.MatchString(ds.Name) {
 				query.Result = append(query.Result, ds)

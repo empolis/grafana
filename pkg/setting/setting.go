@@ -176,18 +176,18 @@ var (
 	ImageUploadProvider string
 
 	// Empolis
-	EmpolisFooterUrl           string
-	EmpolisFooterLabel         string
-	EmpolisLoginBgImg          string
-	EmpolisAppleTouchIcon      template.URL
-	EmpolisFavIcon             template.URL
-	EmpolisMenuLogo            string
-	EmpolisCustomLogo          string
-	EmpolisHideVersion         bool
-	EmpolisAtlantaUrl          string
-	EmpolisAtlantaClientId     string
-	EmpolisAtlantaClientSecret string
-	EmpolisAtlantaTokenUrl     string
+	EmpolisFooterUrl         string
+	EmpolisFooterLabel       string
+	EmpolisLoginBgImg        string
+	EmpolisAppleTouchIcon    template.URL
+	EmpolisFavIcon           template.URL
+	EmpolisMenuLogo          string
+	EmpolisCustomLogo        string
+	EmpolisHideVersion       bool
+	EmpolisIaApiUrl          string
+	EmpolisIaApiClientId     string
+	EmpolisIaApiClientSecret string
+	EmpolisIaApiTokenUrl     string
 )
 
 // AddChangePasswordLink returns if login form is disabled or not since
@@ -1024,10 +1024,10 @@ func (cfg *Cfg) Load(args *CommandLineArgs) error {
 	EmpolisFavIcon = template.URL(valueAsString(empolisSettings, "fav_icon", ""))
 	EmpolisMenuLogo = valueAsString(empolisSettings, "menu_logo", "")
 	EmpolisCustomLogo = valueAsString(empolisSettings, "custom_logo", "")
-	EmpolisAtlantaUrl = valueAsString(empolisSettings, "atlanta_url", "")
-	EmpolisAtlantaClientId = valueAsString(empolisSettings, "atlanta_client_id", "")
-	EmpolisAtlantaClientSecret = valueAsString(empolisSettings, "atlanta_client_secret", "")
-	EmpolisAtlantaTokenUrl = valueAsString(empolisSettings, "atlanta_token_url", "")
+	EmpolisIaApiUrl = valueAsString(empolisSettings, "ia_api_url", "")
+	EmpolisIaApiClientId = valueAsString(empolisSettings, "ia_api_client_id", "")
+	EmpolisIaApiClientSecret = valueAsString(empolisSettings, "ia_api_client_secret", "")
+	EmpolisIaApiTokenUrl = valueAsString(empolisSettings, "ia_api_token_url", "")
 
 	cfg.EmpolisFooterUrl = EmpolisFooterUrl
 	cfg.EmpolisFooterLabel = EmpolisFooterLabel
