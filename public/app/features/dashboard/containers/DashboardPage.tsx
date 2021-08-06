@@ -316,17 +316,17 @@ export class UnthemedDashboardPage extends PureComponent<Props, State> {
 
     return (
       <div className={containerClassNames}>
-        <header aria-label={selectors.pages.Dashboard.DashNav.nav}>
-          <DashNav
-            dashboard={dashboard}
-            title={dashboard.title}
-            folderTitle={dashboard.meta.folderTitle}
-            isFullscreen={!!viewPanel}
-            onAddPanel={this.onAddPanel}
-            kioskMode={kioskMode}
-            hideTimePicker={dashboard.timepicker.hidden}
-          />
-        </header>
+          <header aria-label={selectors.pages.Dashboard.DashNav.nav}>
+            <DashNav
+              dashboard={dashboard}
+              title={dashboard.title}
+              folderTitle={dashboard.meta.folderTitle}
+              isFullscreen={!!viewPanel}
+              onAddPanel={this.onAddPanel}
+              kioskMode={kioskMode}
+              hideTimePicker={dashboard.timepicker.hidden}
+            />
+          </header>
 
         <DashboardPrompt dashboard={dashboard} />
 
