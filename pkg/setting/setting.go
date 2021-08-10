@@ -318,20 +318,21 @@ type Cfg struct {
 	OAuthCookieMaxAge int
 
 	// JWT Auth
-	JWTAuthEnabled         bool
-	JWTAllowSignup         bool
-	JWTAuthHeaderName      string
-	JWTAuthEmailClaim      string
-	JWTAuthUsernameClaim   string
-	JWTAuthNameClaim       string
-	JWTRoleAttributePath   string
-	JWTGroupsAttributePath string
-	JWTAuthExpectClaims    string
-	JWTAuthJWKSetURL       string
-	JWTAuthCacheTTL        time.Duration
-	JWTAuthSyncTTL         int
-	JWTAuthKeyFile         string
-	JWTAuthJWKSetFile      string
+	JWTAuthEnabled            bool
+	JWTAllowSignup            bool
+	JWTAuthHeaderName         string
+	JWTAuthEmailClaim         string
+	JWTAuthUsernameClaim      string
+	JWTAuthNameClaim          string
+	JWTRoleAttributePath      string
+	JWTGroupsAttributePath    string
+	JWTAuthExpectClaims       string
+	JWTAuthJWKSetURL          string
+	JWTAuthAllowHTTPJWKSetURL bool
+	JWTAuthCacheTTL           time.Duration
+	JWTAuthSyncTTL            int
+	JWTAuthKeyFile            string
+	JWTAuthJWKSetFile         string
 
 	// Dataproxy
 	SendUserHeader                 bool
@@ -1297,6 +1298,7 @@ func readAuthSettings(iniFile *ini.File, cfg *Cfg) (err error) {
 	cfg.JWTGroupsAttributePath = valueAsString(authJWT, "groups_attribute_path", "")
 	cfg.JWTAuthExpectClaims = valueAsString(authJWT, "expect_claims", "{}")
 	cfg.JWTAuthJWKSetURL = valueAsString(authJWT, "jwk_set_url", "")
+	cfg.JWTAuthAllowHTTPJWKSetURL = authJWT.Key("allow_http_jwk_set_url").MustBool(false)
 	cfg.JWTAuthCacheTTL = authJWT.Key("cache_ttl").MustDuration(time.Minute * 60)
 	cfg.JWTAuthSyncTTL = authJWT.Key("sync_ttl").MustInt()
 	cfg.JWTAuthKeyFile = valueAsString(authJWT, "key_file", "")
