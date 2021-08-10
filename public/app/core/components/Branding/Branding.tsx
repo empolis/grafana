@@ -14,7 +14,7 @@ const LoginLogo: FC<BrandComponentProps> = ({ className }) => {
   if (empolisOptions.customLogo.trim()) {
     return <img className={className} src={empolisOptions.customLogo} alt="Empolis" />;
   }
-  return <img className={className} src="public/img/grafana_icon.svg" alt="Grafana" />;
+  return <img className={className} src="public/img/grafana_icon.svg" alt="Empolis" />;
 };
 
 const LoginBackground: FC<BrandComponentProps> = ({ className, children }) => {
@@ -29,7 +29,9 @@ const LoginBackground: FC<BrandComponentProps> = ({ className, children }) => {
       right: 0;
       bottom: 0;
       top: 0;
-      background: url(${empolisOptions.loginBgImg !== '' ? empolisOptions.loginBgImg : ('public/img/g8_login_' + (theme.isDark ? 'dark' : 'light') + '.svg')});
+      background: url(${empolisOptions.loginBgImg !== ''
+        ? empolisOptions.loginBgImg
+        : 'public/img/g8_login_' + (theme.isDark ? 'dark' : 'light') + '.svg'});
       background-position: top center;
       background-size: auto;
       background-repeat: no-repeat;
@@ -49,7 +51,10 @@ const LoginBackground: FC<BrandComponentProps> = ({ className, children }) => {
 
 const MenuLogo: FC<BrandComponentProps> = ({ className }) => {
   const { empolisOptions } = config;
-  return <img className={className} src={empolisOptions.menuLogo} alt="Empolis" />;
+  if (empolisOptions.menuLogo.trim()) {
+    return <img className={className} src={empolisOptions.menuLogo} alt="Empolis" />;
+  }
+  return <img className={className} src="public/img/grafana_icon.svg" alt="Empolis" />;
 };
 
 const LoginBoxBackground = () => {
