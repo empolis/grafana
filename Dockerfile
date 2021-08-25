@@ -37,11 +37,7 @@ RUN go mod verify
 RUN go run build.go build
 
 # Final stage
-<<<<<<< HEAD
 FROM alpine:3.14
-=======
-FROM alpine:3.14.1
->>>>>>> upstream/v8.1.x
 
 LABEL maintainer="Grafana team <hello@grafana.com>"
 
