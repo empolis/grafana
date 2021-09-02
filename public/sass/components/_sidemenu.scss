@@ -27,6 +27,10 @@ $mobile-menu-breakpoint: md;
     position: relative;
     z-index: $zindex-sidemenu;
   }
+
+  @media print {
+    display: none !important;
+  }
 }
 
 // body class that hides sidemenu

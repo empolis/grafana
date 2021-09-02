@@ -47,6 +47,12 @@
   }
 }
 
+div.react-grid-layout div.react-grid-item {
+  @media print {
+    page-break-inside: avoid !important;
+  }
+}
+
 @include media-breakpoint-down(sm) {
   .react-grid-item {
     display: block !important;

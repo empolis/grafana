@@ -394,6 +394,9 @@ export const getStyles = stylesFactory((theme: GrafanaTheme2, kioskMode) => {
       display: flex;
       flex: 1 1 0;
       flex-direction: column;
+      @media print {
+        overflow: visible !important;
+      }
     `,
     dashboardScroll: css`
       width: 100%;
