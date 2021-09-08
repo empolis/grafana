@@ -59,7 +59,7 @@ run-frontend: deps-js ## Fetch js dependencies and watch frontend for rebuild
 _BRANCH        := $(shell git rev-parse --abbrev-ref HEAD)
 _BRANCH_TAG    := $(subst /,_,${_BRANCH})
 _REV           := $(shell git rev-parse --short HEAD)
-EMPOLIS_NAME   := empolis/grafana
+EMPOLIS_NAME   := eseia/grafana
 EMPOLIS_IMG    := ${EMPOLIS_NAME}:${_BRANCH_TAG}-${_REV}
 EMPOLIS_BRANCH := ${EMPOLIS_NAME}:${_BRANCH_TAG}
 

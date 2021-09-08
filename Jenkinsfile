@@ -6,7 +6,7 @@ pipeline {
   }
 
   environment {
-    IMAGE = 'empolis/grafana'
+    IMAGE = 'eseia/grafana'
     DOCKER_REPO = dockerRepo()
     DOCKER_REPO_CREDENTIALS = dockerRepoCredentials()
     GIT_COMMIT_SHORT = sh(
