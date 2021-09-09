@@ -318,21 +318,22 @@ type Cfg struct {
 	OAuthCookieMaxAge int
 
 	// JWT Auth
-	JWTAuthEnabled            bool
-	JWTAllowSignup            bool
-	JWTAuthHeaderName         string
-	JWTAuthEmailClaim         string
-	JWTAuthUsernameClaim      string
-	JWTAuthNameClaim          string
-	JWTRoleAttributePath      string
-	JWTGroupsAttributePath    string
-	JWTAuthExpectClaims       string
-	JWTAuthJWKSetURL          string
-	JWTAuthAllowHTTPJWKSetURL bool
-	JWTAuthCacheTTL           time.Duration
-	JWTAuthSyncTTL            int
-	JWTAuthKeyFile            string
-	JWTAuthJWKSetFile         string
+	JWTAuthEnabled               bool
+	JWTAllowSignup               bool
+	JWTAuthHeaderName            string
+	JWTAuthEmailClaim            string
+	JWTAuthUsernameClaim         string
+	JWTAuthNameClaim             string
+	JWTGrafanaAdminAttributePath string
+	JWTRoleAttributePath         string
+	JWTGroupsAttributePath       string
+	JWTAuthExpectClaims          string
+	JWTAuthJWKSetURL             string
+	JWTAuthAllowHTTPJWKSetURL    bool
+	JWTAuthCacheTTL              time.Duration
+	JWTAuthSyncTTL               int
+	JWTAuthKeyFile               string
+	JWTAuthJWKSetFile            string
 
 	// Dataproxy
 	SendUserHeader                 bool
@@ -1295,6 +1296,7 @@ func readAuthSettings(iniFile *ini.File, cfg *Cfg) (err error) {
 	cfg.JWTAuthEmailClaim = valueAsString(authJWT, "email_claim", "")
 	cfg.JWTAuthUsernameClaim = valueAsString(authJWT, "username_claim", "")
 	cfg.JWTAuthNameClaim = valueAsString(authJWT, "name_claim", "")
+	cfg.JWTGrafanaAdminAttributePath = valueAsString(authJWT, "grafana_admin_attribute_path", "")
 	cfg.JWTRoleAttributePath = valueAsString(authJWT, "role_attribute_path", "")
 	cfg.JWTGroupsAttributePath = valueAsString(authJWT, "groups_attribute_path", "")
 	cfg.JWTAuthExpectClaims = valueAsString(authJWT, "expect_claims", "{}")

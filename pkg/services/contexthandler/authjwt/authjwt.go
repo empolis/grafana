@@ -190,6 +190,25 @@ func (auth *AuthJWT) LoginViaJWT(logger log.Logger) (int64, error) {
 		return 0, fmt.Errorf("failed to get JSON from JWT")
 	}
 
+	isGrafanaAdmin, err := auth.isGrafanaAdmin(jwt)
+	if err != nil {
+		auth.HandleError(err, 401, func(details error) {
+			logger.Error(
+				"Failed to extract grafana admin status from JWT",
+				"message", err.Error(),
+				"error", details,
+			)
+		})
+		return 0, fmt.Errorf("failed to extract grafana admin status from JWT")
+	} else {
+		logger.Debug("Extracted grafana admin status from JWT", "isGrafanaAdmin", isGrafanaAdmin)
+		if isGrafanaAdmin {
+			logger.Debug("Adding user to main org as admin and make them grafana admin")
+			extUser.OrgRoles[1] = models.ROLE_ADMIN
+			extUser.IsGrafanaAdmin = &isGrafanaAdmin
+		}
+	}
+
 	role, err := auth.extractRole(jwt)
 	if err != nil {
 		auth.HandleError(err, 401, func(details error) {
@@ -301,6 +320,18 @@ func (auth *AuthJWT) Remember(id int64) error {
 	return nil
 }
 
+func (auth *AuthJWT) isGrafanaAdmin(data []byte) (bool, error) {
+	if auth.cfg.JWTGrafanaAdminAttributePath == "" {
+		return false, nil
+	}
+
+	isAdmin, err := auth.searchJSONForBoolAttr(auth.cfg.JWTGrafanaAdminAttributePath, data)
+	if err != nil {
+		return false, err
+	}
+	return isAdmin, nil
+}
+
 func (auth *AuthJWT) extractRole(data []byte) (string, error) {
 	if auth.cfg.JWTRoleAttributePath == "" {
 		return "", nil
@@ -311,6 +342,20 @@ func (auth *AuthJWT) extractRole(data []byte) (string, error) {
 		return "", err
 	}
 	return role, nil
+}
+
+func (auth *AuthJWT) searchJSONForBoolAttr(attributePath string, data []byte) (bool, error) {
+	val, err := auth.searchJSONForAttr(attributePath, data)
+	if err != nil {
+		return false, err
+	}
+
+	boolVal, ok := val.(bool)
+	if ok {
+		return boolVal, nil
+	}
+
+	return false, nil
 }
 
 func (auth *AuthJWT) searchJSONForStringAttr(attributePath string, data []byte) (string, error) {
