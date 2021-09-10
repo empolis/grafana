@@ -29,6 +29,8 @@ COPY pkg/macaron ./pkg/macaron
 RUN go mod download -x
 
 COPY cue cue
+COPY cue.mod cue.mod
+COPY packages/grafana-schema packages/grafana-schema
 COPY public/app/plugins public/app/plugins
 COPY pkg pkg
 COPY build.go package.json git-branch git-sha git-buildstamp ./
@@ -37,9 +39,9 @@ RUN go mod verify
 RUN go run build.go build
 
 # Final stage
-FROM alpine:3.14
+FROM alpine:3.14.2
 
-LABEL maintainer="Grafana team <hello@grafana.com>"
+LABEL maintainer="Jürgen Kreileder <juergen.kreileder@empolis.com>"
 
 ARG GF_UID="472"
 ARG GF_GID="0"
@@ -55,7 +57,7 @@ ENV PATH="/usr/share/grafana/bin:$PATH" \
 WORKDIR $GF_PATHS_HOME
 
 RUN apk add --no-cache ca-certificates bash tzdata && \
-    apk add --no-cache openssl musl-utils libcrypto1.1>1.1.1l-r0 libssl1.1>1.1.1l-r0
+    apk add --no-cache openssl musl-utils
 
 COPY conf ./conf
 

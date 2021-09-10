@@ -29,6 +29,8 @@ RUN go mod download -x
 COPY build.go package.json git-branch git-sha git-buildstamp ./
 COPY pkg pkg/
 COPY cue cue/
+COPY cue.mod cue.mod/
+COPY packages/grafana-schema packages/grafana-schema/
 COPY public/app/plugins public/app/plugins/
 
 RUN go mod verify
