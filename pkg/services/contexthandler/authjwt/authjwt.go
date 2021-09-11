@@ -204,7 +204,7 @@ func (auth *AuthJWT) LoginViaJWT(logger log.Logger) (int64, error) {
 		logger.Debug("Extracted grafana admin status from JWT", "isGrafanaAdmin", isGrafanaAdmin)
 		if isGrafanaAdmin {
 			logger.Debug("Adding user to main org as admin and make them grafana admin")
-			extUser.OrgRoles[1] = models.ROLE_ADMIN
+			extUser.OrgRoles[int64(1)] = models.ROLE_ADMIN
 			extUser.IsGrafanaAdmin = &isGrafanaAdmin
 		}
 	}
@@ -262,11 +262,13 @@ func (auth *AuthJWT) LoginViaJWT(logger log.Logger) (int64, error) {
 						extUser.OrgRoles[query.Result.Id] = rt
 					}
 				}
-			} else {
+			} else if !isGrafanaAdmin && !setting.AutoAssignOrg {
 				orgID = int64(1)
 				logger.Debug("The user has a role assignment and organization membership is not auto-assigned",
 					"role", role, "orgId", orgID)
 				extUser.OrgRoles[orgID] = rt
+			} else {
+				return 0, fmt.Errorf("user could not be assigned to any org")
 			}
 			logger.Debug("Set org roles", "extUser.OrgRoles", extUser.OrgRoles)
 		}
