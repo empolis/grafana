@@ -267,7 +267,7 @@ func (auth *AuthJWT) LoginViaJWT(logger log.Logger) (int64, error) {
 				logger.Debug("The user has a role assignment and organization membership is not auto-assigned",
 					"role", role, "orgId", orgID)
 				extUser.OrgRoles[orgID] = rt
-			} else {
+			} else if !isGrafanaAdmin {
 				return 0, fmt.Errorf("user could not be assigned to any org")
 			}
 			logger.Debug("Set org roles", "extUser.OrgRoles", extUser.OrgRoles)
