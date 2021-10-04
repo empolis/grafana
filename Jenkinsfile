@@ -35,7 +35,7 @@ pipeline {
 
     stage('Push') {
       when {
-        expression { env.DOCKER_REPO }
+        expression { env.DOCKER_REPO && !(env.BRANCH_NAME =~ /release\/.+/) }
       }
       steps {
         script {
@@ -43,6 +43,20 @@ pipeline {
             image.push("${env.GIT_BRANCH_TAG}")
           }
           sh "docker rmi ${env.DOCKER_REPO}/${env.IMAGE}:${env.GIT_BRANCH_TAG}"
+        }
+      }
+    }
+
+    stage('Push release image with build timestamp') {
+      when {
+        expression { env.DOCKER_REPO && env.BRANCH_NAME =~ /release\/.+/ }
+      }
+      steps {
+        script {
+          docker.withRegistry("https://${env.DOCKER_REPO}", env.DOCKER_REPO_CREDENTIALS) {
+            image.push("${env.GIT_BRANCH_TAG}-${env.BUILD_TIMESTAMP}")
+          }
+          sh "docker rmi ${env.DOCKER_REPO}/${env.IMAGE}:${env.GIT_BRANCH_TAG}-${env.BUILD_TIMESTAMP}"
         }
       }
     }
