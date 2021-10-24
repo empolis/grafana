@@ -53,6 +53,8 @@ export const preparePlotConfigBuilder: UPlotConfigPrepFn<BarChartOptions> = ({
   barWidth,
   stacking,
   text,
+  rawValue,
+  allFrames,
 }) => {
   const builder = new UPlotConfigBuilder();
   const defaultValueFormatter = (seriesIdx: number, value: any) =>
@@ -75,7 +77,7 @@ export const preparePlotConfigBuilder: UPlotConfigPrepFn<BarChartOptions> = ({
     groupWidth,
     barWidth,
     stacking,
-    rawValue: (seriesIdx: number, valueIdx: number) => frame.fields[seriesIdx].values.get(valueIdx),
+    rawValue,
     formatValue,
     text,
     showValue,
@@ -148,8 +150,11 @@ export const preparePlotConfigBuilder: UPlotConfigPrepFn<BarChartOptions> = ({
       softMax: customConfig.axisSoftMax,
 
       // The following properties are not used in the uPlot config, but are utilized as transport for legend config
+      // PlotLegend currently gets unfiltered DataFrame[], so index must be into that field array, not the prepped frame's which we're iterating here
       dataFrameFieldIndex: {
-        fieldIndex: i,
+        fieldIndex: allFrames[0].fields.findIndex(
+          (f) => f.type === FieldType.number && f.state?.seriesIndex === seriesIndex - 1
+        ),
         frameIndex: 0,
       },
     });
@@ -252,10 +257,16 @@ export function prepareGraphableFrames(
     };
   }
 
+  let seriesIndex = 0;
+
   for (let frame of series) {
     const fields: Field[] = [];
     for (const field of frame.fields) {
       if (field.type === FieldType.number) {
+        field.state = field.state ?? {};
+
+        field.state.seriesIndex = seriesIndex++;
+
         let copy = {
           ...field,
           config: {
