@@ -7,8 +7,6 @@ pipeline {
 
     environment {
         IMAGE = 'eseia/grafana'
-        DOCKER_REPO = dockerRepo()
-        DOCKER_REPO_CREDENTIALS = dockerRepoCredentials()
         GIT_COMMIT_SHORT = sh(
                 script: "printf \$(git rev-parse --short ${env.GIT_COMMIT})",
                 returnStdout: true
