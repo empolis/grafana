@@ -16,7 +16,7 @@ require (
 	cuelang.org/go v0.3.2
 	github.com/Azure/azure-sdk-for-go/sdk/azcore v0.16.1
 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v0.9.1
-	github.com/BurntSushi/toml v0.3.1
+	github.com/BurntSushi/toml v1.0.0
 	github.com/Masterminds/semver v1.5.0
 	github.com/VividCortex/mysqlerr v0.0.0-20170204212430-6c6b55f8796f
 	github.com/aws/aws-sdk-go v1.38.68
