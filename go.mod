@@ -12,7 +12,7 @@ replace github.com/denisenkom/go-mssqldb => github.com/grafana/go-mssqldb v0.0.0
 replace k8s.io/client-go => k8s.io/client-go v0.18.8
 
 require (
-	cloud.google.com/go/storage v1.14.0
+	cloud.google.com/go/storage v1.18.2
 	cuelang.org/go v0.3.2
 	github.com/Azure/azure-sdk-for-go/sdk/azcore v0.16.1
 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v0.9.1
@@ -46,7 +46,7 @@ require (
 	github.com/go-stack/stack v1.8.0
 	github.com/gobwas/glob v0.2.3
 	github.com/gofrs/uuid v4.0.0+incompatible
-	github.com/golang/mock v1.5.0
+	github.com/golang/mock v1.6.0
 	github.com/google/go-cmp v0.5.6
 	github.com/google/uuid v1.3.0
 	github.com/gorilla/websocket v1.4.2
@@ -100,13 +100,13 @@ require (
 	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e
 	golang.org/x/exp v0.0.0-20210220032938-85be41e4509f // indirect
 	golang.org/x/net v0.0.0-20210614182718-04defd469f4e
-	golang.org/x/oauth2 v0.0.0-20210514164344-f6687ab2804c
+	golang.org/x/oauth2 v0.0.0-20211005180243-6b3c2da341f1
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 	golang.org/x/time v0.0.0-20210611083556-38a9dc6acbc6
-	golang.org/x/tools v0.1.3
+	golang.org/x/tools v0.1.5
 	gonum.org/v1/gonum v0.9.1
-	google.golang.org/api v0.48.0
-	google.golang.org/grpc v1.39.0
+	google.golang.org/api v0.58.0
+	google.golang.org/grpc v1.40.0
 	google.golang.org/protobuf v1.27.1
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/ini.v1 v1.62.0
