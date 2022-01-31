@@ -106,7 +106,7 @@ require (
 	golang.org/x/tools v0.1.3
 	gonum.org/v1/gonum v0.9.1
 	google.golang.org/api v0.48.0
-	google.golang.org/grpc v1.39.0
+	google.golang.org/grpc v1.44.0
 	google.golang.org/protobuf v1.27.1
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/ini.v1 v1.62.0
