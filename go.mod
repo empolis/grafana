@@ -109,7 +109,7 @@ require (
 	google.golang.org/grpc v1.39.0
 	google.golang.org/protobuf v1.27.1
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
-	gopkg.in/ini.v1 v1.62.0
+	gopkg.in/ini.v1 v1.66.4
 	gopkg.in/ldap.v3 v3.1.0
 	gopkg.in/macaron.v1 v1.4.0
 	gopkg.in/mail.v2 v2.3.1
