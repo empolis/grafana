@@ -93,6 +93,16 @@ export interface EmpolisOptions {
 }
 
 /**
+ * Describes the plugins that should be preloaded prior to start Grafana.
+ *
+ * @public
+ */
+export type PreloadPlugin = {
+  path: string;
+  version: string;
+};
+
+/**
  * Describes all the different Grafana configuration values available for an instance.
  *
  * @public
@@ -135,7 +145,7 @@ export interface GrafanaConfig {
   liveEnabled: boolean;
   theme: GrafanaTheme;
   theme2: GrafanaTheme2;
-  pluginsToPreload: string[];
+  pluginsToPreload: PreloadPlugin[];
   featureToggles: FeatureToggles;
   licenseInfo: LicenseInfo;
   http2Enabled: boolean;
