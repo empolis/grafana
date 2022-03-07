@@ -120,8 +120,8 @@ func TestMiddlewareJWTAuth(t *testing.T) {
 
 		sc.fakeReq("GET", "/").withJWTAuthHeader(token).exec()
 		assert.Equal(t, verifiedToken, token)
-		assert.Equal(t, 401, sc.resp.Code)
-		assert.Equal(t, contexthandler.UserNotFound, sc.respJson["message"])
+		assert.Equal(t, 407, sc.resp.Code)
+		assert.Nil(t, sc.context)
 	}, configure, configureEmailClaim)
 
 	middlewareScenario(t, "Valid token with no user and auto_sign_up enabled", func(t *testing.T, sc *scenarioContext) {

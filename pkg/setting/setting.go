@@ -154,6 +154,9 @@ var (
 	LDAPAllowSignup       bool
 	LDAPActiveSyncEnabled bool
 
+	// JWT
+	JWTAuthEnabled bool
+
 	// Quota
 	Quota QuotaSettings
 
@@ -328,7 +331,7 @@ type Cfg struct {
 
 	// JWT Auth
 	JWTAuthEnabled               bool
-	JWTAllowSignup               bool
+	JWTAuthAutoSignUp            bool
 	JWTAuthHeaderName            string
 	JWTAuthEmailClaim            string
 	JWTAuthUsernameClaim         string
@@ -1333,8 +1336,9 @@ func readAuthSettings(iniFile *ini.File, cfg *Cfg) (err error) {
 
 	// JWT auth
 	authJWT := iniFile.Section("auth.jwt")
-	cfg.JWTAuthEnabled = authJWT.Key("enabled").MustBool(false)
-	cfg.JWTAllowSignup = authJWT.Key("allow_sign_up").MustBool(true)
+	JWTAuthEnabled = authJWT.Key("enabled").MustBool(false)
+	cfg.JWTAuthEnabled = JWTAuthEnabled
+	cfg.JWTAuthAutoSignUp = authJWT.Key("allow_sign_up").MustBool(true)
 	cfg.JWTAuthHeaderName = valueAsString(authJWT, "header_name", "")
 	cfg.JWTAuthEmailClaim = valueAsString(authJWT, "email_claim", "")
 	cfg.JWTAuthUsernameClaim = valueAsString(authJWT, "username_claim", "")

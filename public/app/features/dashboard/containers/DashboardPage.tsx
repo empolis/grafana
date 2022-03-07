@@ -357,7 +357,6 @@ export class UnthemedDashboardPage extends PureComponent<Props, State> {
             <div className={styles.dashboardContent}>
               {initError && <DashboardFailed />}
               {showSubMenu && (
-              {!editPanel && (
                 <section aria-label={selectors.pages.Dashboard.SubMenu.submenu}>
                   <SubMenu dashboard={dashboard} annotations={dashboard.annotations.list} links={dashboard.links} />
                 </section>

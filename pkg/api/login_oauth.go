@@ -8,12 +8,14 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"github.com/grafana/grafana/pkg/services/sqlstore"
 	"net/http"
 	"net/url"
 
-	"golang.org/x/oauth2"
+	"github.com/grafana/grafana/pkg/services/sqlstore"
+
 	"strings"
+
+	"golang.org/x/oauth2"
 
 	"github.com/grafana/grafana/pkg/api/response"
 	"github.com/grafana/grafana/pkg/bus"
@@ -237,7 +239,7 @@ func (hs *HTTPServer) OAuthLogin(ctx *models.ReqContext) response.Response {
 		return nil
 	}
 
-	loginInfo.ExternalUser = *hs.buildExternalUserInfo(token, userInfo, name)
+	loginInfo.ExternalUser = *hs.buildExternalUserInfo(token, userInfo, name, ctx)
 	loginInfo.User, err = syncUser(ctx, &loginInfo.ExternalUser, connect)
 	if err != nil {
 		hs.handleOAuthLoginErrorWithRedirect(ctx, loginInfo, err)
@@ -268,7 +270,7 @@ func (hs *HTTPServer) OAuthLogin(ctx *models.ReqContext) response.Response {
 }
 
 // buildExternalUserInfo returns a ExternalUserInfo struct from OAuth user profile
-func (hs *HTTPServer) buildExternalUserInfo(token *oauth2.Token, userInfo *social.BasicUserInfo, name string) *models.ExternalUserInfo {
+func (hs *HTTPServer) buildExternalUserInfo(token *oauth2.Token, userInfo *social.BasicUserInfo, name string, ctx *models.ReqContext) *models.ExternalUserInfo {
 	oauthLogger.Debug("Building external user info from OAuth user info")
 
 	extUser := &models.ExternalUserInfo{
@@ -295,10 +297,10 @@ func (hs *HTTPServer) buildExternalUserInfo(token *oauth2.Token, userInfo *socia
 			} else if len(userInfo.Groups) > 0 {
 				for _, group := range userInfo.Groups {
 					query := models.GetOrgByNameQuery{Name: group}
-					err := sqlstore.GetOrgByName(&query)
+					err := sqlstore.GetOrgByName(ctx.Req.Context(), &query)
 					if err != nil {
 						query = models.GetOrgByNameQuery{Name: strings.ToLower(group)}
-						err = sqlstore.GetOrgByName(&query)
+						err = sqlstore.GetOrgByName(ctx.Req.Context(), &query)
 					}
 					if err == nil {
 						extUser.OrgRoles[query.Result.Id] = rt

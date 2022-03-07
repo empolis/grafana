@@ -61,7 +61,7 @@ func (rs *RenderingService) renderViaPlugin(ctx context.Context, renderKey strin
 
 func (rs *RenderingService) renderPDFViaPlugin(ctx context.Context, renderKey string, opts PDFOpts) (*RenderPDFResult, error) {
 	// gives plugin some additional time to timeout and return possible errors.
-	ctx, cancel := context.WithTimeout(ctx, opts.Timeout+time.Second*2)
+	ctx, cancel := context.WithTimeout(ctx, getRequestTimeout(opts.TimeoutOpts))
 	defer cancel()
 
 	filePath, err := rs.getNewFilePath(RenderPDF)
@@ -78,7 +78,7 @@ func (rs *RenderingService) renderPDFViaPlugin(ctx context.Context, renderKey st
 	}
 
 	landscape := "0"
-	if (opts.Landscape) {
+	if opts.Landscape {
 		landscape = "1"
 	}
 
@@ -97,7 +97,7 @@ func (rs *RenderingService) renderPDFViaPlugin(ctx context.Context, renderKey st
 	}
 	rs.log.Debug("Calling renderer plugin", "req", req)
 
-	rsp, err := rs.pluginInfo.GrpcPluginV2.RenderPDF(ctx, req)
+	rsp, err := rs.pluginInfo.Renderer.RenderPDF(ctx, req)
 	if errors.Is(ctx.Err(), context.DeadlineExceeded) {
 		rs.log.Info("Rendering timed out")
 		return nil, ErrTimeout
