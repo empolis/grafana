@@ -4,6 +4,7 @@ import {
   BuildInfo,
   createTheme,
   DataSourceInstanceSettings,
+  EmpolisOptions,
   FeatureToggles,
   GrafanaConfig,
   GrafanaTheme,
@@ -48,6 +49,7 @@ export class GrafanaBootConfig implements GrafanaConfig {
   helpEnabled = false;
   profileEnabled = false;
   ldapEnabled = false;
+  jwtEnabled = false;
   sigV4AuthEnabled = false;
   samlEnabled = false;
   samlName = '';
@@ -68,6 +70,7 @@ export class GrafanaBootConfig implements GrafanaConfig {
   pluginsToPreload: PreloadPlugin[] = [];
   featureToggles: FeatureToggles = {};
   licenseInfo: LicenseInfo = {} as LicenseInfo;
+  empolisOptions: EmpolisOptions = {} as EmpolisOptions;
   rendererAvailable = false;
   dashboardPreviews: {
     systemRequirements: {

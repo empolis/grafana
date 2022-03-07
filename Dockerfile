@@ -9,7 +9,8 @@ COPY .yarn .yarn
 COPY packages packages
 COPY plugins-bundled plugins-bundled
 
-RUN yarn install
+RUN apk add --no-cache git
+RUN yarn install --pure-lockfile --no-progress
 
 COPY tsconfig.json .eslintrc .editorconfig .browserslistrc .prettierrc.js babel.config.json .linguirc ./
 COPY public public
@@ -35,6 +36,7 @@ COPY pkg pkg
 COPY scripts scripts
 COPY cue.mod cue.mod
 COPY .bingo .bingo
+COPY git-branch git-sha git-buildstamp ./
 
 RUN go mod verify
 RUN make build-go
@@ -42,7 +44,7 @@ RUN make build-go
 # Final stage
 FROM alpine:3.15
 
-LABEL maintainer="Grafana team <hello@grafana.com>"
+LABEL maintainer="Jürgen Kreileder <juergen.kreileder@empolis.com>"
 
 ARG GF_UID="472"
 ARG GF_GID="0"

@@ -380,7 +380,7 @@ func (hs *HTTPServer) addProfile(navTree []*dtos.NavLink, c *models.ReqContext) 
 func (hs *HTTPServer) addHelpLinks(navTree []*dtos.NavLink, c *models.ReqContext) []*dtos.NavLink {
 	if setting.HelpEnabled {
 		helpVersion := fmt.Sprintf(`%s v%s (%s)`, setting.ApplicationName, setting.BuildVersion, setting.BuildCommit)
-		if hs.Cfg.AnonymousHideVersion && !c.IsSignedIn {
+		if (hs.Cfg.AnonymousHideVersion && !c.IsSignedIn) || setting.EmpolisHideVersion {
 			helpVersion = setting.ApplicationName
 		}
 
@@ -683,8 +683,8 @@ func (hs *HTTPServer) setIndexViewData(c *models.ReqContext) (*dtos.IndexViewDat
 		NewGrafanaVersionExists: hs.grafanaUpdateChecker.UpdateAvailable(),
 		AppName:                 setting.ApplicationName,
 		AppNameBodyClass:        "app-grafana",
-		FavIcon:                 "public/img/fav32.png",
-		AppleTouchIcon:          "public/img/apple-touch-icon.png",
+		FavIcon:                 setting.EmpolisFavIcon,
+		AppleTouchIcon:          setting.EmpolisAppleTouchIcon,
 		AppTitle:                "Grafana",
 		NavTree:                 navTree,
 		Sentry:                  &hs.Cfg.Sentry,

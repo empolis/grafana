@@ -17,6 +17,7 @@ type RenderType string
 const (
 	RenderCSV RenderType = "csv"
 	RenderPNG RenderType = "png"
+	RenderPDF RenderType = "pdf"
 )
 
 type TimeoutOpts struct {
@@ -52,6 +53,24 @@ type Opts struct {
 	Theme             models.Theme
 }
 
+type PDFOpts struct {
+	TimeoutOpts
+	AuthOpts
+	Width             int
+	Height            int
+	Timeout           time.Duration
+	OrgID             int64
+	UserID            int64
+	OrgRole           models.RoleType
+	Path              string
+	Encoding          string
+	Timezone          string
+	ConcurrentLimit   int
+	DeviceScaleFactor float64
+	Landscape         bool
+	Headers           map[string][]string
+}
+
 type CSVOpts struct {
 	TimeoutOpts
 	AuthOpts
@@ -66,12 +85,18 @@ type RenderResult struct {
 	FilePath string
 }
 
+type RenderPDFResult struct {
+	FilePath string
+	FileName string
+}
+
 type RenderCSVResult struct {
 	FilePath string
 	FileName string
 }
 
 type renderFunc func(ctx context.Context, renderKey string, options Opts) (*RenderResult, error)
+type renderPDFFunc func(ctx context.Context, renderKey string, options PDFOpts) (*RenderPDFResult, error)
 type renderCSVFunc func(ctx context.Context, renderKey string, options CSVOpts) (*RenderCSVResult, error)
 
 type renderKeyProvider interface {
@@ -98,6 +123,7 @@ type Service interface {
 	IsAvailable() bool
 	Version() string
 	Render(ctx context.Context, opts Opts, session Session) (*RenderResult, error)
+	RenderPDF(ctx context.Context, opts PDFOpts, session Session) (*RenderPDFResult, error)
 	RenderCSV(ctx context.Context, opts CSVOpts, session Session) (*RenderCSVResult, error)
 	RenderErrorImage(theme models.Theme, error error) (*RenderResult, error)
 	GetRenderUser(ctx context.Context, key string) (*RenderUser, bool)

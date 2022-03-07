@@ -148,10 +148,18 @@ const getStyles = (theme: GrafanaTheme2) => {
       // greater than outer one).
       display: flex;
       flex-grow: 1;
+      @media print {
+        position: static !important;
+        overflow: visible !important;
+      }
       .scrollbar-view {
         display: flex;
         flex-grow: 1;
         flex-direction: column;
+        @media print {
+          position: static !important;
+          overflow: visible !important;
+        }
       }
       .track-vertical {
         border-radius: ${theme.shape.borderRadius(2)};

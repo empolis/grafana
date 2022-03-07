@@ -70,7 +70,7 @@ export const UserProfileEditForm: FC<Props> = ({ user, isSavingUser, updateProfi
             <div className="gf-form-button-row">
               <Button
                 variant="primary"
-                disabled={isSavingUser}
+                disabled={isSavingUser || disableLoginForm}
                 data-testid={selectors.components.UserProfile.profileSaveButton}
               >
                 <Trans id="common.save">Save</Trans>

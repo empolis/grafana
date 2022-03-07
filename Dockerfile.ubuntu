@@ -10,7 +10,8 @@ COPY .yarnrc.yml ./
 COPY .yarn .yarn
 COPY plugins-bundled plugins-bundled
 
-RUN yarn install
+RUN apt-get update && apt-get install -yq git && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN yarn install --pure-lockfile --no-progress
 
 COPY tsconfig.json .eslintrc .editorconfig .browserslistrc .prettierrc.js babel.config.json .linguirc ./
 COPY public public
@@ -28,6 +29,7 @@ WORKDIR /src/grafana
 COPY go.mod go.sum embed.go ./
 COPY Makefile build.go package.json ./
 COPY .bingo .bingo
+COPY git-branch git-sha git-buildstamp ./
 COPY pkg pkg/
 COPY cue cue/
 COPY cue.mod cue.mod/
@@ -59,7 +61,7 @@ WORKDIR $GF_PATHS_HOME
 COPY conf conf
 
 # curl should be part of the image
-RUN apt-get update && apt-get install -y ca-certificates curl
+RUN apt-get update && apt-get install -y ca-certificates curl && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p "$GF_PATHS_HOME/.aws" && \
   addgroup --system --gid $GF_GID grafana && \

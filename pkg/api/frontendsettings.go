@@ -96,6 +96,7 @@ func (hs *HTTPServer) getFrontendSettingsMap(c *models.ReqContext) (map[string]i
 		"allowOrgCreate":                      (setting.AllowUserOrgCreate && c.IsSignedIn) || c.IsGrafanaAdmin,
 		"authProxyEnabled":                    setting.AuthProxyEnabled,
 		"ldapEnabled":                         hs.Cfg.LDAPEnabled,
+		"jwtEnabled":                          hs.Cfg.JWTAuthEnabled,
 		"alertingEnabled":                     setting.AlertingEnabled,
 		"alertingErrorOrTimeout":              setting.AlertingErrorOrTimeout,
 		"alertingNoDataOrNullValues":          setting.AlertingNoDataOrNullValues,
@@ -170,6 +171,16 @@ func (hs *HTTPServer) getFrontendSettingsMap(c *models.ReqContext) (map[string]i
 			"enabled": hs.Cfg.SectionWithEnvOverrides("reporting").Key("enabled").MustBool(true),
 		},
 		"unifiedAlertingEnabled": hs.Cfg.UnifiedAlerting.Enabled,
+		"empolisOptions": map[string]interface{}{
+			"footerUrl":      setting.EmpolisFooterUrl,
+			"footerLabel":    setting.EmpolisFooterLabel,
+			"loginBgImg":     setting.EmpolisLoginBgImg,
+			"appleTouchIcon": setting.EmpolisAppleTouchIcon,
+			"favIcon":        setting.EmpolisFavIcon,
+			"menuLogo":       setting.EmpolisMenuLogo,
+			"customLogo":     setting.EmpolisCustomLogo,
+			"hideVersion":    setting.EmpolisHideVersion,
+		},
 	}
 
 	if hs.ThumbService != nil {

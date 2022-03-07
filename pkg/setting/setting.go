@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"html/template"
 	"net/http"
 	"net/url"
 	"os"
@@ -182,6 +183,20 @@ var (
 	GrafanaComUrl string
 
 	ImageUploadProvider string
+
+	// Empolis
+	EmpolisFooterUrl         string
+	EmpolisFooterLabel       string
+	EmpolisLoginBgImg        string
+	EmpolisAppleTouchIcon    template.URL
+	EmpolisFavIcon           template.URL
+	EmpolisMenuLogo          string
+	EmpolisCustomLogo        string
+	EmpolisHideVersion       bool
+	EmpolisIaApiUrl          string
+	EmpolisIaApiClientId     string
+	EmpolisIaApiClientSecret string
+	EmpolisIaApiTokenUrl     string
 )
 
 // AddChangePasswordLink returns if login form is disabled or not since
@@ -240,6 +255,7 @@ type Cfg struct {
 
 	// Rendering
 	ImagesDir                      string
+	PDFsDir                        string
 	CSVsDir                        string
 	RendererUrl                    string
 	RendererCallbackUrl            string
@@ -320,16 +336,22 @@ type Cfg struct {
 	OAuthCookieMaxAge int
 
 	// JWT Auth
-	JWTAuthEnabled       bool
-	JWTAuthHeaderName    string
-	JWTAuthEmailClaim    string
-	JWTAuthUsernameClaim string
-	JWTAuthExpectClaims  string
-	JWTAuthJWKSetURL     string
-	JWTAuthCacheTTL      time.Duration
-	JWTAuthKeyFile       string
-	JWTAuthJWKSetFile    string
-	JWTAuthAutoSignUp    bool
+	JWTAuthEnabled               bool
+	JWTAllowSignup               bool
+	JWTAuthHeaderName            string
+	JWTAuthEmailClaim            string
+	JWTAuthUsernameClaim         string
+	JWTAuthNameClaim             string
+	JWTGrafanaAdminAttributePath string
+	JWTRoleAttributePath         string
+	JWTGroupsAttributePath       string
+	JWTAuthExpectClaims          string
+	JWTAuthJWKSetURL             string
+	JWTAuthAllowHTTPJWKSetURL    bool
+	JWTAuthCacheTTL              time.Duration
+	JWTAuthSyncTTL               int
+	JWTAuthKeyFile               string
+	JWTAuthJWKSetFile            string
 
 	// Dataproxy
 	SendUserHeader                 bool
@@ -375,6 +397,16 @@ type Cfg struct {
 
 	// Sentry config
 	Sentry Sentry
+
+	// Empolis
+	EmpolisFooterUrl      string
+	EmpolisFooterLabel    string
+	EmpolisLoginBgImg     string
+	EmpolisAppleTouchIcon template.URL
+	EmpolisFavIcon        template.URL
+	EmpolisMenuLogo       string
+	EmpolisCustomLogo     string
+	EmpolisHideVersion    bool
 
 	// Data sources
 	DataSourceLimit int
@@ -1036,6 +1068,29 @@ func (cfg *Cfg) Load(args CommandLineArgs) error {
 	}
 	cfg.GeomapEnableCustomBaseLayers = geomapSection.Key("enable_custom_baselayers").MustBool(true)
 
+	empolisSettings := iniFile.Section("empolis")
+	EmpolisFooterUrl = valueAsString(empolisSettings, "footer_url", "")
+	EmpolisFooterLabel = valueAsString(empolisSettings, "footer_label", "")
+	EmpolisHideVersion = empolisSettings.Key("hide_version").MustBool(false)
+	EmpolisLoginBgImg = valueAsString(empolisSettings, "login_bg_img", "")
+	EmpolisAppleTouchIcon = template.URL(valueAsString(empolisSettings, "apple_touch_icon", ""))
+	EmpolisFavIcon = template.URL(valueAsString(empolisSettings, "fav_icon", ""))
+	EmpolisMenuLogo = valueAsString(empolisSettings, "menu_logo", "")
+	EmpolisCustomLogo = valueAsString(empolisSettings, "custom_logo", "")
+	EmpolisIaApiUrl = valueAsString(empolisSettings, "ia_api_url", "")
+	EmpolisIaApiClientId = valueAsString(empolisSettings, "ia_api_client_id", "")
+	EmpolisIaApiClientSecret = valueAsString(empolisSettings, "ia_api_client_secret", "")
+	EmpolisIaApiTokenUrl = valueAsString(empolisSettings, "ia_api_token_url", "")
+
+	cfg.EmpolisFooterUrl = EmpolisFooterUrl
+	cfg.EmpolisFooterLabel = EmpolisFooterLabel
+	cfg.EmpolisHideVersion = EmpolisHideVersion
+	cfg.EmpolisLoginBgImg = EmpolisLoginBgImg
+	cfg.EmpolisAppleTouchIcon = EmpolisAppleTouchIcon
+	cfg.EmpolisFavIcon = EmpolisFavIcon
+	cfg.EmpolisMenuLogo = EmpolisMenuLogo
+	cfg.EmpolisCustomLogo = EmpolisCustomLogo
+
 	cfg.readDateFormats()
 	cfg.readSentryConfig()
 
@@ -1292,12 +1347,19 @@ func readAuthSettings(iniFile *ini.File, cfg *Cfg) (err error) {
 	// JWT auth
 	authJWT := iniFile.Section("auth.jwt")
 	cfg.JWTAuthEnabled = authJWT.Key("enabled").MustBool(false)
+	cfg.JWTAllowSignup = authJWT.Key("allow_sign_up").MustBool(true)
 	cfg.JWTAuthHeaderName = valueAsString(authJWT, "header_name", "")
 	cfg.JWTAuthEmailClaim = valueAsString(authJWT, "email_claim", "")
 	cfg.JWTAuthUsernameClaim = valueAsString(authJWT, "username_claim", "")
+	cfg.JWTAuthNameClaim = valueAsString(authJWT, "name_claim", "")
+	cfg.JWTGrafanaAdminAttributePath = valueAsString(authJWT, "grafana_admin_attribute_path", "")
+	cfg.JWTRoleAttributePath = valueAsString(authJWT, "role_attribute_path", "")
+	cfg.JWTGroupsAttributePath = valueAsString(authJWT, "groups_attribute_path", "")
 	cfg.JWTAuthExpectClaims = valueAsString(authJWT, "expect_claims", "{}")
 	cfg.JWTAuthJWKSetURL = valueAsString(authJWT, "jwk_set_url", "")
+	cfg.JWTAuthAllowHTTPJWKSetURL = authJWT.Key("allow_http_jwk_set_url").MustBool(false)
 	cfg.JWTAuthCacheTTL = authJWT.Key("cache_ttl").MustDuration(time.Minute * 60)
+	cfg.JWTAuthSyncTTL = authJWT.Key("sync_ttl").MustInt()
 	cfg.JWTAuthKeyFile = valueAsString(authJWT, "key_file", "")
 	cfg.JWTAuthJWKSetFile = valueAsString(authJWT, "jwk_set_file", "")
 	cfg.JWTAuthAutoSignUp = authJWT.Key("auto_sign_up").MustBool(false)
@@ -1406,6 +1468,7 @@ func (cfg *Cfg) readRenderingSettings(iniFile *ini.File) error {
 
 	cfg.RendererConcurrentRequestLimit = renderSec.Key("concurrent_render_request_limit").MustInt(30)
 	cfg.ImagesDir = filepath.Join(cfg.DataPath, "png")
+	cfg.PDFsDir = filepath.Join(cfg.DataPath, "pdf")
 	cfg.CSVsDir = filepath.Join(cfg.DataPath, "csv")
 
 	return nil

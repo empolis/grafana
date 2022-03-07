@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"go/build"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -269,7 +270,10 @@ func buildStamp() (int64, error) {
 
 	bs, err := runError("git", "show", "-s", "--format=%ct")
 	if err != nil {
-		return time.Now().Unix(), nil
+		bs, err = ioutil.ReadFile("git-buildstamp")
+		if err != nil {
+			return time.Now().Unix(), nil
+		}
 	}
 
 	return strconv.ParseInt(string(bs), 10, 64)

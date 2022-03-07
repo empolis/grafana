@@ -42,6 +42,7 @@ export {
   OAuth,
   OAuthSettings,
   GrafanaConfig,
+  EmpolisOptions,
   BuildInfo,
   LicenseInfo,
   PreloadPlugin,

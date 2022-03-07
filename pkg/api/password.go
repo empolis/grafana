@@ -24,6 +24,9 @@ func (hs *HTTPServer) SendResetPasswordEmail(c *models.ReqContext) response.Resp
 	if setting.DisableLoginForm {
 		return response.Error(401, "Not allowed to reset password when login form is disabled", nil)
 	}
+	if setting.GetCfg().JWTAuthEnabled {
+		return response.Error(401, "Not allowed to reset password when JWT authentication is enabled", nil)
+	}
 
 	userQuery := models.GetUserByLoginQuery{LoginOrEmail: form.UserOrEmail}
 

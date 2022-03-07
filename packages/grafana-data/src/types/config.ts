@@ -57,6 +57,22 @@ export interface SentryConfig {
 }
 
 /**
+ * Stores Empolis configuration options.
+ *
+ * @public
+ */
+export interface EmpolisOptions {
+  footerUrl: string;
+  footerLabel: string;
+  loginBgImg: string;
+  appleTouchIcon: string;
+  favIcon: string;
+  menuLogo: string;
+  customLogo: string;
+  hideVersion: boolean;
+}
+
+/**
  * Describes the plugins that should be preloaded prior to start Grafana.
  *
  * @public
@@ -174,6 +190,7 @@ export interface GrafanaConfig {
   licenseInfo: LicenseInfo;
   http2Enabled: boolean;
   dateFormats?: SystemDateFormatSettings;
+  empolisOptions: EmpolisOptions;
   sentry: SentryConfig;
   customTheme?: any;
   geomapDefaultBaseLayer?: MapLayerOptions;
