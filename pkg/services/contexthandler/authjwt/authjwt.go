@@ -117,7 +117,7 @@ func (auth *AuthJWT) GetUserViaCache(logger log.Logger) (int64, error) {
 		return 0, err
 	}
 	logger.Debug("Getting user ID via auth cache", "cacheKey", cacheKey)
-	userID, err := auth.remoteCache.Get(cacheKey)
+	userID, err := auth.remoteCache.Get(auth.ctx.Req.Context(), cacheKey)
 	if err != nil {
 		logger.Debug("Failed getting user ID via auth cache", "error", err)
 		return 0, err
@@ -133,7 +133,7 @@ func (auth *AuthJWT) RemoveUserFromCache(logger log.Logger) error {
 		return err
 	}
 	logger.Debug("Removing user from auth cache", "cacheKey", cacheKey)
-	if err := auth.remoteCache.Delete(cacheKey); err != nil {
+	if err := auth.remoteCache.Delete(auth.ctx.Req.Context(), cacheKey); err != nil {
 		return err
 	}
 
@@ -253,10 +253,10 @@ func (auth *AuthJWT) LoginViaJWT(logger log.Logger) (int64, error) {
 			} else if len(groups) > 0 {
 				for _, group := range groups {
 					query := models.GetOrgByNameQuery{Name: group}
-					err := sqlstore.GetOrgByName(&query)
+					err := sqlstore.GetOrgByName(auth.ctx.Req.Context(), &query)
 					if err != nil {
 						query = models.GetOrgByNameQuery{Name: strings.ToLower(group)}
-						err = sqlstore.GetOrgByName(&query)
+						err = sqlstore.GetOrgByName(auth.ctx.Req.Context(), &query)
 					}
 					if err == nil {
 						extUser.OrgRoles[query.Result.Id] = rt
@@ -276,11 +276,11 @@ func (auth *AuthJWT) LoginViaJWT(logger log.Logger) (int64, error) {
 
 	upsert := &models.UpsertUserCommand{
 		ReqContext:    auth.ctx,
-		SignupAllowed: auth.cfg.JWTAllowSignup,
+		SignupAllowed: auth.cfg.JWTAuthAutoSignUp,
 		ExternalUser:  extUser,
 	}
 
-	err = bus.Dispatch(upsert)
+	err = bus.Dispatch(auth.ctx.Req.Context(), upsert)
 	if err != nil {
 		return 0, err
 	}
@@ -294,7 +294,7 @@ func (auth *AuthJWT) GetSignedInUser(userID int64) (*models.SignedInUser, error)
 		UserId: userID,
 	}
 
-	if err := bus.DispatchCtx(context.Background(), query); err != nil {
+	if err := bus.Dispatch(context.Background(), query); err != nil {
 		return nil, err
 	}
 
@@ -308,14 +308,14 @@ func (auth *AuthJWT) Remember(id int64) error {
 	}
 
 	// Check if user is already in cache
-	userID, err := auth.remoteCache.Get(cacheKey)
+	userID, err := auth.remoteCache.Get(auth.ctx.Req.Context(), cacheKey)
 	if err == nil && userID != nil {
 		return nil
 	}
 
 	expiration := time.Duration(auth.cfg.JWTAuthSyncTTL) * time.Minute
 
-	if err := auth.remoteCache.Set(cacheKey, id, expiration); err != nil {
+	if err := auth.remoteCache.Set(auth.ctx.Req.Context(), cacheKey, id, expiration); err != nil {
 		return err
 	}
 

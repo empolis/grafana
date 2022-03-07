@@ -10,7 +10,7 @@ COPY packages packages
 COPY plugins-bundled plugins-bundled
 
 RUN apk add --no-cache git
-RUN yarn install --pure-lockfile --no-progress
+RUN yarn install
 
 COPY tsconfig.json .eslintrc .editorconfig .browserslistrc .prettierrc.js babel.config.json .linguirc ./
 COPY public public

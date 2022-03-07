@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
+	"github.com/grafana/grafana/pkg/plugins"
 	"github.com/stretchr/testify/require"
 )
 
@@ -149,7 +150,7 @@ func TestMacroEngine(t *testing.T) {
 		t.Run("interpolate __unixEpochMilliFilter function", func(t *testing.T) {
 			sql, err := engine.Interpolate(query, timeRange, "select $__unixEpochMilliFilter(time)")
 			require.NoError(t, err)
-			require.Equal(t, fmt.Sprintf("select time >= %d AND time <= %d", plugins.TimeUnixMilli(from), plugins.TimeUnixMilli(to)), sql)
+			require.Equal(t, fmt.Sprintf("select time >= %d AND time <= %d", from.UnixMilli(), to.UnixMilli()), sql)
 		})
 
 		t.Run("interpolate __unixEpochNanoFilter function", func(t *testing.T) {
@@ -161,13 +162,13 @@ func TestMacroEngine(t *testing.T) {
 		t.Run("interpolate __unixEpochiMilliFrom function", func(t *testing.T) {
 			sql, err := engine.Interpolate(query, timeRange, "select $__unixEpochMilliFrom()")
 			require.NoError(t, err)
-			require.Equal(t, fmt.Sprintf("select %d", plugins.TimeUnixMilli(from)), sql)
+			require.Equal(t, fmt.Sprintf("select %d", from.UnixMilli()), sql)
 		})
 
 		t.Run("interpolate __unixEpochMilliTo function", func(t *testing.T) {
 			sql, err := engine.Interpolate(query, timeRange, "select $__unixEpochMilliTo()")
 			require.NoError(t, err)
-			require.Equal(t, fmt.Sprintf("select %d", plugins.TimeUnixMilli(to)), sql)
+			require.Equal(t, fmt.Sprintf("select %d", to.UnixMilli()), sql)
 		})
 
 		t.Run("interpolate __unixEpochNanoFrom function", func(t *testing.T) {

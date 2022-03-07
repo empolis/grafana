@@ -131,20 +131,28 @@ func (hs *HTTPServer) RenderToPdf(c *models.ReqContext) {
 	}
 
 	result, err := hs.RenderService.RenderPDF(c.Req.Context(), rendering.PDFOpts{
+		TimeoutOpts: rendering.TimeoutOpts{
+			Timeout: time.Duration(timeout) * time.Second,
+		},
+		AuthOpts: rendering.AuthOpts{
+			OrgID:   c.OrgId,
+			UserID:  c.UserId,
+			OrgRole: c.OrgRole,
+		},
 		Width:             width,
 		Height:            height,
 		Timeout:           time.Duration(timeout) * time.Second,
 		OrgID:             c.OrgId,
 		UserID:            c.UserId,
 		OrgRole:           c.OrgRole,
-		Path:              c.Params("*") + queryParams,
+		Path:              web.Params(c.Req)["*"] + queryParams,
 		Timezone:          queryReader.Get("tz", ""),
 		Encoding:          queryReader.Get("encoding", ""),
 		ConcurrentLimit:   hs.Cfg.RendererConcurrentRequestLimit,
 		DeviceScaleFactor: scale,
 		Landscape:         landscape == 1,
 		Headers:           headers,
-	})
+	}, nil)
 	if err != nil {
 		if errors.Is(err, rendering.ErrTimeout) {
 			c.Handle(hs.Cfg, 500, err.Error(), err)
@@ -156,7 +164,7 @@ func (hs *HTTPServer) RenderToPdf(c *models.ReqContext) {
 	}
 
 	c.Resp.Header().Set("Content-Type", "application/pdf")
-	http.ServeFile(c.Resp, c.Req.Request, result.FilePath)
+	http.ServeFile(c.Resp, c.Req, result.FilePath)
 }
 
 func (hs *HTTPServer) RenderToCsv(c *models.ReqContext) {
