@@ -7,7 +7,7 @@ WIRE_TAGS = "oss"
 -include local/Makefile
 include .bingo/Variables.mk
 
-.PHONY: all deps-go deps-js deps build-go build-server build-cli build-js build build-docker-full build-docker-full-ubuntu lint-go golangci-lint test-go test-js gen-ts test run run-frontend clean devenv devenv-down protobuf drone help
+.PHONY: all deps-go deps-js deps build-go build-server build-cli build-js build build-docker-full build-docker-full-ubuntu lint-go golangci-lint test-go test-js gen-ts test run run-frontend clean devenv devenv-down protobuf drone help git-files-for-docker
 
 GO = go
 GO_FILES ?= ./pkg/...
@@ -114,6 +114,26 @@ run: scripts/go/bin/bra ## Build and run web server on filesystem changes.
 run-frontend: deps-js ## Fetch js dependencies and watch frontend for rebuild
 	yarn start
 
+_BRANCH        := $(shell git rev-parse --abbrev-ref HEAD)
+_BRANCH_TAG    := $(subst /,_,${_BRANCH})
+_REV           := $(shell git rev-parse --short HEAD)
+EMPOLIS_NAME   := eseia/grafana
+EMPOLIS_IMG    := ${EMPOLIS_NAME}:${_BRANCH_TAG}-${_REV}
+EMPOLIS_BRANCH := ${EMPOLIS_NAME}:${_BRANCH_TAG}
+
+git-files-for-docker:
+	/bin/echo -n "${_BRANCH}" > git-branch
+	/bin/echo -n "${_REV}" > git-sha
+	/bin/echo -n "$(shell git show -s --format=%ct)" > git-buildstamp
+
+build-docker-empolis: git-files-for-docker ## Build Empolis Alpine Docker image
+	docker build -t ${EMPOLIS_IMG} .
+	docker tag ${EMPOLIS_IMG} ${EMPOLIS_BRANCH}
+
+build-docker-empolis-ubuntu: git-files-for-docker ## Build Empolis Ubuntu Docker image
+	docker build -f Dockerfile.ubuntu -t ${EMPOLIS_IMG}-ubuntu .
+	docker tag ${EMPOLIS_IMG}-ubuntu ${EMPOLIS_BRANCH}-ubuntu
+
 ##@ Testing
 
 test-go: ## Run tests for backend.
@@ -211,4 +231,4 @@ drone: $(DRONE)
 	$(DRONE) --server https://drone.grafana.net sign --save grafana/grafana
 
 help: ## Display this help.
-	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
+	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-27s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)

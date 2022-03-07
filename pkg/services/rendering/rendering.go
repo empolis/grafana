@@ -32,6 +32,7 @@ type RenderingService struct {
 	log             log.Logger
 	pluginInfo      *plugins.Plugin
 	renderAction    renderFunc
+	renderPDFAction renderPDFFunc
 	renderCSVAction renderCSVFunc
 	domain          string
 	inProgressCount int32
@@ -50,6 +51,12 @@ func ProvideService(cfg *setting.Cfg, remoteCache *remotecache.RemoteCache, rm p
 	err := os.MkdirAll(cfg.ImagesDir, 0700)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create images directory %q: %w", cfg.ImagesDir, err)
+	}
+
+	// ensure PDFsDir exists
+	err = os.MkdirAll(cfg.PDFsDir, 0700)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create PDFs directory %q: %w", cfg.PDFsDir, err)
 	}
 
 	// ensure CSVsDir exists
@@ -118,6 +125,7 @@ func (rs *RenderingService) Run(ctx context.Context) error {
 			rs.version = version
 		})
 		rs.renderAction = rs.renderViaHTTP
+		rs.renderPDFAction = rs.renderPDFViaHTTP
 		rs.renderCSVAction = rs.renderCSVViaHTTP
 		<-ctx.Done()
 		return nil
@@ -133,6 +141,7 @@ func (rs *RenderingService) Run(ctx context.Context) error {
 
 		rs.version = rs.pluginInfo.Info.Version
 		rs.renderAction = rs.renderViaPlugin
+		rs.renderPDFAction = rs.renderPDFViaPlugin
 		rs.renderCSVAction = rs.renderCSVViaPlugin
 		<-ctx.Done()
 
@@ -260,6 +269,49 @@ func (rs *RenderingService) render(ctx context.Context, opts Opts, renderKeyProv
 	return rs.renderAction(ctx, renderKey, opts)
 }
 
+func (rs *RenderingService) RenderPDF(ctx context.Context, opts PDFOpts, session Session) (*RenderPDFResult, error) {
+	startTime := time.Now()
+
+	renderKeyProvider := rs.perRequestRenderKeyProvider
+	if session != nil {
+		renderKeyProvider = session
+	}
+	result, err := rs.renderPDF(ctx, opts, renderKeyProvider)
+
+	elapsedTime := time.Since(startTime).Milliseconds()
+	saveMetrics(elapsedTime, err, RenderPDF)
+
+	return result, err
+}
+
+func (rs *RenderingService) renderPDF(ctx context.Context, opts PDFOpts, renderKeyProvider renderKeyProvider) (*RenderPDFResult, error) {
+	if int(atomic.LoadInt32(&rs.inProgressCount)) > opts.ConcurrentLimit {
+		return nil, ErrConcurrentLimitReached
+	}
+
+	if !rs.IsAvailable() {
+		return nil, ErrRenderUnavailable
+	}
+
+	rs.log.Info("Rendering", "path", opts.Path)
+	if math.IsInf(opts.DeviceScaleFactor, 0) || math.IsNaN(opts.DeviceScaleFactor) || opts.DeviceScaleFactor <= 0 {
+		opts.DeviceScaleFactor = 1
+	}
+	renderKey, err := renderKeyProvider.get(ctx, opts.AuthOpts)
+	if err != nil {
+		return nil, err
+	}
+
+	defer renderKeyProvider.afterRequest(ctx, opts.AuthOpts, renderKey)
+
+	defer func() {
+		metrics.MRenderingQueue.Set(float64(atomic.AddInt32(&rs.inProgressCount, -1)))
+	}()
+
+	metrics.MRenderingQueue.Set(float64(rs.inProgressCount))
+	return rs.renderPDFAction(ctx, renderKey, opts)
+}
+
 func (rs *RenderingService) RenderCSV(ctx context.Context, opts CSVOpts, session Session) (*RenderCSVResult, error) {
 	startTime := time.Now()
 
@@ -308,7 +360,10 @@ func (rs *RenderingService) getNewFilePath(rt RenderType) (string, error) {
 
 	ext := "png"
 	folder := rs.Cfg.ImagesDir
-	if rt == RenderCSV {
+	if rt == RenderPDF {
+		ext = "pdf"
+		folder = rs.Cfg.PDFsDir
+	} else if rt == RenderCSV {
 		ext = "csv"
 		folder = rs.Cfg.CSVsDir
 	}

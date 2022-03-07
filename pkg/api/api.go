@@ -507,6 +507,8 @@ func (hs *HTTPServer) registerRoutes() {
 
 	// rendering
 	r.Get("/render/*", reqSignedIn, hs.RenderToPng)
+	r.Get("/render/pdf/*", reqSignedIn, hs.RenderToPdf)
+	r.Get("/render/csv/*", reqSignedIn, hs.RenderToCsv)
 
 	// grafana.net proxy
 	r.Any("/api/gnet/*", reqSignedIn, hs.ProxyGnetRequest)

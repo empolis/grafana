@@ -164,3 +164,6 @@ public/locales/**/*.js
 
 deployment_tools_config.json
 
+/git-branch
+/git-sha
+/git-buildstamp

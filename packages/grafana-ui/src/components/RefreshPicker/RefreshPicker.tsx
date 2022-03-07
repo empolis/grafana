@@ -67,7 +67,7 @@ export class RefreshPicker extends PureComponent<Props> {
     }
 
     return (
-      <ButtonGroup className="refresh-picker">
+      <ButtonGroup className="refresh-picker hide-from-print-view">
         <ToolbarButton
           tooltip={tooltip}
           onClick={onRefresh}

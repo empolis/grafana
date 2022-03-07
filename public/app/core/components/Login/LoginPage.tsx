@@ -28,6 +28,7 @@ export const LoginPage: FC = () => {
           passwordHint,
           ldapEnabled,
           authProxyEnabled,
+          jwtEnabled,
           disableLoginForm,
           disableUserSignUp,
           login,
@@ -46,7 +47,7 @@ export const LoginPage: FC = () => {
                     passwordHint={passwordHint}
                     isLoggingIn={isLoggingIn}
                   >
-                    {!(ldapEnabled || authProxyEnabled) ? (
+                    {!(ldapEnabled || authProxyEnabled || jwtEnabled) ? (
                       <HorizontalGroup justify="flex-end">
                         <LinkButton
                           className={forgottenPasswordStyles}

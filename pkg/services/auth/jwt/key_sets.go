@@ -147,7 +147,7 @@ func (s *AuthService) initKeySet() error {
 		if err != nil {
 			return err
 		}
-		if urlParsed.Scheme != "https" {
+		if urlParsed.Scheme != "https" && !s.Cfg.JWTAuthAllowHTTPJWKSetURL {
 			return ErrJWTSetURLMustHaveHTTPSScheme
 		}
 		s.keySet = &keySetHTTP{

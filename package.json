@@ -3,8 +3,8 @@
   "license": "AGPL-3.0-only",
   "private": true,
   "name": "grafana",
-  "version": "8.4.3",
-  "repository": "github:grafana/grafana",
+  "version": "8.4.3-empolis",
+  "repository": "github:empolis/grafana",
   "scripts": {
     "api-tests": "jest --notify --watch --config=devenv/e2e-api-tests/jest.js",
     "build": "yarn i18n:compile && NODE_ENV=production webpack --config scripts/webpack/webpack.prod.js",

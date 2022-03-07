@@ -9,7 +9,6 @@ import (
 
 	"github.com/grafana/grafana/pkg/bus"
 	"github.com/grafana/grafana/pkg/models"
-	"github.com/grafana/grafana/pkg/services/contexthandler"
 	"github.com/grafana/grafana/pkg/setting"
 )
 
@@ -50,7 +49,13 @@ func TestMiddlewareJWTAuth(t *testing.T) {
 			query.Result = &models.SignedInUser{
 				UserId: id,
 				OrgId:  orgID,
-				Login:  query.Login,
+				Login:  myUsername,
+			}
+			return nil
+		})
+		bus.AddHandler("upsert-user", func(cmd *models.UpsertUserCommand) error {
+			cmd.Result = &models.User{
+				Id: id,
 			}
 			return nil
 		})
@@ -78,7 +83,13 @@ func TestMiddlewareJWTAuth(t *testing.T) {
 			query.Result = &models.SignedInUser{
 				UserId: id,
 				OrgId:  orgID,
-				Email:  query.Email,
+				Email:  myEmail,
+			}
+			return nil
+		})
+		bus.AddHandler("upsert-user", func(cmd *models.UpsertUserCommand) error {
+			cmd.Result = &models.User{
+				Id: id,
 			}
 			return nil
 		})
@@ -162,8 +173,8 @@ func TestMiddlewareJWTAuth(t *testing.T) {
 
 		sc.fakeReq("GET", "/").withJWTAuthHeader(token).exec()
 		assert.Equal(t, verifiedToken, token)
-		assert.Equal(t, 401, sc.resp.Code)
-		assert.Equal(t, contexthandler.InvalidJWT, sc.respJson["message"])
+		assert.Equal(t, 407, sc.resp.Code)
+		assert.Nil(t, sc.context)
 	}, configure, configureUsernameClaim)
 
 	middlewareScenario(t, "Valid token without a email claim", func(t *testing.T, sc *scenarioContext) {
@@ -178,8 +189,8 @@ func TestMiddlewareJWTAuth(t *testing.T) {
 
 		sc.fakeReq("GET", "/").withJWTAuthHeader(token).exec()
 		assert.Equal(t, verifiedToken, token)
-		assert.Equal(t, 401, sc.resp.Code)
-		assert.Equal(t, contexthandler.InvalidJWT, sc.respJson["message"])
+		assert.Equal(t, 407, sc.resp.Code)
+		assert.Nil(t, sc.context)
 	}, configure, configureEmailClaim)
 
 	middlewareScenario(t, "Invalid token", func(t *testing.T, sc *scenarioContext) {
@@ -192,6 +203,6 @@ func TestMiddlewareJWTAuth(t *testing.T) {
 		sc.fakeReq("GET", "/").withJWTAuthHeader(token).exec()
 		assert.Equal(t, verifiedToken, token)
 		assert.Equal(t, 401, sc.resp.Code)
-		assert.Equal(t, contexthandler.InvalidJWT, sc.respJson["message"])
+		assert.Nil(t, sc.context)
 	}, configure, configureUsernameClaim)
 }

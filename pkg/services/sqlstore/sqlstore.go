@@ -196,30 +196,38 @@ func (ss *SQLStore) ensureMainOrgAndAdminUser() error {
 			return nil
 		}
 
+		ss.log.Debug("Creating default org", "name", MainOrgName)
+		mainOrgId, err := ss.getOrCreateOrg(sess, MainOrgName)
+		if err != nil {
+			return fmt.Errorf("failed to create default organization: %w", err)
+		}
+		ss.log.Info("Created default organization", "orgId", mainOrgId)
+
 		// ensure admin user
 		if !ss.Cfg.DisableInitAdminCreation {
 			ss.log.Debug("Creating default admin user")
-			if _, err := ss.createUser(ctx, sess, userCreationArgs{
+			user, err := ss.createUser(ctx, sess, userCreationArgs{
 				Login:    ss.Cfg.AdminUser,
 				Email:    ss.Cfg.AdminUser + "@localhost",
 				Password: ss.Cfg.AdminPassword,
 				IsAdmin:  true,
-			}, false); err != nil {
+			}, true)
+			if err != nil {
 				return fmt.Errorf("failed to create admin user: %s", err)
 			}
-
+			orgUser := models.OrgUser{
+				OrgId:   mainOrgId,
+				UserId:  user.Id,
+				Role:    models.ROLE_ADMIN,
+				Created: time.Now(),
+				Updated: time.Now(),
+			}
+			if _, err = sess.Insert(&orgUser); err != nil {
+				return fmt.Errorf("failed to add admin user to main org: %s", err)
+			}
 			ss.log.Info("Created default admin", "user", ss.Cfg.AdminUser)
-			// Why should we return and not create the default org in this case?
-			// Returning here breaks tests using anonymous access
-			// return nil
 		}
 
-		ss.log.Debug("Creating default org", "name", MainOrgName)
-		if _, err := ss.getOrCreateOrg(sess, MainOrgName); err != nil {
-			return fmt.Errorf("failed to create default organization: %w", err)
-		}
-
-		ss.log.Info("Created default organization")
 		return nil
 	})
 

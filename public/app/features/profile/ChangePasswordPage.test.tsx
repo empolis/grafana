@@ -103,13 +103,13 @@ describe('ChangePasswordPage', () => {
     config.ldapEnabled = true;
     const { rerender } = await getTestContext();
     expect(
-      screen.getByText('You cannot change password when LDAP or auth proxy authentication is enabled.')
+      screen.getByText('You cannot change password when LDAP, auth proxy or JWT authentication is enabled.')
     ).toBeInTheDocument();
     config.ldapEnabled = false;
     config.authProxyEnabled = true;
     rerender(<ChangePasswordPage {...defaultProps} />);
     expect(
-      screen.getByText('You cannot change password when LDAP or auth proxy authentication is enabled.')
+      screen.getByText('You cannot change password when LDAP, auth proxy or JWT authentication is enabled.')
     ).toBeInTheDocument();
     config.authProxyEnabled = false;
   });

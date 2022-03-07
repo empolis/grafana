@@ -329,11 +329,10 @@ export class UnthemedDashboardPage extends PureComponent<Props, State> {
     const containerClassNames = classnames(styles.dashboardContainer, {
       'panel-in-fullscreen': viewPanel,
     });
-    const showSubMenu = !editPanel && kioskMode === KioskMode.Off && !this.props.queryParams.editview;
+    const showSubMenu = !editPanel && !this.props.queryParams.editview;
 
     return (
       <div className={containerClassNames}>
-        {kioskMode !== KioskMode.Full && (
           <header data-testid={selectors.pages.Dashboard.DashNav.navV2}>
             <DashNav
               dashboard={dashboard}
@@ -345,7 +344,6 @@ export class UnthemedDashboardPage extends PureComponent<Props, State> {
               hideTimePicker={dashboard.timepicker.hidden}
             />
           </header>
-        )}
 
         <DashboardPrompt dashboard={dashboard} />
 
@@ -359,6 +357,7 @@ export class UnthemedDashboardPage extends PureComponent<Props, State> {
             <div className={styles.dashboardContent}>
               {initError && <DashboardFailed />}
               {showSubMenu && (
+              {!editPanel && (
                 <section aria-label={selectors.pages.Dashboard.SubMenu.submenu}>
                   <SubMenu dashboard={dashboard} annotations={dashboard.annotations.list} links={dashboard.links} />
                 </section>
@@ -390,12 +389,18 @@ export const getStyles = stylesFactory((theme: GrafanaTheme2, kioskMode) => {
       flex: 1 1 0;
       flex-direction: column;
       min-height: 0;
+      @media print {
+        overflow: visible !important;
+      }
     `,
     dashboardScroll: css`
       width: 100%;
       flex-grow: 1;
       min-height: 0;
       display: flex;
+      @media print {
+        min-height: unset;
+      }
     `,
     dashboardContent: css`
       padding: ${contentPadding};

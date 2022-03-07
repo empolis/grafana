@@ -134,6 +134,7 @@ const isInternal = (timeZone: TimeZone): boolean => {
     case InternalTimeZones.default:
     case InternalTimeZones.localBrowserTime:
     case InternalTimeZones.utc:
+    case InternalTimeZones.data:
       return true;
 
     default:
