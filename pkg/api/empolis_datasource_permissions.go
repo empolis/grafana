@@ -72,7 +72,7 @@ func getPermissionsFromIaApi(userId string, tenantId string) ([]string, error) {
 	return permissions, nil
 }
 
-func GetDataSourcesPermissions(query *m.DatasourcesPermissionFilterQuery) error {
+func GetDataSourcesPermissions(ctx context.Context, query *m.DatasourcesPermissionFilterQuery) error {
 
 	datasourcePermissionsLogger.Debug("Datasource permissions", "user role", query.User.OrgRole)
 	if query.User.OrgRole == m.ROLE_ADMIN {
