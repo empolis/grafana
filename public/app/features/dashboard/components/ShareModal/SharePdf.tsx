@@ -4,6 +4,7 @@ import { SelectableValue, PanelModel, AppEvents } from '@grafana/data';
 import { DashboardModel } from 'app/features/dashboard/state';
 import { appEvents } from 'app/core/core';
 import { buildPdfUrl } from './utils';
+import { ShareModalTabProps } from './types';
 
 const themeOptions: Array<SelectableValue<string>> = [
   { label: 'Current', value: 'current' },
@@ -16,11 +17,7 @@ const pdfOptions: Array<SelectableValue<string>> = [
   { label: 'Landscape', value: 'landscape' },
 ];
 
-export interface Props {
-  dashboard: DashboardModel;
-  panel?: PanelModel;
-  onDismiss(): void;
-}
+export interface Props extends ShareModalTabProps {}
 
 export interface State {
   selectedTheme: string;
@@ -59,9 +56,7 @@ export class SharePdf extends PureComponent<Props, State> {
 
     return (
       <>
-        <p className="share-modal-info-text">
-          Render dashboard as a PDF document.
-        </p>
+        <p className="share-modal-info-text">Render dashboard as a PDF document.</p>
         <FieldSet>
           <Field label="Orientation">
             <RadioButtonGroup options={pdfOptions} value={pdfOrientation} onChange={this.onOrientationChange} />

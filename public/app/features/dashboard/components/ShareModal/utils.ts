@@ -140,7 +140,7 @@ export function getLocalTimeZone() {
 
 export function buildPdfUrl(landscape: boolean, selectedTheme?: string, panel?: PanelModel) {
   const baseUrl = buildBaseUrl();
-  const params = buildParams(true, selectedTheme, panel);
+  const params = buildParams({ useCurrentTimeRange: true, selectedTheme, panel });
 
   params.panelId = params.editPanel ?? params.viewPanel;
   delete params.editPanel;
@@ -148,7 +148,7 @@ export function buildPdfUrl(landscape: boolean, selectedTheme?: string, panel?: 
 
   let pdfUrl = baseUrl.replace(config.appSubUrl + '/dashboard/', config.appSubUrl + '/render/pdf/dashboard/');
   pdfUrl = pdfUrl.replace(config.appSubUrl + '/d/', config.appSubUrl + '/render/pdf/d/');
-  pdfUrl = urlUtil.appendQueryToUrl(pdfUrl, urlUtil.toUrlParams(params));
+  pdfUrl = urlUtil.appendQueryToUrl(pdfUrl, params.toString());
   if (landscape) {
     pdfUrl += '&landscape=1';
   }
