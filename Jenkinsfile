@@ -26,7 +26,13 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    image = docker.build("${env.IMAGE}:${env.GIT_BRANCH_TAG}-${env.GIT_COMMIT_SHORT}")
+                    image = docker.build("$IMAGE:$GIT_BRANCH_TAG-$GIT_COMMIT_SHORT", """\
+                        --pull \
+                        --label org.opencontainers.image.vendor="Empolis Information Management GmbH" \
+                        --label org.opencontainers.image.title=$IMAGE \
+                        --label org.opencontainers.image.created="$BUILD_DATE" \
+                        --label org.opencontainers.image.revision=$GIT_BRANCH_TAG-$GIT_COMMIT_SHORT \
+                        .""".stripIndent())
                 }
             }
         }
