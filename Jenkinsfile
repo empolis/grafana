@@ -12,6 +12,10 @@ pipeline {
                 returnStdout: true
         )
         GIT_BRANCH_TAG = env.GIT_BRANCH.replace('/', '_')
+        BUILD_DATE = sh(
+                script: "printf \"\$(date --rfc-3339=seconds --utc)\"",
+                returnStdout: true
+        )
     }
 
     stages {
