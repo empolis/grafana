@@ -87,6 +87,7 @@ RUN export GF_GID_NAME=$(getent group $GF_GID | cut -d':' -f1) && \
 
 COPY --from=go-builder /grafana/bin/*/grafana-server /grafana/bin/*/grafana-cli ./bin/
 COPY --from=js-builder /grafana/public ./public
+RUN cp public/img/grafana_icon.svg public/img/icons/unicons/empolis.svg
 COPY --from=js-builder /grafana/tools ./tools
 
 EXPOSE 3000

@@ -33,7 +33,7 @@ const homeItem: NavModelItem = {
   id: 'home',
   text: 'Home',
   url: config.appSubUrl || '/',
-  icon: 'grafana',
+  icon: 'empolis',
 };
 
 export const NavBarNext = React.memo(() => {
@@ -92,7 +92,7 @@ export const NavBarNext = React.memo(() => {
                 className={styles.grafanaLogo}
                 url={homeItem.url}
               >
-                <Icon name="grafana" size="xl" />
+                <Icon name="empolis" size="xl" />
               </NavBarItemWithoutMenu>
               <NavBarItem className={styles.search} isActive={activeItem === searchItem} link={searchItem}>
                 <Icon name="search" size="xl" />
