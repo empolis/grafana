@@ -11,8 +11,6 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/grafana/grafana/pkg/services/sqlstore"
-
 	"strings"
 
 	"golang.org/x/oauth2"
@@ -296,10 +294,10 @@ func (hs *HTTPServer) buildExternalUserInfo(token *oauth2.Token, userInfo *socia
 			} else if len(userInfo.Groups) > 0 {
 				for _, group := range userInfo.Groups {
 					query := models.GetOrgByNameQuery{Name: group}
-					err := sqlstore.GetOrgByName(ctx.Req.Context(), &query)
+					err := hs.SQLStore.GetOrgByNameHandler(ctx.Req.Context(), &query)
 					if err != nil {
 						query = models.GetOrgByNameQuery{Name: strings.ToLower(group)}
-						err = sqlstore.GetOrgByName(ctx.Req.Context(), &query)
+						err = hs.SQLStore.GetOrgByNameHandler(ctx.Req.Context(), &query)
 					}
 					if err == nil {
 						extUser.OrgRoles[query.Result.Id] = rt

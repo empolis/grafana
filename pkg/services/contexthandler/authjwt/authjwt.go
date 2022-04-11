@@ -27,6 +27,7 @@ type AuthJWT struct {
 	jwtToken       string
 	jwtAuthService models.JWTService
 	remoteCache    *remotecache.RemoteCache
+	sqlStore       sqlstore.Store
 	ctx            *models.ReqContext
 	orgID          int64
 }
@@ -50,6 +51,7 @@ func (err Error) Error() string {
 type Options struct {
 	JWTAuthService models.JWTService
 	RemoteCache    *remotecache.RemoteCache
+	SqlStore       sqlstore.Store
 	Ctx            *models.ReqContext
 	OrgID          int64
 }
@@ -60,6 +62,7 @@ func New(cfg *setting.Cfg, jwtToken string, options *Options) *AuthJWT {
 		jwtToken:       jwtToken,
 		jwtAuthService: options.JWTAuthService,
 		remoteCache:    options.RemoteCache,
+		sqlStore:       options.SqlStore,
 		ctx:            options.Ctx,
 		orgID:          options.OrgID,
 	}
@@ -253,10 +256,10 @@ func (auth *AuthJWT) LoginViaJWT(logger log.Logger) (int64, error) {
 			} else if len(groups) > 0 {
 				for _, group := range groups {
 					query := models.GetOrgByNameQuery{Name: group}
-					err := sqlstore.GetOrgByName(auth.ctx.Req.Context(), &query)
+					err := auth.sqlStore.GetOrgByNameHandler(auth.ctx.Req.Context(), &query)
 					if err != nil {
 						query = models.GetOrgByNameQuery{Name: strings.ToLower(group)}
-						err = sqlstore.GetOrgByName(auth.ctx.Req.Context(), &query)
+						err = auth.sqlStore.GetOrgByNameHandler(auth.ctx.Req.Context(), &query)
 					}
 					if err == nil {
 						extUser.OrgRoles[query.Result.Id] = rt

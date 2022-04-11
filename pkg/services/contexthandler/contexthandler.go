@@ -562,6 +562,7 @@ func (h *ContextHandler) initContextWithJWT(ctx *models.ReqContext, orgId int64)
 	authJwt := authjwt.New(h.Cfg, jwtToken, &authjwt.Options{
 		JWTAuthService: h.JWTAuthService,
 		RemoteCache:    h.RemoteCache,
+		SqlStore:       h.SQLStore,
 		Ctx:            ctx,
 		OrgID:          orgId,
 	})
