@@ -112,7 +112,7 @@ export const DashNav = React.memo<Props>((props) => {
     const { canStar, canShare, isStarred } = dashboard.meta;
     const buttons: ReactNode[] = [];
 
-    if (kioskMode !== KioskMode.Off || isPlaylistRunning()) {
+    if (isPlaylistRunning()) {
       return [];
     }
 
@@ -220,7 +220,7 @@ export const DashNav = React.memo<Props>((props) => {
     }
 
     if (kioskMode === KioskMode.Full) {
-      return [this.renderTimeControls()];
+      return [renderTimeControls()];
     }
 
     if (canEdit && !isFullscreen) {
