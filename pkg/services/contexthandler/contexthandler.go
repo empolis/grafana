@@ -36,7 +36,7 @@ const (
 const ServiceName = "ContextHandler"
 
 func ProvideService(cfg *setting.Cfg, tokenService models.UserTokenService, jwtService models.JWTService,
-	remoteCache *remotecache.RemoteCache, renderService rendering.Service, sqlStore *sqlstore.SQLStore,
+	remoteCache *remotecache.RemoteCache, renderService rendering.Service, sqlStore sqlstore.Store,
 	tracer tracing.Tracer, authProxy *authproxy.AuthProxy) *ContextHandler {
 	return &ContextHandler{
 		Cfg:              cfg,
@@ -152,7 +152,7 @@ func (h *ContextHandler) Middleware(mContext *web.Context) {
 	// update last seen every 5min
 	if reqContext.ShouldUpdateLastSeenAt() {
 		reqContext.Logger.Debug("Updating last user_seen_at", "user_id", reqContext.UserId)
-		if err := bus.Dispatch(mContext.Req.Context(), &models.UpdateUserLastSeenAtCommand{UserId: reqContext.UserId}); err != nil {
+		if err := h.SQLStore.UpdateUserLastSeenAt(mContext.Req.Context(), &models.UpdateUserLastSeenAtCommand{UserId: reqContext.UserId}); err != nil {
 			reqContext.Logger.Error("Failed to update last_seen_at", "error", err)
 		}
 	}
@@ -210,7 +210,7 @@ func (h *ContextHandler) initContextWithAPIKey(reqContext *models.ReqContext) bo
 
 	// fetch key
 	keyQuery := models.GetApiKeyByNameQuery{KeyName: decoded.Name, OrgId: decoded.OrgId}
-	if err := bus.Dispatch(reqContext.Req.Context(), &keyQuery); err != nil {
+	if err := h.SQLStore.GetApiKeyByName(reqContext.Req.Context(), &keyQuery); err != nil {
 		reqContext.JsonApiErr(401, InvalidAPIKey, err)
 		return true
 	}
@@ -252,7 +252,7 @@ func (h *ContextHandler) initContextWithAPIKey(reqContext *models.ReqContext) bo
 
 	//Use service account linked to API key as the signed in user
 	query := models.GetSignedInUserQuery{UserId: *apikey.ServiceAccountId, OrgId: apikey.OrgId}
-	if err := bus.Dispatch(reqContext.Req.Context(), &query); err != nil {
+	if err := h.SQLStore.GetSignedInUserWithCacheCtx(reqContext.Req.Context(), &query); err != nil {
 		reqContext.Logger.Error(
 			"Failed to link API key to service account in",
 			"id", query.UserId,
@@ -309,7 +309,7 @@ func (h *ContextHandler) initContextWithBasicAuth(reqContext *models.ReqContext,
 	user := authQuery.User
 
 	query := models.GetSignedInUserQuery{UserId: user.Id, OrgId: orgID}
-	if err := bus.Dispatch(ctx, &query); err != nil {
+	if err := h.SQLStore.GetSignedInUserWithCacheCtx(ctx, &query); err != nil {
 		reqContext.Logger.Error(
 			"Failed at user signed in",
 			"id", user.Id,
@@ -345,7 +345,7 @@ func (h *ContextHandler) initContextWithToken(reqContext *models.ReqContext, org
 	}
 
 	query := models.GetSignedInUserQuery{UserId: token.UserId, OrgId: orgID}
-	if err := bus.Dispatch(ctx, &query); err != nil {
+	if err := h.SQLStore.GetSignedInUserWithCacheCtx(ctx, &query); err != nil {
 		reqContext.Logger.Error("Failed to get user with id", "userId", token.UserId, "error", err)
 		return false
 	}

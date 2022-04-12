@@ -45,20 +45,7 @@ func TestMiddlewareJWTAuth(t *testing.T) {
 				"foo-username": myUsername,
 			}, nil
 		}
-		bus.AddHandler("get-sign-user", func(ctx context.Context, query *models.GetSignedInUserQuery) error {
-			query.Result = &models.SignedInUser{
-				UserId: id,
-				OrgId:  orgID,
-				Login:  myUsername,
-			}
-			return nil
-		})
-		bus.AddHandler("upsert-user", func(cmd *models.UpsertUserCommand) error {
-			cmd.Result = &models.User{
-				Id: id,
-			}
-			return nil
-		})
+		sc.mockSQLStore.ExpectedSignedInUser = &models.SignedInUser{UserId: id, OrgId: orgID, Login: myUsername}
 
 		sc.fakeReq("GET", "/").withJWTAuthHeader(token).exec()
 		assert.Equal(t, verifiedToken, token)
@@ -79,20 +66,7 @@ func TestMiddlewareJWTAuth(t *testing.T) {
 				"foo-email": myEmail,
 			}, nil
 		}
-		bus.AddHandler("get-sign-user", func(ctx context.Context, query *models.GetSignedInUserQuery) error {
-			query.Result = &models.SignedInUser{
-				UserId: id,
-				OrgId:  orgID,
-				Email:  myEmail,
-			}
-			return nil
-		})
-		bus.AddHandler("upsert-user", func(cmd *models.UpsertUserCommand) error {
-			cmd.Result = &models.User{
-				Id: id,
-			}
-			return nil
-		})
+		sc.mockSQLStore.ExpectedSignedInUser = &models.SignedInUser{UserId: id, OrgId: orgID, Email: myEmail}
 
 		sc.fakeReq("GET", "/").withJWTAuthHeader(token).exec()
 		assert.Equal(t, verifiedToken, token)
@@ -114,9 +88,7 @@ func TestMiddlewareJWTAuth(t *testing.T) {
 				"foo-email": myEmail,
 			}, nil
 		}
-		bus.AddHandler("get-sign-user", func(ctx context.Context, query *models.GetSignedInUserQuery) error {
-			return models.ErrUserNotFound
-		})
+		sc.mockSQLStore.ExpectedError = models.ErrUserNotFound
 
 		sc.fakeReq("GET", "/").withJWTAuthHeader(token).exec()
 		assert.Equal(t, verifiedToken, token)
@@ -135,14 +107,7 @@ func TestMiddlewareJWTAuth(t *testing.T) {
 				"foo-email": myEmail,
 			}, nil
 		}
-		bus.AddHandler("get-sign-user", func(ctx context.Context, query *models.GetSignedInUserQuery) error {
-			query.Result = &models.SignedInUser{
-				UserId: id,
-				OrgId:  orgID,
-				Email:  query.Email,
-			}
-			return nil
-		})
+		sc.mockSQLStore.ExpectedSignedInUser = &models.SignedInUser{UserId: id, OrgId: orgID, Email: myEmail}
 		bus.AddHandler("upsert-user", func(ctx context.Context, command *models.UpsertUserCommand) error {
 			command.Result = &models.User{
 				Id:    id,
