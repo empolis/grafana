@@ -1,4 +1,6 @@
-FROM node:16-alpine3.15 as js-builder
+# syntax = docker/dockerfile:1.4
+
+FROM --platform=$BUILDPLATFORM node:16-alpine3.15 as js-builder
 
 ENV NODE_OPTIONS=--max_old_space_size=8000
 
@@ -21,9 +23,15 @@ COPY emails emails
 ENV NODE_ENV production
 RUN yarn build
 
-FROM golang:1.17.8-alpine3.15 as go-builder
 
-RUN apk add --no-cache gcc g++ make
+FROM --platform=$BUILDPLATFORM tonistiigi/xx AS xx
+
+
+FROM --platform=$BUILDPLATFORM golang:1.17.8-alpine3.15 as go-builder
+
+COPY --from=xx / /
+
+RUN apk add --no-cache clang lld g++ make
 
 WORKDIR /grafana
 
@@ -39,7 +47,12 @@ COPY .bingo .bingo
 COPY git-branch git-sha git-buildstamp ./
 
 RUN go mod verify
-RUN make build-go
+RUN make gen-go
+
+ARG TARGETPLATFORM
+RUN xx-apk add musl-dev gcc g++
+ENV CGO_ENABLED=1
+RUN make build-xx-go
 
 # Final stage
 FROM alpine:3.15
