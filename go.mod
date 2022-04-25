@@ -104,7 +104,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.2.0
 	golang.org/x/crypto v0.0.0-20211117183948-ae814b36b871
 	golang.org/x/exp v0.0.0-20210220032938-85be41e4509f
-	golang.org/x/net v0.0.0-20211118161319-6a13c67c3ce4
+	golang.org/x/net v0.0.0-20211118161319-6a13c67c3ce4 // indirect
 	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 	golang.org/x/time v0.0.0-20211116232009-f0f3c7e86c11
@@ -127,7 +127,7 @@ require (
 
 require (
 	cloud.google.com/go v0.97.0 // indirect
-	github.com/Azure/azure-sdk-for-go/sdk/internal v0.9.1 // indirect
+	github.com/Azure/azure-sdk-for-go/sdk/internal v0.9.2 // indirect
 	github.com/Azure/go-autorest v14.2.0+incompatible // indirect
 	github.com/Azure/go-autorest/autorest/date v0.3.0 // indirect
 	github.com/Azure/go-autorest/autorest/to v0.4.0 // indirect
@@ -252,8 +252,8 @@ require (
 
 require (
 	cloud.google.com/go/kms v1.1.0
-	github.com/Azure/azure-sdk-for-go/sdk/azidentity v0.13.2
-	github.com/Azure/azure-sdk-for-go/sdk/keyvault/azkeys v0.4.0
+	github.com/Azure/azure-sdk-for-go/sdk/azidentity v0.14.0
+	github.com/Azure/azure-sdk-for-go/sdk/keyvault/azkeys v0.5.0
 	github.com/Azure/go-autorest/autorest/adal v0.9.17
 	github.com/golang-migrate/migrate/v4 v4.7.0
 	github.com/grafana/dskit v0.0.0-20211011144203-3a88ec0b675f
@@ -261,8 +261,8 @@ require (
 )
 
 require (
-	github.com/Azure/azure-sdk-for-go/sdk/azcore v0.22.0 // indirect
-	github.com/Azure/azure-sdk-for-go/sdk/keyvault/internal v0.2.1 // indirect
+	github.com/Azure/azure-sdk-for-go/sdk/azcore v0.23.0 // indirect
+	github.com/Azure/azure-sdk-for-go/sdk/keyvault/internal v0.3.0 // indirect
 	github.com/AzureAD/microsoft-authentication-library-for-go v0.4.0 // indirect
 	github.com/census-instrumentation/opencensus-proto v0.3.0 // indirect
 	github.com/chromedp/cdproto v0.0.0-20220208224320-6efb837e6bc2 // indirect
