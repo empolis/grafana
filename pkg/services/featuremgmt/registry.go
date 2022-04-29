@@ -24,7 +24,7 @@ var (
 			State:       FeatureStateBeta,
 		},
 		{
-			Name:        "service-accounts",
+			Name:        "serviceAccounts",
 			Description: "support service accounts",
 			State:       FeatureStateBeta,
 		},
@@ -205,6 +205,18 @@ var (
 			Name:         "explore2Dashboard",
 			Description:  "Experimental Explore to Dashboard workflow",
 			State:        FeatureStateBeta,
+			FrontendOnly: true,
+		},
+		{
+			Name:         "tracing",
+			Description:  "Adds trace ID to error notifications",
+			State:        FeatureStateAlpha,
+			FrontendOnly: true,
+		},
+		{
+			Name:         "persistNotifications",
+			Description:  "PoC Notifications page",
+			State:        FeatureStateAlpha,
 			FrontendOnly: true,
 		},
 	}

@@ -1,18 +1,22 @@
-import React, { ReactNode } from 'react';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React, { ReactNode } from 'react';
+import { Provider } from 'react-redux';
+
+import { DataQuery } from '@grafana/data';
+import { locationService, setEchoSrv } from '@grafana/runtime';
+import { backendSrv } from 'app/core/services/backend_srv';
+import { Echo } from 'app/core/services/echo/Echo';
+import * as initDashboard from 'app/features/dashboard/state/initDashboard';
+import { DashboardSearchItemType } from 'app/features/search/types';
 import { configureStore } from 'app/store/configureStore';
 import { ExploreId, ExploreState } from 'app/types';
-import { Provider } from 'react-redux';
-import { AddToDashboard } from '.';
-import * as api from './addToDashboard';
-import { locationService, setEchoSrv } from '@grafana/runtime';
-import * as initDashboard from 'app/features/dashboard/state/initDashboard';
-import { DataQuery } from '@grafana/data';
+
 import { createEmptyQueryResponse } from '../state/utils';
-import { backendSrv } from 'app/core/services/backend_srv';
-import { DashboardSearchItemType } from 'app/features/search/types';
-import { Echo } from 'app/core/services/echo/Echo';
+
+import * as api from './addToDashboard';
+
+import { AddToDashboard } from '.';
 
 const setup = (children: ReactNode, queries: DataQuery[] = [{ refId: 'A' }]) => {
   const store = configureStore({
@@ -86,7 +90,7 @@ describe('AddToDashboardButton', () => {
 
         await openModal();
 
-        userEvent.click(screen.getByRole('button', { name: /open$/i }));
+        userEvent.click(screen.getByRole('button', { name: /open dashboard$/i }));
 
         await waitForAddToDashboardResponse();
 
@@ -138,7 +142,7 @@ describe('AddToDashboardButton', () => {
 
           await openModal();
 
-          userEvent.click(screen.getByRole('button', { name: /open$/i }));
+          userEvent.click(screen.getByRole('button', { name: /open dashboard$/i }));
 
           await waitForAddToDashboardResponse();
 
@@ -170,7 +174,7 @@ describe('AddToDashboardButton', () => {
 
         userEvent.click(screen.getByRole<HTMLInputElement>('radio', { name: /existing dashboard/i }));
 
-        userEvent.click(screen.getByRole('button', { name: /open$/i }));
+        userEvent.click(screen.getByRole('button', { name: /open dashboard$/i }));
         await waitForAddToDashboardResponse();
 
         expect(locationService.push).not.toHaveBeenCalled();
@@ -255,7 +259,7 @@ describe('AddToDashboardButton', () => {
           });
           userEvent.click(screen.getByLabelText('Select option'));
 
-          userEvent.click(screen.getByRole('button', { name: /open$/i }));
+          userEvent.click(screen.getByRole('button', { name: /open dashboard$/i }));
 
           await waitFor(async () => {
             expect(screen.queryByRole('dialog')).not.toBeInTheDocument();

@@ -10,10 +10,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/grafana/grafana/pkg/bus"
 	"github.com/grafana/grafana/pkg/infra/log"
 	"github.com/grafana/grafana/pkg/infra/remotecache"
 	"github.com/grafana/grafana/pkg/models"
+	"github.com/grafana/grafana/pkg/services/login"
 	"github.com/grafana/grafana/pkg/services/sqlstore"
 	"github.com/grafana/grafana/pkg/setting"
 	"github.com/grafana/grafana/pkg/util/errutil"
@@ -27,6 +27,7 @@ type AuthJWT struct {
 	jwtToken       string
 	jwtAuthService models.JWTService
 	remoteCache    *remotecache.RemoteCache
+	loginService   login.Service
 	sqlStore       sqlstore.Store
 	ctx            *models.ReqContext
 	orgID          int64
@@ -51,6 +52,7 @@ func (err Error) Error() string {
 type Options struct {
 	JWTAuthService models.JWTService
 	RemoteCache    *remotecache.RemoteCache
+	LoginService   login.Service
 	SqlStore       sqlstore.Store
 	Ctx            *models.ReqContext
 	OrgID          int64
@@ -62,6 +64,7 @@ func New(cfg *setting.Cfg, jwtToken string, options *Options) *AuthJWT {
 		jwtToken:       jwtToken,
 		jwtAuthService: options.JWTAuthService,
 		remoteCache:    options.RemoteCache,
+		loginService:   options.LoginService,
 		sqlStore:       options.SqlStore,
 		ctx:            options.Ctx,
 		orgID:          options.OrgID,
@@ -283,7 +286,7 @@ func (auth *AuthJWT) LoginViaJWT(logger log.Logger) (int64, error) {
 		ExternalUser:  extUser,
 	}
 
-	err = bus.Dispatch(auth.ctx.Req.Context(), upsert)
+	err = auth.loginService.UpsertUser(auth.ctx.Req.Context(), upsert)
 	if err != nil {
 		return 0, err
 	}
@@ -297,7 +300,7 @@ func (auth *AuthJWT) GetSignedInUser(userID int64) (*models.SignedInUser, error)
 		UserId: userID,
 	}
 
-	if err := bus.Dispatch(context.Background(), query); err != nil {
+	if err := auth.sqlStore.GetSignedInUser(context.Background(), query); err != nil {
 		return nil, err
 	}
 
