@@ -1,4 +1,4 @@
-# syntax = docker/dockerfile:1.4
+# syntax = docker/dockerfile:1.4.1
 
 FROM --platform=$BUILDPLATFORM node:16-alpine3.15 as js-builder
 
@@ -46,13 +46,20 @@ COPY cue.mod cue.mod
 COPY .bingo .bingo
 COPY git-branch git-sha git-buildstamp ./
 
-RUN go mod verify
-RUN make gen-go
+RUN --mount=type=cache,id=go-mod,target=/go/pkg/mod \
+    --mount=type=cache,id=go-build,target=/root/.cache/go-build \
+    go mod verify
+RUN --mount=type=cache,id=go-mod,target=/go/pkg/mod \
+    --mount=type=cache,id=go-build,target=/root/.cache/go-build \
+    make gen-go
 
 ARG TARGETPLATFORM
 RUN xx-apk add musl-dev gcc g++
 ENV CGO_ENABLED=1
-RUN make build-xx-go
+RUN --mount=type=cache,id=go-mod,target=/go/pkg/mod \
+    --mount=type=cache,id=go-build,target=/root/.cache/go-build \
+    make build-xx-go
+
 
 # Final stage
 FROM alpine:3.15
