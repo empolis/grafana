@@ -26,12 +26,6 @@ pipeline {
             }
         }
 
-        stage('Ensure builder is running') {
-            steps {
-                iaBuildxBootstrap()
-            }
-        }
-
         stage('Build and push') {
             steps {
                 iaBuildxBuild COMMON_BUILD_ARGS
