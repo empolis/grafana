@@ -3525,7 +3525,6 @@
    "x-go-package": "github.com/prometheus/alertmanager/api/v2/models"
   },
   "receiver": {
-   "description": "Receiver receiver",
    "properties": {
     "name": {
      "description": "name",
@@ -3536,7 +3535,9 @@
    "required": [
     "name"
    ],
-   "type": "object"
+   "type": "object",
+   "x-go-name": "Receiver",
+   "x-go-package": "github.com/prometheus/alertmanager/api/v2/models"
   },
   "silence": {
    "description": "Silence silence",
@@ -4820,12 +4821,35 @@
     "tags": [
      "provisioning"
     ]
+   }
+  },
+  "/api/provisioning/contact-points/{ID}": {
+   "delete": {
+    "consumes": [
+     "application/json"
+    ],
+    "operationId": "RouteDeleteContactpoints",
+    "responses": {
+     "202": {
+      "$ref": "#/responses/Accepted"
+     },
+     "400": {
+      "description": "ValidationError",
+      "schema": {
+       "$ref": "#/definitions/ValidationError"
+      }
+     }
+    },
+    "summary": "Delete a contact point.",
+    "tags": [
+     "provisioning"
+    ]
    },
    "put": {
     "consumes": [
      "application/json"
     ],
-    "operationId": "RoutePutContactpoints",
+    "operationId": "RoutePutContactpoint",
     "parameters": [
      {
       "in": "body",
@@ -4847,29 +4871,6 @@
      }
     },
     "summary": "Update an existing contact point.",
-    "tags": [
-     "provisioning"
-    ]
-   }
-  },
-  "/api/provisioning/contact-points/{ID}": {
-   "delete": {
-    "consumes": [
-     "application/json"
-    ],
-    "operationId": "RouteDeleteContactpoints",
-    "responses": {
-     "202": {
-      "$ref": "#/responses/Accepted"
-     },
-     "400": {
-      "description": "ValidationError",
-      "schema": {
-       "$ref": "#/definitions/ValidationError"
-      }
-     }
-    },
-    "summary": "Delete a contact point.",
     "tags": [
      "provisioning"
     ]
@@ -4897,11 +4898,11 @@
      "provisioning"
     ]
    },
-   "post": {
+   "put": {
     "consumes": [
      "application/json"
     ],
-    "operationId": "RoutePostPolicyTree",
+    "operationId": "RoutePutPolicyTree",
     "parameters": [
      {
       "in": "body",
