@@ -1,4 +1,4 @@
-# syntax = docker/dockerfile:1.4.1
+# syntax = docker/dockerfile:1.4.2
 
 FROM --platform=$BUILDPLATFORM node:16-alpine3.15 as js-builder
 
