@@ -70,7 +70,7 @@ require (
 	github.com/m3db/prometheus_remote_client_golang v0.4.4
 	github.com/magefile/mage v1.12.1
 	github.com/mattn/go-isatty v0.0.12
-	github.com/mattn/go-sqlite3 v1.14.7
+	github.com/mattn/go-sqlite3 v1.14.9
 	github.com/matttproud/golang_protobuf_extensions v1.0.2-0.20181231171920-c182affec369
 	github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f
 	github.com/ohler55/ojg v1.12.9
@@ -93,7 +93,7 @@ require (
 	github.com/unknwon/com v1.0.1
 	github.com/urfave/cli/v2 v2.3.0
 	github.com/vectordotdev/go-datemath v0.1.1-0.20220323213446-f3954d0b18ae
-	github.com/weaveworks/common v0.0.0-20210913144402-035033b78a78
+	github.com/weaveworks/common v0.0.0-20210913144402-035033b78a78 // indirect
 	github.com/xorcare/pointer v1.1.0
 	github.com/yudai/gojsondiff v1.0.0
 	go.opentelemetry.io/collector v0.31.0
@@ -104,7 +104,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.2.0
 	golang.org/x/crypto v0.0.0-20211117183948-ae814b36b871
 	golang.org/x/exp v0.0.0-20210220032938-85be41e4509f
-	golang.org/x/net v0.0.0-20211118161319-6a13c67c3ce4
+	golang.org/x/net v0.0.0-20211118161319-6a13c67c3ce4 // indirect
 	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 	golang.org/x/time v0.0.0-20211116232009-f0f3c7e86c11
@@ -120,9 +120,9 @@ require (
 	gopkg.in/square/go-jose.v2 v2.5.1
 	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
-	xorm.io/builder v0.3.6
+	xorm.io/builder v0.3.11-0.20220531020008-1bd24a7dc978
 	xorm.io/core v0.7.3
-	xorm.io/xorm v0.8.2
+	xorm.io/xorm v1.3.1
 )
 
 require (
@@ -274,6 +274,7 @@ require (
 	github.com/envoyproxy/protoc-gen-validate v0.6.2 // indirect
 	github.com/getkin/kin-openapi v0.94.0 // indirect
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32 // indirect
+	github.com/goccy/go-json v0.8.1 // indirect
 	github.com/golang-jwt/jwt v3.2.1+incompatible // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
@@ -281,6 +282,7 @@ require (
 	github.com/opencontainers/image-spec v1.0.2 // indirect
 	github.com/pierrec/lz4/v4 v4.1.8 // indirect
 	github.com/segmentio/asm v1.1.1 // indirect
+	github.com/syndtr/goleveldb v1.0.0 // indirect
 )
 
 // Use fork of crewjam/saml with fixes for some issues until changes get merged into upstream
