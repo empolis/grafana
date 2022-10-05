@@ -284,6 +284,11 @@ func (auth *AuthJWT) LoginViaJWT(logger log.Logger) (int64, error) {
 		ReqContext:    auth.ctx,
 		SignupAllowed: auth.cfg.JWTAuthAutoSignUp,
 		ExternalUser:  extUser,
+		UserLookupParams: models.UserLookupParams{
+			UserID: nil,
+			Login:  &extUser.Login,
+			Email:  &extUser.Email,
+		},
 	}
 
 	err = auth.loginService.UpsertUser(auth.ctx.Req.Context(), upsert)

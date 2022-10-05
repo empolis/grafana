@@ -27,7 +27,7 @@ RUN yarn build
 FROM --platform=$BUILDPLATFORM tonistiigi/xx AS xx
 
 
-FROM --platform=$BUILDPLATFORM golang:1.17.9-alpine3.15 as go-builder
+FROM --platform=$BUILDPLATFORM golang:1.17.11-alpine3.15 as go-builder
 
 COPY --from=xx / /
 

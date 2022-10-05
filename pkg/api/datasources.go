@@ -8,16 +8,19 @@ import (
 	"net/http"
 	"sort"
 	"strconv"
+	"strings"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana/pkg/api/datasource"
 	"github.com/grafana/grafana/pkg/api/dtos"
 	"github.com/grafana/grafana/pkg/api/response"
+	"github.com/grafana/grafana/pkg/components/simplejson"
 	"github.com/grafana/grafana/pkg/infra/log"
 	"github.com/grafana/grafana/pkg/models"
 	"github.com/grafana/grafana/pkg/plugins/adapters"
 	"github.com/grafana/grafana/pkg/services/datasources"
 	"github.com/grafana/grafana/pkg/services/datasources/permissions"
+	"github.com/grafana/grafana/pkg/setting"
 	"github.com/grafana/grafana/pkg/util"
 	"github.com/grafana/grafana/pkg/web"
 )
@@ -75,7 +78,7 @@ func (hs *HTTPServer) GetDataSources(c *models.ReqContext) response.Response {
 func (hs *HTTPServer) GetDataSourceById(c *models.ReqContext) response.Response {
 	id, err := strconv.ParseInt(web.Params(c.Req)[":id"], 10, 64)
 	if err != nil {
-		return response.Error(http.StatusBadRequest, "id is invalid", err)
+		return response.Error(http.StatusBadRequest, "id is invalid", nil)
 	}
 	query := models.GetDataSourceQuery{
 		Id:    id,
@@ -235,9 +238,30 @@ func (hs *HTTPServer) DeleteDataSourceByName(c *models.ReqContext) response.Resp
 
 func validateURL(cmdType string, url string) response.Response {
 	if _, err := datasource.ValidateURL(cmdType, url); err != nil {
-		return response.Error(400, fmt.Sprintf("Validation error, invalid URL: %q", url), err)
+		datasourcesLogger.Error("Failed to validate URL", "url", url)
+		return response.Error(http.StatusBadRequest, "Validation error, invalid URL", err)
 	}
 
+	return nil
+}
+
+// validateJSONData prevents the user from adding a custom header with name that matches the auth proxy header name.
+// This is done to prevent data source proxy from being used to circumvent auth proxy.
+// For more context take a look at CVE-2022-35957
+func validateJSONData(jsonData *simplejson.Json, cfg *setting.Cfg) error {
+	if jsonData == nil || !cfg.AuthProxyEnabled {
+		return nil
+	}
+
+	for key, value := range jsonData.MustMap() {
+		if strings.HasPrefix(key, "httpHeaderName") {
+			header := fmt.Sprint(value)
+			if http.CanonicalHeaderKey(header) == http.CanonicalHeaderKey(cfg.AuthProxyHeaderName) {
+				datasourcesLogger.Error("Forbidden to add a data source header with a name equal to auth proxy header name", "headerName", key)
+				return errors.New("validation error, invalid header name specified")
+			}
+		}
+	}
 	return nil
 }
 
@@ -255,6 +279,9 @@ func (hs *HTTPServer) AddDataSource(c *models.ReqContext) response.Response {
 		if resp := validateURL(cmd.Type, cmd.Url); resp != nil {
 			return resp
 		}
+	}
+	if err := validateJSONData(cmd.JsonData, hs.Cfg); err != nil {
+		return response.Error(http.StatusBadRequest, "Failed to add datasource", err)
 	}
 
 	if err := hs.DataSourcesService.AddDataSource(c.Req.Context(), &cmd); err != nil {
@@ -288,6 +315,9 @@ func (hs *HTTPServer) UpdateDataSource(c *models.ReqContext) response.Response {
 	}
 	if resp := validateURL(cmd.Type, cmd.Url); resp != nil {
 		return resp
+	}
+	if err := validateJSONData(cmd.JsonData, hs.Cfg); err != nil {
+		return response.Error(http.StatusBadRequest, "Failed to update datasource", err)
 	}
 
 	ds, err := hs.getRawDataSourceById(c.Req.Context(), cmd.Id, cmd.OrgId)
@@ -435,7 +465,7 @@ func (hs *HTTPServer) GetDataSourceIdByName(c *models.ReqContext) response.Respo
 func (hs *HTTPServer) CallDatasourceResource(c *models.ReqContext) {
 	datasourceID, err := strconv.ParseInt(web.Params(c.Req)[":id"], 10, 64)
 	if err != nil {
-		c.JsonApiErr(http.StatusBadRequest, "id is invalid", err)
+		c.JsonApiErr(http.StatusBadRequest, "id is invalid", nil)
 		return
 	}
 	ds, err := hs.DataSourceCache.GetDatasource(c.Req.Context(), datasourceID, c.SignedInUser, c.SkipCache)
@@ -494,7 +524,7 @@ func convertModelToDtos(ds *models.DataSource) dtos.DataSource {
 func (hs *HTTPServer) CheckDatasourceHealth(c *models.ReqContext) response.Response {
 	datasourceID, err := strconv.ParseInt(web.Params(c.Req)[":id"], 10, 64)
 	if err != nil {
-		return response.Error(http.StatusBadRequest, "id is invalid", err)
+		return response.Error(http.StatusBadRequest, "id is invalid", nil)
 	}
 
 	ds, err := hs.DataSourceCache.GetDatasource(c.Req.Context(), datasourceID, c.SignedInUser, c.SkipCache)

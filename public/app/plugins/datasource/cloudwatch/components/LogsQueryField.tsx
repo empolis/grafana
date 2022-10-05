@@ -2,7 +2,8 @@ import { css } from '@emotion/css';
 import { intersectionBy, debounce, unionBy } from 'lodash';
 import { LanguageMap, languages as prismLanguages } from 'prismjs';
 import React, { ReactNode } from 'react';
-import { Editor, Node, Plugin } from 'slate';
+import { Node, Plugin } from 'slate';
+import { Editor } from 'slate-react';
 
 import { AbsoluteTimeRange, QueryEditorProps, SelectableValue } from '@grafana/data';
 import {
@@ -25,6 +26,7 @@ import { CloudWatchLanguageProvider } from '../language_provider';
 import syntax from '../syntax';
 import { CloudWatchJsonData, CloudWatchLogsQuery, CloudWatchQuery } from '../types';
 import { getStatsGroups } from '../utils/query/getStatsGroups';
+import { appendTemplateVariables } from '../utils/utils';
 
 import QueryHeader from './QueryHeader';
 
@@ -75,7 +77,7 @@ export class CloudWatchLogsQueryField extends React.PureComponent<CloudWatchLogs
     hint: undefined,
   };
 
-  plugins: Plugin[];
+  plugins: Array<Plugin<Editor>>;
 
   constructor(props: CloudWatchLogsQueryFieldProps, context: React.Context<any>) {
     super(props, context);
@@ -260,7 +262,7 @@ export class CloudWatchLogsQueryField extends React.PureComponent<CloudWatchLogs
     );
   };
 
-  onQueryFieldClick = (_event: Event, _editor: Editor, next: () => any) => {
+  onQueryFieldClick = (_event: Event | React.MouseEvent, _editor: Editor, next: () => any) => {
     const { selectedLogGroups, loadingLogGroups } = this.state;
 
     const queryFieldDisabled = loadingLogGroups || selectedLogGroups.length === 0;
@@ -309,7 +311,7 @@ export class CloudWatchLogsQueryField extends React.PureComponent<CloudWatchLogs
                 aria-label="Log Groups"
                 menuShouldPortal
                 allowCustomValue={allowCustomValue}
-                options={unionBy(availableLogGroups, selectedLogGroups, 'value')}
+                options={appendTemplateVariables(datasource, unionBy(availableLogGroups, selectedLogGroups, 'value'))}
                 value={selectedLogGroups}
                 onChange={(v) => {
                   this.setSelectedLogGroups(v);

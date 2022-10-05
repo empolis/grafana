@@ -1,15 +1,21 @@
-+++
-title = "Query caching"
-description = "Grafana Enterprise data source query caching"
-keywords = ["grafana", "plugins", "query", "caching"]
-weight = 300
-+++
+---
+aliases:
+  - /docs/grafana/latest/enterprise/query-caching/
+description: Grafana Enterprise data source query caching
+keywords:
+  - grafana
+  - plugins
+  - query
+  - caching
+title: Query caching
+weight: 300
+---
 
 # Query caching
 
 When query caching is enabled, Grafana temporarily stores the results of data source queries. When you or another user submit the exact same query again, the results will come back from the cache instead of from the data source (like Splunk or ServiceNow) itself.
 
-Query caching works for all backend data sources, and queries sent through the data source proxy. You can enable the cache globally and configure the cache duration (also called Time to Live, or TTL).
+Query caching works for all backend data sources. You can enable the cache globally and configure the cache duration (also called Time to Live, or TTL).
 
 The following cache backends are available: in-memory, Redis, and Memcached.
 
@@ -33,11 +39,11 @@ Query caching works for all [Enterprise data sources](https://grafana.com/grafan
 
 - CloudWatch Metrics
 - Google Cloud Monitoring
-- InfluxDB
 - Microsoft SQL Server
 - MySQL
 - Postgres
 - Tempo
+- InfluxDB (using Flux query language)
 
 Some data sources, such as Elasticsearch, Prometheus, and Loki, cache queries themselves, so Grafana query caching does not improve performance.
 
