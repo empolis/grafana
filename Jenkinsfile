@@ -17,6 +17,13 @@ pipeline {
             .""".stripIndent()
     }
 
+    options {
+        office365ConnectorWebhooks([[startNotification : false,
+                                     notifyFailure     : true,
+                                     notifyBackToNormal: true
+                                    ]])
+    }
+
     stages {
         stage('Prepare workspace') {
             steps {
