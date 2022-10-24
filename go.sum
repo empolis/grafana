@@ -105,8 +105,9 @@ github.com/Azure/azure-sdk-for-go v52.5.0+incompatible/go.mod h1:9XXNKU+eRnpl9mo
 github.com/Azure/azure-sdk-for-go v54.0.0+incompatible/go.mod h1:9XXNKU+eRnpl9moKnB4QOLf1HestfXbmab5FXxiDBjc=
 github.com/Azure/azure-sdk-for-go v55.2.0+incompatible/go.mod h1:9XXNKU+eRnpl9moKnB4QOLf1HestfXbmab5FXxiDBjc=
 github.com/Azure/azure-sdk-for-go v57.1.0+incompatible/go.mod h1:9XXNKU+eRnpl9moKnB4QOLf1HestfXbmab5FXxiDBjc=
-github.com/Azure/azure-sdk-for-go v59.3.0+incompatible h1:dPIm0BO4jsMXFcCI/sLTPkBtE7mk8WMuRHA0JeWhlcQ=
 github.com/Azure/azure-sdk-for-go v59.3.0+incompatible/go.mod h1:9XXNKU+eRnpl9moKnB4QOLf1HestfXbmab5FXxiDBjc=
+github.com/Azure/azure-sdk-for-go v67.0.0+incompatible h1:SVBwznSETB0Sipd0uyGJr7khLhJOFRUEUb+0JgkCvDo=
+github.com/Azure/azure-sdk-for-go v67.0.0+incompatible/go.mod h1:9XXNKU+eRnpl9moKnB4QOLf1HestfXbmab5FXxiDBjc=
 github.com/Azure/azure-sdk-for-go/sdk/azcore v0.20.0/go.mod h1:ZPW/Z0kLCTdDZaDbYTetxc9Cxl/2lNqxYHYNOF2bti0=
 github.com/Azure/azure-sdk-for-go/sdk/azcore v0.21.0/go.mod h1:fBF9PQNqB8scdgpZ3ufzaLntG0AG7C1WjPMsiFOmfHM=
 github.com/Azure/azure-sdk-for-go/sdk/azcore v0.22.0 h1:zBJcBJwte0x6PcPK7XaWDMvK2o2ZM2f1sMaqNNavQ5g=
@@ -1361,8 +1362,6 @@ github.com/grafana/go-mssqldb v0.0.0-20210326084033-d0ce3c521036 h1:GplhUk6Xes5J
 github.com/grafana/go-mssqldb v0.0.0-20210326084033-d0ce3c521036/go.mod h1:xbL0rPBG9cCiLr28tMa8zpbdarY27NDyej4t/EjAShU=
 github.com/grafana/grafana-aws-sdk v0.10.3 h1:nqjK8NfrUyUcAtSjGxnt17ZKjeOMCi62MNKFNagjG6g=
 github.com/grafana/grafana-aws-sdk v0.10.3/go.mod h1:vFIOHEnY1u5nY0/tge1IHQjPuG6DRKr2ISf/HikUdjE=
-github.com/grafana/grafana-azure-sdk-go v1.1.0 h1:Gh0fjs7jr4Lp5y+4cjn48U+MQaJeV8i9m1ds/1xszto=
-github.com/grafana/grafana-azure-sdk-go v1.1.0/go.mod h1:rgrnK9m6CgKlgx4rH3FFP/6dTdyRO6LYC2mVZov35yo=
 github.com/grafana/grafana-azure-sdk-go v1.3.0 h1:zboQpq/ljBjqHo/6UQNZAUwqGTtnEGRYSEnqIQvLuAo=
 github.com/grafana/grafana-azure-sdk-go v1.3.0/go.mod h1:rgrnK9m6CgKlgx4rH3FFP/6dTdyRO6LYC2mVZov35yo=
 github.com/grafana/grafana-google-sdk-go v0.0.0-20211104130251-b190293eaf58 h1:2ud7NNM7LrGPO4x0NFR8qLq68CqI4SmB7I2yRN2w9oE=
