@@ -1240,8 +1240,9 @@ github.com/google/go-cmp v0.5.4/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/
 github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/google/go-cmp v0.5.6/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/google/go-cmp v0.5.7/go.mod h1:n+brtR0CgQNWTVd5ZUFpTBC8YFBDLK/h/bpaJ8/DtOE=
-github.com/google/go-cmp v0.5.8 h1:e6P7q2lk1O+qJJb4BtCQXlK8vWEO8V1ZeuEdJNOqZyg=
 github.com/google/go-cmp v0.5.8/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
+github.com/google/go-cmp v0.5.9 h1:O2Tfq5qg4qc4AmwVlvv0oLiVAGB7enBSJ2x2DqQFi38=
+github.com/google/go-cmp v0.5.9/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
 github.com/google/go-github v17.0.0+incompatible/go.mod h1:zLgOLi98H3fifZn+44m+umXrS52loVEgC2AApnigrVQ=
 github.com/google/go-github/v32 v32.1.0/go.mod h1:rIEpZD9CTDQwDK9GDrtMTycQNA4JU3qBsCizh3q2WCI=
 github.com/google/go-querystring v0.0.0-20170111101155-53e6ce116135/go.mod h1:odCYkC5MyYFN7vkCjXpyrEuKhc/BUO6wN/zVPAxq5ck=
@@ -1361,8 +1362,6 @@ github.com/grafana/go-mssqldb v0.0.0-20210326084033-d0ce3c521036 h1:GplhUk6Xes5J
 github.com/grafana/go-mssqldb v0.0.0-20210326084033-d0ce3c521036/go.mod h1:xbL0rPBG9cCiLr28tMa8zpbdarY27NDyej4t/EjAShU=
 github.com/grafana/grafana-aws-sdk v0.10.3 h1:nqjK8NfrUyUcAtSjGxnt17ZKjeOMCi62MNKFNagjG6g=
 github.com/grafana/grafana-aws-sdk v0.10.3/go.mod h1:vFIOHEnY1u5nY0/tge1IHQjPuG6DRKr2ISf/HikUdjE=
-github.com/grafana/grafana-azure-sdk-go v1.1.0 h1:Gh0fjs7jr4Lp5y+4cjn48U+MQaJeV8i9m1ds/1xszto=
-github.com/grafana/grafana-azure-sdk-go v1.1.0/go.mod h1:rgrnK9m6CgKlgx4rH3FFP/6dTdyRO6LYC2mVZov35yo=
 github.com/grafana/grafana-azure-sdk-go v1.3.0 h1:zboQpq/ljBjqHo/6UQNZAUwqGTtnEGRYSEnqIQvLuAo=
 github.com/grafana/grafana-azure-sdk-go v1.3.0/go.mod h1:rgrnK9m6CgKlgx4rH3FFP/6dTdyRO6LYC2mVZov35yo=
 github.com/grafana/grafana-google-sdk-go v0.0.0-20211104130251-b190293eaf58 h1:2ud7NNM7LrGPO4x0NFR8qLq68CqI4SmB7I2yRN2w9oE=
